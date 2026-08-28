@@ -477,7 +477,8 @@ export default function App() {
 
 
         {/* ROUTE 10: Platform & Audience SEO Landing Pages */}
-        {(activeRoute === '/accessibility-checker' ||
+        {(activeRoute === '/solutions' ||
+          activeRoute === '/accessibility-checker' ||
           activeRoute === '/ada-compliance-checker' ||
           activeRoute === '/wcag-checker' ||
           activeRoute === '/website-accessibility-test' ||
@@ -491,7 +492,7 @@ export default function App() {
           activeRoute === '/for-ecommerce' ||
           activeRoute === '/for-small-business') && (
           <SeoLandingPage
-            slug={activeRoute.replace('/', '')}
+            slug={activeRoute === '/solutions' ? 'accessibility-checker' : activeRoute.replace('/', '')}
             onScanComplete={handleScanComplete}
             onNavigate={handleNavigate}
           />

@@ -372,4 +372,236 @@ export const SEO_PAGES: Record<string, SeoPageData> = {
     ],
     canonicalUrl: 'https://accessfix.ai/for-developers',
   },
+  'wix-accessibility-checker': {
+    slug: 'wix-accessibility-checker',
+    title: 'Wix Accessibility Checker | Audit Wix Site WCAG Compliance',
+    metaDescription: 'Audit your Wix website for accessibility barriers. Test contrast ratios, image alt text, and mobile tap targets. Scan your Wix site free.',
+    h1: 'Wix Website Accessibility Checker',
+    heroSubtitle: 'Identify and fix accessibility issues on Wix websites with step-by-step guidance for Wix Editor and Studio.',
+    category: 'platforms',
+    targetKeywords: ['Wix accessibility checker', 'Wix ADA compliance', 'Wix WCAG test', 'accessible Wix website'],
+    wcagRelevance: 'Audits Wix apps, dynamic lightboxes, menu navigation, and mobile viewport layouts.',
+    overviewContent: 'Wix empowers millions of businesses to create websites quickly, but visual drag-and-drop builders often hide accessibility issues like missing alt tags, nested heading errors, and unlabelled button icons. AccessFix AI audits your live Wix domain and gives you exact steps to fix issues in Wix Studio and Wix Editor.',
+    keyFeatures: [
+      {
+        title: 'Wix Studio & Classic Editor Guidance',
+        description: 'Step-by-step instructions tailored for the Wix Settings and Accessibility Wizard panels.',
+        iconName: 'Layout',
+      },
+      {
+        title: 'Lightbox & Popup Trapping Checks',
+        description: 'Detects popups that trap keyboard focus or prevent screen reader dismissal.',
+        iconName: 'Layers',
+      },
+      {
+        title: 'Vector Art & Icon Alt Tags',
+        description: 'Flags decorative vs informative vector illustrations in your Wix media library.',
+        iconName: 'Image',
+      },
+      {
+        title: 'Automated Scan History',
+        description: 'Track your accessibility score over time as you add new pages and apps.',
+        iconName: 'Activity',
+      },
+    ],
+    commonFailures: [
+      {
+        title: 'Vector Icons Missing Alt Text (WCAG 1.1.1)',
+        impact: 'Screen reader users hear generic file names for social media links.',
+        fix: 'Add descriptive text in Wix Media Manager or mark as decorative.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does the Wix Accessibility Wizard guarantee ADA compliance?',
+        answer: 'The built-in Wix wizard is a great starting point, but automated cloud testing with AccessFix AI provides deeper WCAG 2.1 AA coverage and ongoing monitoring.',
+      },
+    ],
+    canonicalUrl: 'https://accessfix.ai/wix-accessibility-checker',
+  },
+  'webflow-accessibility-checker': {
+    slug: 'webflow-accessibility-checker',
+    title: 'Webflow Accessibility Checker | Audit Webflow Sites for WCAG & ADA',
+    metaDescription: 'Audit Webflow projects for accessibility. Test custom interactions, dropdown menus, and color contrast. Run a free Webflow accessibility audit.',
+    h1: 'Webflow Site Accessibility Checker',
+    heroSubtitle: 'Inspect Webflow custom component interactions, ARIA attributes, and semantic HTML structure for complete compliance.',
+    category: 'platforms',
+    targetKeywords: ['Webflow accessibility checker', 'Webflow ADA compliance', 'Webflow WCAG audit', 'accessible Webflow sites'],
+    wcagRelevance: 'Covers custom Webflow interactions (IX2), tabs, dropdowns, and custom code embeds.',
+    overviewContent: 'Webflow offers unmatched visual design flexibility, but custom IX2 interactions, hamburger menus, and client-first classes often introduce keyboard navigation roadblocks. AccessFix AI inspects your published Webflow site, pinpointing element classes and providing copy-paste Custom Code and attribute fixes.',
+    keyFeatures: [
+      {
+        title: 'Custom Interaction Auditing',
+        description: 'Validates that hover animations have accessible keyboard focus equivalents.',
+        iconName: 'Zap',
+      },
+      {
+        title: 'ARIA Attribute Checklist',
+        description: 'Points out missing role and aria-expanded attributes on custom modals and navbars.',
+        iconName: 'Code',
+      },
+      {
+        title: 'Client-First & Relume Ready',
+        description: 'Tailored diagnostics compatible with modern Webflow component libraries.',
+        iconName: 'ShieldCheck',
+      },
+      {
+        title: 'Continuous Publishing Alerts',
+        description: 'Ensures client updates do not break your accessibility score after handoff.',
+        iconName: 'Activity',
+      },
+    ],
+    commonFailures: [
+      {
+        title: 'Dropdown Menus Inaccessible by Keyboard (WCAG 2.1.1)',
+        impact: 'Keyboard navigators cannot expand submenu navigation links.',
+        fix: 'Add custom attributes aria-haspopup="true" and aria-expanded="false" to toggle triggers.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'How do I add custom accessibility attributes in Webflow?',
+        answer: 'In the Webflow Designer Element Settings panel (D), navigate to Custom Attributes and add the exact aria-* properties flagged in your report.',
+      },
+    ],
+    canonicalUrl: 'https://accessfix.ai/webflow-accessibility-checker',
+  },
+  'for-ecommerce': {
+    slug: 'for-ecommerce',
+    title: 'Accessibility Auditing Tool for eCommerce Stores | AccessFix AI',
+    metaDescription: 'Maximize online store conversion and prevent ADA Title III lawsuits. Audit product grids, checkout funnels, and cart drawers. Test free.',
+    h1: 'Accessibility Platform for eCommerce Stores',
+    heroSubtitle: 'Make your shopping cart, product catalog, and checkout funnel accessible to 1.3 billion consumers with disabilities worldwide.',
+    category: 'audiences',
+    targetKeywords: ['ecommerce accessibility', 'online store ADA compliance', 'accessible checkout', 'ecommerce WCAG audit'],
+    wcagRelevance: 'Focuses on checkout abandonment prevention, screen reader product discovery, and keyboard cart flows.',
+    overviewContent: 'Over 80% of digital accessibility lawsuits target commercial online retailers. When shoppers encounter unlabelled variant buttons, inaccessible promo popups, or keyboard-trapped checkout drawers, they abandon their carts. AccessFix AI audits your complete customer journey to protect revenue and ensure legal compliance.',
+    keyFeatures: [
+      {
+        title: 'Checkout Funnel Verification',
+        description: 'Eliminates form label and error announcement barriers during checkout.',
+        iconName: 'ShoppingBag',
+      },
+      {
+        title: 'Discount Popup & Modal Diagnostics',
+        description: 'Ensures marketing lightboxes can be easily closed via the Escape key.',
+        iconName: 'ShieldCheck',
+      },
+      {
+        title: 'Catalog Alt Text Optimization',
+        description: 'Batch audits product photos for descriptive, SEO-friendly alternative text.',
+        iconName: 'Image',
+      },
+      {
+        title: 'Revenue Protection Shield',
+        description: 'Helps demonstrate proactive accessibility conformance against predatory demand letters.',
+        iconName: 'Scale',
+      },
+    ],
+    commonFailures: [
+      {
+        title: 'Unannounced Cart Drawer Updates (WCAG 4.1.3)',
+        impact: 'Blind shoppers add an item to cart but receive no audible confirmation.',
+        fix: 'Add aria-live="polite" to the cart count badge or flyout drawer.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Will making my store accessible increase my sales?',
+        answer: 'Yes. The disabled community controls over $1.9 trillion in disposable income. Accessible sites also rank higher in search engines and achieve lower cart abandonment rates.',
+      },
+    ],
+    canonicalUrl: 'https://accessfix.ai/for-ecommerce',
+  },
+  'for-small-business': {
+    slug: 'for-small-business',
+    title: 'Affordable Website Accessibility for Small Business | AccessFix AI',
+    metaDescription: 'Protect your small business website from ADA lawsuits. Automated WCAG testing with plain-English AI explanations. Free instant scan.',
+    h1: 'Small Business Website Accessibility Tool',
+    heroSubtitle: 'Simple, automated accessibility audits and plain-English fixes designed for local businesses and growing startups.',
+    category: 'audiences',
+    targetKeywords: ['small business accessibility', 'small business ADA compliance', 'website accessibility for local business'],
+    wcagRelevance: 'Addresses high-risk lawsuit triggers: contact forms, Google Maps embeds, phone links, and menu contrast.',
+    overviewContent: 'Small businesses are increasingly targeted by automated accessibility litigation. AccessFix AI eliminates the need for expensive $5,000 manual audits by scanning your site in seconds, translating complex standards into plain English, and providing exact fix guides for WordPress, Squarespace, and Wix.',
+    keyFeatures: [
+      {
+        title: 'Plain-English AI Explanations',
+        description: 'No technical jargon—understand exactly what is broken and why it matters to your customers.',
+        iconName: 'Sparkles',
+      },
+      {
+        title: 'Cost-Effective Compliance',
+        description: 'Save thousands on legal consulting fees with automated scans and DIY fix guides.',
+        iconName: 'ShieldCheck',
+      },
+      {
+        title: 'Contact Form & Map Audits',
+        description: 'Ensures lead capture forms and location maps are accessible to all visitors.',
+        iconName: 'FileText',
+      },
+      {
+        title: 'Instant Compliance Certificate',
+        description: 'Generate an audit summary report for your records and business insurance.',
+        iconName: 'Award',
+      },
+    ],
+    commonFailures: [
+      {
+        title: 'Inaccessible Contact Form Fields (WCAG 3.3.2)',
+        impact: 'Customers cannot submit service inquiries or quote requests.',
+        fix: 'Ensure visible labels are connected to all form inputs.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can small businesses be sued for website accessibility?',
+        answer: 'Yes. Under Title III of the ADA, businesses of any size with a public website can face accessibility claims regardless of revenue or employee count.',
+      },
+    ],
+    canonicalUrl: 'https://accessfix.ai/for-small-business',
+  },
+  'website-accessibility-test': {
+    slug: 'website-accessibility-test',
+    title: 'Free Website Accessibility Test | WCAG 2.1 & 2.2 Scan',
+    metaDescription: 'Test your website accessibility instantly. Free online WCAG 2.1 AA inspection engine with prioritized developer action steps.',
+    h1: 'Free Website Accessibility Test',
+    heroSubtitle: 'Comprehensive automated test measuring contrast, ARIA landmarks, keyboard navigation, and semantic DOM structure.',
+    category: 'core',
+    targetKeywords: ['website accessibility test', 'test website accessibility', 'web accessibility test online'],
+    wcagRelevance: 'Audits full DOM tree against 40+ WCAG 2.1 AA test rules.',
+    overviewContent: 'Run an immediate website accessibility test to evaluate how easily visitors using screen readers, keyboard-only controls, or low-vision settings can browse your web pages.',
+    keyFeatures: [
+      { title: '40+ Rule Cloud Engine', description: 'Deep structural verification of images, forms, buttons, and headings.', iconName: 'ShieldCheck' },
+      { title: 'Actionable Matrix', description: 'Prioritizes fixes by impact and developer effort.', iconName: 'Sparkles' },
+    ],
+    commonFailures: [
+      { title: 'Missing Alt Text (1.1.1)', impact: 'Screen readers cannot describe images.', fix: 'Provide clear alt text.' },
+    ],
+    faqs: [
+      { question: 'How often should I run a test?', answer: 'We recommend testing after every major design refresh or content publication.' },
+    ],
+    canonicalUrl: 'https://accessfix.ai/website-accessibility-test',
+  },
+  'accessibility-testing': {
+    slug: 'accessibility-testing',
+    title: 'Automated Web Accessibility Testing Platform | AccessFix AI',
+    metaDescription: 'Enterprise-grade automated accessibility testing platform. Continuous WCAG 2.1 AA audits, team workflows, and AI code generation.',
+    h1: 'Automated Accessibility Testing Platform',
+    heroSubtitle: 'Accelerate digital inclusion with continuous monitoring, DOM diagnostics, and automated remediation snippets.',
+    category: 'core',
+    targetKeywords: ['accessibility testing', 'web accessibility testing tool', 'automated accessibility testing'],
+    wcagRelevance: 'Designed for engineering and QA teams testing against WCAG 2.1 & 2.2 AA standards.',
+    overviewContent: 'AccessFix AI provides automated accessibility testing built for modern development teams. Integrate automated scans into your staging environments, export executive reports, and remediate faster with AI-generated JSX and HTML.',
+    keyFeatures: [
+      { title: 'CI/CD & Staging Ready', description: 'Test staging builds before pushing changes to production.', iconName: 'Code' },
+      { title: 'Team Collaboration Hub', description: 'Assign accessibility tickets across engineering and content teams.', iconName: 'Briefcase' },
+    ],
+    commonFailures: [
+      { title: 'Missing Keyboard Focus Rings (2.4.7)', impact: 'Tab navigation is invisible to users.', fix: 'Retain high-contrast focus rings.' },
+    ],
+    faqs: [
+      { question: 'Can automated testing replace manual testing?', answer: 'Automated testing solves 30-50% of issues rapidly, complementing manual audits for maximum coverage.' },
+    ],
+    canonicalUrl: 'https://accessfix.ai/accessibility-testing',
+  },
 };

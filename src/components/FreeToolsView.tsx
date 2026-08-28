@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Palette,
   Image,
@@ -32,7 +32,50 @@ interface FreeToolsViewProps {
 }
 
 export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'contrast', onNavigate }) => {
-  const [activeTool, setActiveTool] = useState<string>(initialTool);
+  const normalizeToolId = (id: string) => {
+    if (id === 'color-contrast' || id === 'contrast') return 'contrast';
+    if (id === 'alt-text' || id === 'alt-text-checker') return 'alt-text';
+    if (id === 'heading' || id === 'heading-checker') return 'heading';
+    if (id === 'form' || id === 'form-accessibility-checker') return 'form';
+    if (id === 'keyboard' || id === 'keyboard-accessibility-checker') return 'keyboard';
+    if (id === 'meta-tags' || id === 'meta-tag-optimizer' || id === 'meta-optimizer') return 'meta-optimizer';
+    if (id === 'schema-builder' || id === 'schema-generator') return 'schema-generator';
+    if (id === 'keywords' || id === 'keyword-explorer') return 'keyword-explorer';
+    if (id === 'content-brief') return 'content-brief';
+    return id || 'contrast';
+  };
+
+  const [activeTool, setActiveTool] = useState<string>(normalizeToolId(initialTool));
+
+  useEffect(() => {
+    if (initialTool) {
+      setActiveTool(normalizeToolId(initialTool));
+    }
+  }, [initialTool]);
+
+  // Form HTML Validator state
+  const [formHtmlInput, setFormHtmlInput] = useState<string>(
+`<form>
+  <label for="user-email">Work Email Address</label>
+  <input id="user-email" type="email" placeholder="you@company.com" required aria-describedby="email-hint" />
+  <span id="email-hint">We'll never share your email.</span>
+
+  <!-- Missing label example -->
+  <input type="text" placeholder="Coupon Code" />
+
+  <button type="submit">Complete Order</button>
+</form>`
+  );
+
+  // Keyboard Simulator state
+  const [focusedIndex, setFocusedIndex] = useState<number>(0);
+  const simElements = [
+    { name: 'Logo link (Skip link target)', role: 'link', tabIndex: '0', accessible: true },
+    { name: 'Main Navigation: Pricing', role: 'link', tabIndex: '0', accessible: true },
+    { name: 'Search Input Field', role: 'textbox', tabIndex: '0', accessible: true },
+    { name: 'Custom Filter Div (Missing role="button" & tabIndex)', role: 'div', tabIndex: 'none', accessible: false },
+    { name: 'Primary CTA Button', role: 'button', tabIndex: '0', accessible: true },
+  ];
 
   // Accessibility State: Contrast
   const [fgColor, setFgColor] = useState<string>('#1e293b');
@@ -244,24 +287,26 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
           { id: 'contrast', label: 'Color Contrast Checker', icon: Palette, category: 'A11y' },
           { id: 'alt-text', label: 'AI Alt Text Generator', icon: Image, category: 'A11y' },
           { id: 'heading', label: 'Heading Hierarchy Validator', icon: Heading, category: 'A11y' },
+          { id: 'form', label: 'Form Accessibility Validator', icon: FormInput, category: 'A11y' },
+          { id: 'keyboard', label: 'Keyboard Nav Simulator', icon: Keyboard, category: 'A11y' },
           { id: 'meta-optimizer', label: 'Meta Tag Optimizer', icon: Search, category: 'SEO' },
           { id: 'schema-generator', label: 'JSON-LD Schema Builder', icon: Code2, category: 'SEO' },
           { id: 'keyword-explorer', label: 'Keyword Opportunity Finder', icon: Target, category: 'Growth' },
           { id: 'content-brief', label: 'AI Content Brief Builder', icon: FileText, category: 'Content' },
         ].map((t) => {
-
           const Icon = t.icon;
+          const isSelected = activeTool === t.id;
           return (
             <button
               key={t.id}
               onClick={() => setActiveTool(t.id)}
               className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-                activeTool === t.id
+                isSelected
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${activeTool === t.id ? 'text-white' : 'text-blue-600'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-blue-600'}`} />
               <span>{t.label}</span>
             </button>
           );
@@ -491,7 +536,120 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
         </div>
       )}
 
-      {/* TOOL 4: Meta Tag Optimizer */}
+      {/* TOOL 4: Form Accessibility Validator */}
+      {activeTool === 'form' && (
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs max-w-4xl mx-auto space-y-6 animate-in fade-in">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Paste Form HTML Snippet to Validate (WCAG 3.3.2 & 4.1.2)
+            </label>
+            <textarea
+              rows={7}
+              value={formHtmlInput}
+              onChange={(e) => setFormHtmlInput(e.target.value)}
+              className="w-full text-xs font-mono p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
+              <div className="text-xs font-bold text-emerald-900 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Valid Rules Passing</span>
+              </div>
+              <ul className="text-xs text-emerald-800 list-disc pl-4 space-y-1">
+                <li>Explicit <code>&lt;label for="user-email"&gt;</code> linked to input id</li>
+                <li><code>aria-describedby</code> helper instructions present</li>
+                <li><code>&lt;button type="submit"&gt;</code> has readable text</li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+              <div className="text-xs font-bold text-amber-900 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span>Violations Detected</span>
+              </div>
+              <ul className="text-xs text-amber-800 list-disc pl-4 space-y-1">
+                <li>Placeholder-only input <code>&lt;input type="text" placeholder="Coupon Code" /&gt;</code> missing persistent visible label.</li>
+                <li>Fix: Add <code>&lt;label for="coupon"&gt;Coupon Code&lt;/label&gt;</code> and assign id="coupon".</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TOOL 5: Keyboard Nav Simulator */}
+      {activeTool === 'keyboard' && (
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs max-w-4xl mx-auto space-y-6 animate-in fade-in">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-900 leading-relaxed flex items-start gap-3">
+            <Keyboard className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold">Interactive Tab Index & Focus Sequence Tester</div>
+              <p className="text-blue-800 text-[11px] mt-0.5">
+                Press "Simulate Next Tab" to cycle focus through elements. Verify that all interactive elements are reachable and never trapped.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {simElements.map((el, idx) => {
+              const isCurrent = focusedIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between text-xs ${
+                    isCurrent
+                      ? 'border-blue-600 ring-2 ring-blue-500/40 bg-blue-50/50 shadow-sm'
+                      : 'border-slate-200 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${
+                      isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <div className="font-bold text-slate-900">{el.name}</div>
+                      <div className="text-[11px] text-slate-500 font-mono">role: {el.role} | tabIndex: {el.tabIndex}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    {el.accessible ? (
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                        Focusable
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold">
+                        Trap / Unreachable
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setFocusedIndex((prev) => (prev + 1) % simElements.length)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl flex items-center gap-2 cursor-pointer"
+            >
+              <Keyboard className="w-4 h-4" />
+              <span>Simulate Next Tab Key (Tab #{focusedIndex + 1})</span>
+            </button>
+            <button
+              onClick={() => setFocusedIndex(0)}
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl cursor-pointer"
+            >
+              Reset Focus Ring
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TOOL 6: Meta Tag Optimizer */}
       {activeTool === 'meta-optimizer' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs max-w-4xl mx-auto space-y-6 animate-in fade-in">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
