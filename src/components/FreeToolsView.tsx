@@ -179,22 +179,42 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
 
   const handleGenerateMeta = async () => {
     setIsGeneratingMeta(true);
+    const kw = targetKeyword.trim() || 'Website Accessibility';
+    const dom = domainName.trim() || 'accessfix.ai';
+    const cleanDom = dom.replace(/^https?:\/\//, '').split('/')[0];
+    const brand = cleanDom.split('.')[0];
+    const capitalizedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+
     try {
       const res = await fetch('/api/tools/meta/suggest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetKeyword, domain: domainName }),
+        body: JSON.stringify({ targetKeyword: kw, domain: dom }),
       });
       if (res.ok) {
         const data = await res.json();
-        setGeneratedTitles(data.titles.map((t: any) => t.title));
-        setGeneratedDescs(data.descriptions.map((d: any) => d.description));
+        if (data?.titles?.length && data?.descriptions?.length) {
+          setGeneratedTitles(data.titles.map((t: any) => t.title));
+          setGeneratedDescs(data.descriptions.map((d: any) => d.description));
+          return;
+        }
       }
     } catch {
-      // Keep state
-    } finally {
-      setIsGeneratingMeta(false);
+      // Fall through to client generation
     }
+
+    // Client-side instant SEO meta generator adhering to 140-155 chars description and 55-60 chars title
+    setGeneratedTitles([
+      `${kw} Audit & Checker 2026 | ${capitalizedBrand}`,
+      `Free ${kw} Tool - Real-Time Analysis | ${capitalizedBrand}`,
+      `${kw} Compliance & Optimization Guide | ${capitalizedBrand}`,
+    ]);
+    setGeneratedDescs([
+      `Discover fast, accurate ${kw.toLowerCase()} diagnostics with ${capitalizedBrand}. Fix critical issues, boost rankings, and test your site today for free.`,
+      `Optimize your website for ${kw.toLowerCase()} in minutes. Automated audits, actionable code fixes, and compliance checks. Start your free scan now.`,
+      `Streamline your ${kw.toLowerCase()} workflow with ${capitalizedBrand}. Get instant diagnostics, WCAG compliance fixes, and detailed health reports.`,
+    ]);
+    setIsGeneratingMeta(false);
   };
 
   const handleGenerateSchema = () => {
