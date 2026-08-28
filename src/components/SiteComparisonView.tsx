@@ -6,6 +6,7 @@ import {
   ScorecardCategory,
   GrowthActionItem,
   CompetitorWinningKeyword,
+  DiscoveredKeywordItem,
   QuickWinOpportunity,
   ContentGapItemDetailed,
   SiteWeaknessItem,
@@ -81,12 +82,19 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
   const [result, setResult] = useState<SiteComparisonResult | null>(null);
 
   // UI interaction states
-  const [activeTab, setActiveTab] = useState<'overview' | 'actions' | 'keywords' | 'content' | 'weaknesses' | 'technical' | 'roadmap'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'actions' | 'discovered' | 'keywords' | 'content' | 'weaknesses' | 'technical' | 'roadmap'>('overview');
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'Critical' | 'High' | 'Medium'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState(false);
   const [whiteLabelMode, setWhiteLabelMode] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState<string | null>('strat-1');
+
+  // Discovered Keywords interactive states
+  const [discoveredSearchQuery, setDiscoveredSearchQuery] = useState('');
+  const [discoveredIntentFilter, setDiscoveredIntentFilter] = useState<'all' | 'transactional' | 'commercial' | 'informational'>('all');
+  const [discoveredOpportunityFilter, setDiscoveredOpportunityFilter] = useState<'all' | 'Ultra High' | 'High' | 'Medium'>('all');
+  const [discoveredSortBy, setDiscoveredSortBy] = useState<'volume' | 'compRank' | 'opportunity' | 'cpc'>('volume');
+  const [copiedKeywordId, setCopiedKeywordId] = useState<string | null>(null);
 
   // Load sample demonstration comparison on initial mount if not run
   useEffect(() => {
@@ -256,6 +264,56 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     document.body.removeChild(link);
   };
 
+  const handleExportDiscoveredCsv = () => {
+    if (!result || !result.discoveredKeywords) return;
+    const rows = [
+      ['Keyword', 'Monthly Search Volume', 'Competitor Rank', 'Your Rank', 'Keyword Difficulty (KD)', 'CPC (USD)', 'Search Intent', 'Est. Competitor Monthly Visits', 'Opportunity Level', 'Opportunity Score', 'Recommended Content Type', 'Recommended Slug', 'Strategic Rationale'],
+      ...result.discoveredKeywords.map((k) => [
+        `"${k.keyword.replace(/"/g, '""')}"`,
+        k.monthlySearchVolume,
+        `#${k.competitorRank}`,
+        'Not in Top 100',
+        k.keywordDifficulty,
+        `$${k.cpcUsd.toFixed(2)}`,
+        k.searchIntent,
+        k.estimatedCompetitorMonthlyVisits,
+        k.opportunityLevel,
+        k.opportunityScore,
+        `"${k.recommendedContentType.replace(/"/g, '""')}"`,
+        `"${k.recommendedSlug}"`,
+        `"${k.strategicRationale.replace(/"/g, '""')}"`,
+      ]),
+    ];
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((e) => e.join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `discovered-keywords-${result.yourSite.domain}-vs-${result.competitorSite.domain}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleCopyKeywordBrief = (kw: DiscoveredKeywordItem) => {
+    const text = `# Discovered Keyword Strategy Brief: "${kw.keyword}"
+- Monthly Search Volume: ${kw.monthlySearchVolume.toLocaleString()} searches/mo
+- Competitor Rank: #${kw.competitorRank} (${result?.competitorSite.domain})
+- Your Rank: Not included in Site 1 (${result?.yourSite.domain})
+- Search Intent: ${kw.searchIntent.toUpperCase()}
+- Keyword Difficulty (KD): ${kw.keywordDifficulty}/100
+- CPC Value: $${kw.cpcUsd.toFixed(2)}
+- Est. Competitor Monthly Traffic: ~${kw.estimatedCompetitorMonthlyVisits.toLocaleString()} visits/mo
+- Recommended Content Format: ${kw.recommendedContentType}
+- Target URL Path: ${kw.recommendedSlug}
+- Strategic Rationale: ${kw.strategicRationale}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedKeywordId(kw.id);
+      setTimeout(() => setCopiedKeywordId(null), 2500);
+    });
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -266,6 +324,22 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
     return matchesPriority && matchesCategory;
   });
+
+  // Filter and sort discovered keywords
+  const filteredDiscoveredKeywords = (result?.discoveredKeywords || [])
+    .filter((k) => {
+      const matchesSearch = !discoveredSearchQuery || k.keyword.toLowerCase().includes(discoveredSearchQuery.toLowerCase());
+      const matchesIntent = discoveredIntentFilter === 'all' || k.searchIntent === discoveredIntentFilter;
+      const matchesOpportunity = discoveredOpportunityFilter === 'all' || k.opportunityLevel === discoveredOpportunityFilter;
+      return matchesSearch && matchesIntent && matchesOpportunity;
+    })
+    .sort((a, b) => {
+      if (discoveredSortBy === 'volume') return b.monthlySearchVolume - a.monthlySearchVolume;
+      if (discoveredSortBy === 'compRank') return a.competitorRank - b.competitorRank;
+      if (discoveredSortBy === 'opportunity') return b.opportunityScore - a.opportunityScore;
+      if (discoveredSortBy === 'cpc') return b.cpcUsd - a.cpcUsd;
+      return 0;
+    });
 
   return (
     <div id="site-comparison-container" className="min-h-screen bg-slate-950 text-slate-100 pb-24">
@@ -583,6 +657,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
               {[
                 { id: 'overview', label: 'Executive Summary', icon: Award },
                 { id: 'actions', label: `Top 15 Actions (${result.top15Actions.length})`, icon: TrendingUp },
+                { id: 'discovered', label: `Discovered Keywords (${result.discoveredKeywords?.length || 0})`, icon: Sparkles, highlight: true },
                 { id: 'keywords', label: `Winning Keywords (${result.winningKeywords.length})`, icon: Key },
                 { id: 'content', label: `Content Gaps (${result.contentGaps.length})`, icon: FileText },
                 { id: 'weaknesses', label: `Weaknesses & Strengths`, icon: AlertTriangle },
@@ -591,18 +666,28 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
+                const isDiscovered = tab.id === 'discovered';
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`flex items-center whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                       isActive
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                        ? isDiscovered
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                          : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                        : isDiscovered
+                        ? 'text-amber-400/90 hover:text-amber-200 hover:bg-slate-900 border border-amber-500/20'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 mr-1.5 ${isActive ? 'text-cyan-400' : 'text-slate-500'}`} />
+                    <Icon className={`w-3.5 h-3.5 mr-1.5 ${isActive ? (isDiscovered ? 'text-amber-400' : 'text-cyan-400') : (isDiscovered ? 'text-amber-400' : 'text-slate-500')}`} />
                     {tab.label}
+                    {isDiscovered && !isActive && (
+                      <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        New
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -799,6 +884,70 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                   </table>
                 </div>
               </div>
+
+              {/* Discovered Keywords Executive Callout */}
+              {result.discoveredKeywords && result.discoveredKeywords.length > 0 && (
+                <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                  <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div className="space-y-1">
+                      <div className="inline-flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                        <Sparkles className="w-4 h-4" />
+                        <span>High-Growth Opportunity Unlocked</span>
+                      </div>
+                      <h3 className="text-xl font-black text-white flex items-center">
+                        Discovered Keywords (High Searches in Competitor Site, Missing in Yours)
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-300">
+                        {result.competitorSite.domain} dominates {result.discoveredKeywords.length} high-search queries that generate an estimated{' '}
+                        <strong className="text-amber-300">
+                          {result.discoveredKeywords.reduce((acc, k) => acc + k.monthlySearchVolume, 0).toLocaleString()} monthly searches
+                        </strong>{' '}
+                        where your site has zero presence.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveTab('discovered')}
+                      className="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 transition-all shadow-md flex items-center cursor-pointer"
+                    >
+                      Explore All {result.discoveredKeywords.length} Discovered Keywords
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {result.discoveredKeywords.slice(0, 3).map((dk) => (
+                      <div key={dk.id} className="bg-slate-950/80 border border-amber-500/20 rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between text-xs mb-2">
+                            <span className="font-bold text-amber-300 text-sm">"{dk.keyword}"</span>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 uppercase font-mono">
+                              {dk.searchIntent}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-300 space-y-1 mb-3">
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Search Volume:</span>
+                              <strong className="text-white font-mono">{dk.monthlySearchVolume.toLocaleString()}/mo</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Competitor Rank:</span>
+                              <strong className="text-emerald-400 font-mono">#{dk.competitorRank}</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Your Site Rank:</span>
+                              <strong className="text-rose-400">Not in Top 100</strong>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-slate-900 text-[11px] text-slate-400 truncate">
+                          Target Format: <span className="text-slate-200">{dk.recommendedContentType}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -902,10 +1051,351 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
           )}
 
           {/* ============================================================ */}
-          {/* TAB 3: KEYWORD INTELLIGENCE & STRIKING DISTANCE */}
+          {/* TAB 3: DISCOVERED KEYWORDS */}
+          {/* ============================================================ */}
+          {activeTab === 'discovered' && (
+            <div className="space-y-8 animate-fadeIn">
+              {/* Hero Banner & Aggregate Metrics */}
+              <div className="bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-950 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-xl">
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+                  <div className="max-w-3xl">
+                    <div className="inline-flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Untapped Search Demand Extraction</span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-white">
+                      Discovered Keywords Intelligence
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+                      These high-value search queries are actively harvested by{' '}
+                      <span className="text-amber-300 font-bold font-mono">{result.competitorSite.domain}</span>, yet are{' '}
+                      <strong className="text-rose-300">completely missing or not ranking</strong> on your website ({result.yourSite.domain}). Deploying dedicated pages and targeted tools for these keywords delivers your fastest pathway to capturing competitor organic market share.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={handleExportDiscoveredCsv}
+                      className="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-all cursor-pointer shadow-sm"
+                    >
+                      <Download className="w-3.5 h-3.5 mr-1.5" />
+                      Export Discovered (CSV)
+                    </button>
+                    <button
+                      onClick={() => onNavigate?.('/tools/content-brief')}
+                      className="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all cursor-pointer shadow-sm"
+                    >
+                      <Rocket className="w-3.5 h-3.5 mr-1.5" />
+                      Generate Content Brief
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4 Macro Metrics */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80">
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800">
+                    <div className="text-slate-400 text-xs font-medium">Discovered Keywords</div>
+                    <div className="text-2xl sm:text-3xl font-black text-amber-400 mt-1 font-mono">
+                      {result.discoveredKeywords?.length || 0}
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-1">High-demand opportunities</div>
+                  </div>
+
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800">
+                    <div className="text-slate-400 text-xs font-medium">Untapped Search Demand</div>
+                    <div className="text-2xl sm:text-3xl font-black text-white mt-1 font-mono">
+                      {((result.discoveredKeywords || []).reduce((sum, k) => sum + k.monthlySearchVolume, 0)).toLocaleString()}
+                    </div>
+                    <div className="text-[11px] text-emerald-400 mt-1">Monthly searches available</div>
+                  </div>
+
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800">
+                    <div className="text-slate-400 text-xs font-medium">Competitor Captured Traffic</div>
+                    <div className="text-2xl sm:text-3xl font-black text-amber-300 mt-1 font-mono">
+                      ~{((result.discoveredKeywords || []).reduce((sum, k) => sum + k.estimatedCompetitorMonthlyVisits, 0)).toLocaleString()}
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-1">Visits/mo taken by competitor</div>
+                  </div>
+
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800">
+                    <div className="text-slate-400 text-xs font-medium">Average KD / Ease</div>
+                    <div className="text-2xl sm:text-3xl font-black text-cyan-400 mt-1 font-mono">
+                      {Math.round(
+                        (result.discoveredKeywords || []).reduce((sum, k) => sum + k.keywordDifficulty, 0) /
+                          Math.max(1, result.discoveredKeywords?.length || 1)
+                      )}
+                      <span className="text-slate-500 text-sm font-normal">/100</span>
+                    </div>
+                    <div className="text-[11px] text-cyan-300/80 mt-1">Low-to-moderate difficulty</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Filters, Search & Sort Control Bar */}
+              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+                  <div className="relative flex-1 min-w-[200px] max-w-md">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={discoveredSearchQuery}
+                      onChange={(e) => setDiscoveredSearchQuery(e.target.value)}
+                      placeholder="Search discovered keywords..."
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                    />
+                    {discoveredSearchQuery && (
+                      <button
+                        onClick={() => setDiscoveredSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Intent Filter */}
+                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                    {(['all', 'transactional', 'commercial', 'informational'] as const).map((intent) => (
+                      <button
+                        key={intent}
+                        onClick={() => setDiscoveredIntentFilter(intent)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
+                          discoveredIntentFilter === intent
+                            ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                            : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                        }`}
+                      >
+                        {intent}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sort Control */}
+                <div className="flex items-center space-x-2 text-xs">
+                  <span className="text-slate-400 font-medium">Sort by:</span>
+                  <select
+                    value={discoveredSortBy}
+                    onChange={(e) => setDiscoveredSortBy(e.target.value as any)}
+                    className="bg-slate-950 border border-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-amber-500"
+                  >
+                    <option value="volume">Search Volume (High to Low)</option>
+                    <option value="compRank">Competitor Rank (Top 1st)</option>
+                    <option value="opportunity">Opportunity Score (Highest)</option>
+                    <option value="cpc">Commercial Value (CPC)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Discovered Keywords Cards List */}
+              <div className="space-y-4">
+                {filteredDiscoveredKeywords.length === 0 ? (
+                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-10 text-center text-slate-400">
+                    <Search className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+                    <p className="font-bold text-white">No discovered keywords match your current filter.</p>
+                    <p className="text-xs mt-1">Try clearing your search query or selecting "all" intents.</p>
+                    <button
+                      onClick={() => {
+                        setDiscoveredSearchQuery('');
+                        setDiscoveredIntentFilter('all');
+                        setDiscoveredOpportunityFilter('all');
+                      }}
+                      className="mt-4 px-4 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20"
+                    >
+                      Reset Filters
+                    </button>
+                  </div>
+                ) : (
+                  filteredDiscoveredKeywords.map((kw) => (
+                    <div
+                      key={kw.id}
+                      className="bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-5 sm:p-6 transition-all shadow-md group"
+                    >
+                      {/* Keyword Title & Status Badges */}
+                      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="text-lg font-black text-white tracking-tight group-hover:text-amber-300 transition-colors">
+                              "{kw.keyword}"
+                            </h4>
+                            <button
+                              onClick={() => handleCopyKeywordBrief(kw)}
+                              title="Copy Keyword Strategy Brief"
+                              className="text-slate-400 hover:text-amber-400 transition-colors p-1 rounded-md hover:bg-slate-800"
+                            >
+                              {copiedKeywordId === kw.id ? (
+                                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              ) : (
+                                <Copy className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
+                            {/* Missing from Site 1 Badge */}
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                              <XCircle className="w-3 h-3 mr-1 text-rose-400" />
+                              Not in Your Site (Rank: &gt;100)
+                            </span>
+
+                            {/* Competitor Rank Badge */}
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                              <Award className="w-3 h-3 mr-1 text-emerald-400" />
+                              Competitor Rank #{kw.competitorRank}
+                            </span>
+
+                            {/* Intent Badge */}
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] uppercase font-bold bg-slate-950 text-cyan-400 border border-cyan-500/20 font-mono">
+                              {kw.searchIntent}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Opportunity Score Pill */}
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className={`px-3 py-1 rounded-xl text-xs font-black flex items-center ${
+                              kw.opportunityLevel === 'Ultra High'
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                                : kw.opportunityLevel === 'High'
+                                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                : 'bg-slate-800 text-slate-300 border border-slate-700'
+                            }`}
+                          >
+                            <Flame className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
+                            {kw.opportunityLevel} Opportunity ({kw.opportunityScore}/100)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 4 Metrics Strip */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 mb-4 text-xs">
+                        <div>
+                          <div className="text-slate-400 text-[11px]">Monthly Search Demand</div>
+                          <div className="text-base font-black text-white font-mono mt-0.5">
+                            {kw.monthlySearchVolume.toLocaleString()}/mo
+                          </div>
+                          <div className="w-full bg-slate-900 rounded-full h-1.5 mt-1 border border-slate-800 overflow-hidden">
+                            <div
+                              className="bg-gradient-to-r from-amber-400 to-amber-500 h-1.5 rounded-full"
+                              style={{ width: `${Math.min(100, Math.max(15, (kw.monthlySearchVolume / 35000) * 100))}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="text-slate-400 text-[11px]">Competitor Traffic Harvest</div>
+                          <div className="text-base font-black text-emerald-400 font-mono mt-0.5">
+                            ~{kw.estimatedCompetitorMonthlyVisits.toLocaleString()} visits
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-1">Est. organic capture</div>
+                        </div>
+
+                        <div>
+                          <div className="text-slate-400 text-[11px]">Keyword Difficulty (KD)</div>
+                          <div className="text-base font-black text-cyan-400 font-mono mt-0.5">
+                            {kw.keywordDifficulty}/100{' '}
+                            <span className="text-[11px] font-medium text-slate-400">
+                              ({kw.keywordDifficulty < 35 ? 'Easy Win' : kw.keywordDifficulty < 50 ? 'Moderate' : 'Competitive'})
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-1">SERP ranking resistance</div>
+                        </div>
+
+                        <div>
+                          <div className="text-slate-400 text-[11px]">Commercial Value (CPC)</div>
+                          <div className="text-base font-black text-emerald-300 font-mono mt-0.5">
+                            ${kw.cpcUsd.toFixed(2)}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-1">Paid search equivalent</div>
+                        </div>
+                      </div>
+
+                      {/* Strategic Rationale & Competitive Takeaway */}
+                      <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 mb-4 text-xs space-y-2">
+                        <div className="flex items-start">
+                          <strong className="text-amber-400 mr-2 flex-shrink-0">Competitive Takeaway:</strong>
+                          <span className="text-slate-300 leading-relaxed">{kw.strategicRationale}</span>
+                        </div>
+                      </div>
+
+                      {/* Blueprint Recommendation & Action Footer */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800 text-xs">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <div>
+                            <span className="text-slate-400">Recommended Format: </span>
+                            <span className="font-semibold text-white">{kw.recommendedContentType}</span>
+                          </div>
+                          <span className="text-slate-600 hidden sm:inline">•</span>
+                          <div className="font-mono text-slate-400">
+                            Target Path: <span className="text-cyan-300">{kw.recommendedSlug}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleCopyKeywordBrief(kw)}
+                            className="inline-flex items-center px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-950 text-slate-300 border border-slate-800 hover:text-white hover:border-slate-700 transition-all cursor-pointer"
+                          >
+                            {copiedKeywordId === kw.id ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                                Copy Brief
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => onNavigate?.('/tools/content-brief')}
+                            className="inline-flex items-center px-3.5 py-1.5 rounded-lg font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 transition-all cursor-pointer shadow-sm"
+                          >
+                            Generate Content Brief <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 4: KEYWORD INTELLIGENCE & STRIKING DISTANCE */}
           {/* ============================================================ */}
           {activeTab === 'keywords' && (
             <div className="space-y-8 animate-fadeIn">
+              {/* Link to Discovered Keywords */}
+              {result.discoveredKeywords && result.discoveredKeywords.length > 0 && (
+                <div className="bg-amber-950/25 border border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">
+                        Looking for keywords missing from your site?
+                      </h4>
+                      <p className="text-xs text-slate-300">
+                        Explore {result.discoveredKeywords.length} high-search discovered keywords that {result.competitorSite.domain} ranks for with zero competition from your domain.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('discovered')}
+                    className="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-sm cursor-pointer"
+                  >
+                    View Discovered Keywords ({result.discoveredKeywords.length})
+                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  </button>
+                </div>
+              )}
+
               {/* Striking Distance Quick Wins (Pos 11-20) */}
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8">
                 <div className="flex items-center justify-between mb-4">

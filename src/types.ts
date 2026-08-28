@@ -766,6 +766,23 @@ export interface CompetitorWinningKeyword {
   recommendedAction: string;
 }
 
+export interface DiscoveredKeywordItem {
+  id: string;
+  keyword: string;
+  monthlySearchVolume: number;
+  competitorRank: number; // 1 to 10 on competitor site
+  yourRank: number | null; // null: completely not included / not ranking on site 1
+  keywordDifficulty: number; // 0-100
+  cpcUsd: number;
+  searchIntent: SearchIntent;
+  estimatedCompetitorMonthlyVisits: number;
+  opportunityLevel: 'Ultra High' | 'High' | 'Medium';
+  opportunityScore: number; // 0-100
+  recommendedContentType: string; // e.g. "Interactive Web Tool / Calculator", "Pillar Guide", "Comparison Matrix"
+  recommendedSlug: string;
+  strategicRationale: string;
+}
+
 export interface QuickWinOpportunity {
   id: string;
   keyword: string;
@@ -969,6 +986,7 @@ export interface SiteComparisonResult {
   winningPatterns: WinningPatternItem[];
   keywordComparison: KeywordComparisonItem[];
   winningKeywords: CompetitorWinningKeyword[];
+  discoveredKeywords: DiscoveredKeywordItem[];
   quickWins: QuickWinOpportunity[];
   contentGaps: ContentGapItemDetailed[];
   competitorContentStrength: CompetitorContentStrengthData;
