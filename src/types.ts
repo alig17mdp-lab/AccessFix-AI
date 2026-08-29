@@ -948,9 +948,11 @@ export interface RoadmapItem {
   priority: 'Critical' | 'High' | 'Medium';
   expectedEffort: 'Low' | 'Medium' | 'High';
   responsibleArea: string;
-  relatedUrl: string;
-  relatedKeywordOrTool: string;
-  actionSummary: string;
+  relatedUrl?: string;
+  relatedKeywordOrTool?: string;
+  actionSummary?: string;
+  metricToMove?: string;
+  deliverable?: string;
 }
 
 export interface ActionRoadmapPlan {

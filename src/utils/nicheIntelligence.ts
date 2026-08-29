@@ -839,7 +839,7 @@ export function buildNicheIntelligence(
         },
       ],
       roadmapPlan: {
-        phase30Days: [
+        first30Days: [
           {
             id: 'rm-1',
             title: 'Deploy Business Days & Military Time Calculator Routes',
@@ -868,7 +868,7 @@ export function buildNicheIntelligence(
             deliverable: 'Updated H1, meta titles, and snippet-ready direct answer text.',
           },
         ],
-        phase60Days: [
+        days31To60: [
           {
             id: 'rm-4',
             title: 'Publish Comprehensive Date Math Formula & Code Pillar Guide',
@@ -897,7 +897,7 @@ export function buildNicheIntelligence(
             deliverable: 'Interactive timesheet calculator with export to PDF / CSV.',
           },
         ],
-        phase90Days: [
+        days61To90: [
           {
             id: 'rm-7',
             title: 'Execute High-Authority Backlink Outreach to Tech & Productivity Hubs',
@@ -1130,7 +1130,7 @@ export function buildNicheIntelligence(
         },
       ],
       roadmapPlan: {
-        phase30Days: [
+        first30Days: [
           {
             id: 'rm-e1',
             title: 'Launch Merchant Shipping & Product Schema Generator Tools',
@@ -1141,7 +1141,7 @@ export function buildNicheIntelligence(
             deliverable: 'Two live interactive web utilities with clean URLs.',
           },
         ],
-        phase60Days: [
+        days31To60: [
           {
             id: 'rm-e2',
             title: 'Publish Comprehensive E-Commerce Core Web Vitals Optimization Guide',
@@ -1152,7 +1152,7 @@ export function buildNicheIntelligence(
             deliverable: '2,500-word authoritative guide with Liquid code snippets.',
           },
         ],
-        phase90Days: [
+        days61To90: [
           {
             id: 'rm-e3',
             title: 'Partner with Shopify & WooCommerce Agency Directories',
@@ -1428,7 +1428,7 @@ export function buildNicheIntelligence(
       },
     ],
     roadmapPlan: {
-      phase30Days: [
+      first30Days: [
         {
           id: 'rm-g1',
           title: `Launch Interactive "${seedTopic}" Utility Route`,
@@ -1439,7 +1439,7 @@ export function buildNicheIntelligence(
           deliverable: 'Live interactive web utility with clean URL.',
         },
       ],
-      phase60Days: [
+      days31To60: [
         {
           id: 'rm-g2',
           title: `Publish Comprehensive "${seedTopic}" Pillar Guide & Comparison`,
@@ -1450,7 +1450,7 @@ export function buildNicheIntelligence(
           deliverable: '2,000-word authoritative guide.',
         },
       ],
-      phase90Days: [
+      days61To90: [
         {
           id: 'rm-g3',
           title: 'High-Authority Backlinks & AI Search Optimization',

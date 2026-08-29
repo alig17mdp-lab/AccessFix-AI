@@ -65,9 +65,9 @@ interface SiteComparisonViewProps {
 }
 
 export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNavigate }) => {
-  // Input states
-  const [yourUrl, setYourUrl] = useState('https://www.timeandduration.com');
-  const [competitorUrl, setCompetitorUrl] = useState('https://www.timeanddate.com');
+  // Input states (initialized empty for user-driven scan)
+  const [yourUrl, setYourUrl] = useState('');
+  const [competitorUrl, setCompetitorUrl] = useState('');
   const [yourUrlTouched, setYourUrlTouched] = useState(false);
   const [competitorUrlTouched, setCompetitorUrlTouched] = useState(false);
 
@@ -95,11 +95,6 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
   const [discoveredOpportunityFilter, setDiscoveredOpportunityFilter] = useState<'all' | 'Ultra High' | 'High' | 'Medium'>('all');
   const [discoveredSortBy, setDiscoveredSortBy] = useState<'volume' | 'compRank' | 'opportunity' | 'cpc'>('volume');
   const [copiedKeywordId, setCopiedKeywordId] = useState<string | null>(null);
-
-  // Load sample demonstration comparison on initial mount if not run
-  useEffect(() => {
-    handleRunComparison('https://www.timeandduration.com', 'https://www.timeanddate.com');
-  }, []);
 
   // Handler for auto-clearing example address on click/focus
   const handleYourUrlFocus = () => {
@@ -198,7 +193,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     }
   };
 
-  const handlePrefillDemo = (type: 'tools' | 'ecommerce' | 'saas' | 'agency') => {
+  const handlePrefillDemo = (type: 'tools' | 'ecommerce' | 'saas' | 'agency' | 'healthcare') => {
     let y = 'https://www.timeandduration.com';
     let c = 'https://www.timeanddate.com';
     let ind = 'Ecommerce / Retail';
@@ -215,6 +210,10 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
       y = 'https://flowdash-app.example.io';
       c = 'https://linear-metrics.example.com';
       ind = 'SaaS / B2B Software';
+    } else if (type === 'healthcare') {
+      y = 'https://apex-wellness.example.com';
+      c = 'https://metro-health-care.example.org';
+      ind = 'Healthcare & Wellness';
     } else if (type === 'agency') {
       y = 'https://brightcreative.example.org';
       c = 'https://apexmedia.example.com';
@@ -342,61 +341,63 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     });
 
   return (
-    <div id="site-comparison-container" className="min-h-screen bg-slate-950 text-slate-100 pb-24">
-      {/* ----------------- TOP HERO & CONTROL SECTION ----------------- */}
-      <section className="border-b border-slate-800/80 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 py-10 px-4 sm:px-6 lg:px-8">
+    <div id="site-comparison-container" className="min-h-screen bg-slate-50 text-slate-900 pb-24">
+      {/* ----------------- TOP HERO & CONTROL SECTION (MATCHING SCREENSHOT 314) ----------------- */}
+      <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 via-white to-slate-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb & Badges */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <div className="flex items-center space-x-2 text-xs text-slate-400 font-medium">
+            <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
               <button
                 onClick={() => onNavigate?.('/tools')}
-                className="hover:text-cyan-400 transition-colors"
+                className="hover:text-blue-600 transition-colors"
               >
                 AccessFix Tools
               </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-              <span className="text-cyan-400 font-semibold">Competitive Site Comparison</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-blue-600 font-semibold">Competitive Site Comparison</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-cyan-400 animate-pulse" />
-                Live Competitive Intelligence
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-blue-600" />
+                AI Competitive Intelligence
               </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-xs">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
-                Zero Latency Engine
+                Instant Diagnostic Engine
               </span>
             </div>
           </div>
 
-          {/* Heading */}
+          {/* Heading matching Screenshot 314 format */}
           <div className="mb-8">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-3">
-              Site <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400">Comparison</span> & Gap Analysis
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 shadow-xs mb-4">
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span>AI Website Health & Growth Platform</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-4">
+              Compare Your Website for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-600 to-sky-600">Keywords, Gaps & Speed</span>
             </h1>
-            <p className="text-base sm:text-lg text-slate-300 max-w-4xl leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed">
               Compare your website side-by-side with any competitor. Instantly uncover winning keywords, high-converting content gaps, technical advantages, and a prioritized 15-step action plan to win.
             </p>
           </div>
 
-          {/* Two URLs Dual Comparison Input Card */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-            <div className="absolute -top-32 -right-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 items-center relative z-10">
+          {/* Two URLs Dual Comparison Input Card (Matching Screenshot 314 style) */}
+          <div className="bg-white border-2 border-slate-200 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 rounded-2xl p-5 sm:p-7 shadow-xl transition-all">
+            <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
               {/* Your Site Input (5 Cols) */}
-              <div className="lg:col-span-5 bg-slate-950/80 border-2 border-cyan-500/30 hover:border-cyan-500/60 focus-within:border-cyan-400 rounded-2xl p-4.5 transition-all shadow-inner relative group">
-                <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="your-url-input" className="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center">
-                    <Globe className="w-4 h-4 mr-1.5 text-cyan-400" />
+              <div className="lg:col-span-5 bg-slate-50/80 border border-slate-200 hover:border-slate-300 focus-within:border-blue-600 focus-within:bg-white rounded-xl p-3.5 transition-all">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="your-url-input" className="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center">
+                    <Globe className="w-4 h-4 mr-1.5 text-blue-600" />
                     Your Website URL
                   </label>
-                  <span className="text-[11px] font-medium text-cyan-400/70 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Target Subject</span>
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Target Subject</span>
                 </div>
                 <div className="flex items-center relative">
+                  <Globe className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
                   <input
                     id="your-url-input"
                     type="url"
@@ -407,8 +408,8 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                       setYourUrl(e.target.value);
                       setYourUrlTouched(true);
                     }}
-                    placeholder="https://yourwebsite.com"
-                    className="w-full bg-transparent text-white placeholder-slate-500 font-mono text-sm sm:text-base focus:outline-none pr-8"
+                    placeholder="Enter website URL (e.g. https://www.yoursite.com)"
+                    className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 font-medium text-sm sm:text-base focus:outline-none pr-8"
                     disabled={isLoading}
                   />
                   {yourUrl && (
@@ -418,7 +419,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                         setYourUrl('');
                         setYourUrlTouched(true);
                       }}
-                      className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-full transition-colors"
+                      className="absolute right-0 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                       title="Clear URL"
                     >
                       <X className="w-4 h-4" />
@@ -428,22 +429,23 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
               </div>
 
               {/* Central VS Badge (1 Col) */}
-              <div className="lg:col-span-1 flex justify-center items-center py-2 lg:py-0">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center shadow-lg text-slate-300 font-black text-sm tracking-wider">
+              <div className="lg:col-span-1 flex justify-center items-center py-1 lg:py-0">
+                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center font-black text-xs shadow-xs shrink-0">
                   VS
                 </div>
               </div>
 
               {/* Competitor Site Input (5 Cols) */}
-              <div className="lg:col-span-5 bg-slate-950/80 border-2 border-amber-500/30 hover:border-amber-500/60 focus-within:border-amber-400 rounded-2xl p-4.5 transition-all shadow-inner relative group">
-                <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="competitor-url-input" className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center">
-                    <Flame className="w-4 h-4 mr-1.5 text-amber-400" />
+              <div className="lg:col-span-5 bg-slate-50/80 border border-slate-200 hover:border-slate-300 focus-within:border-amber-500 focus-within:bg-white rounded-xl p-3.5 transition-all">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="competitor-url-input" className="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center">
+                    <Flame className="w-4 h-4 mr-1.5 text-amber-500" />
                     Competitor Website URL
                   </label>
-                  <span className="text-[11px] font-medium text-amber-400/70 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">Market Benchmark</span>
+                  <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">Market Benchmark</span>
                 </div>
                 <div className="flex items-center relative">
+                  <Flame className="w-4 h-4 text-amber-500 mr-2 shrink-0" />
                   <input
                     id="competitor-url-input"
                     type="url"
@@ -454,8 +456,8 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                       setCompetitorUrl(e.target.value);
                       setCompetitorUrlTouched(true);
                     }}
-                    placeholder="https://competitor.com"
-                    className="w-full bg-transparent text-white placeholder-slate-500 font-mono text-sm sm:text-base focus:outline-none pr-8"
+                    placeholder="Enter competitor URL (e.g. https://www.competitor.com)"
+                    className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 font-medium text-sm sm:text-base focus:outline-none pr-8"
                     disabled={isLoading}
                   />
                   {competitorUrl && (
@@ -465,7 +467,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                         setCompetitorUrl('');
                         setCompetitorUrlTouched(true);
                       }}
-                      className="absolute right-0 p-1 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-full transition-colors"
+                      className="absolute right-0 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                       title="Clear URL"
                     >
                       <X className="w-4 h-4" />
@@ -476,68 +478,39 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
             </div>
 
             {/* Advanced Filters & Action Bar */}
-            <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4 relative z-10">
+            <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Country */}
-                <div className="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 font-medium">Target Region:</span>
+                <div className="flex items-center space-x-2 text-xs text-slate-700 bg-slate-100 px-3 py-2 rounded-xl border border-slate-200">
+                  <span className="text-slate-500 font-medium">Target Region:</span>
                   <select
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
-                    className="bg-transparent text-xs text-white focus:outline-none cursor-pointer font-medium"
+                    className="bg-transparent text-xs text-slate-900 focus:outline-none cursor-pointer font-bold"
                   >
-                    <option value="US" className="bg-slate-900">🇺🇸 United States (US)</option>
-                    <option value="UK" className="bg-slate-900">🇬🇧 United Kingdom (UK)</option>
-                    <option value="CA" className="bg-slate-900">🇨🇦 Canada (CA)</option>
-                    <option value="AU" className="bg-slate-900">🇦🇺 Australia (AU)</option>
-                    <option value="DE" className="bg-slate-900">🇩🇪 Germany (DE)</option>
-                    <option value="FR" className="bg-slate-900">🇫🇷 France (FR)</option>
+                    <option value="US">🇺🇸 United States (US)</option>
+                    <option value="UK">🇬🇧 United Kingdom (UK)</option>
+                    <option value="CA">🇨🇦 Canada (CA)</option>
+                    <option value="AU">🇦🇺 Australia (AU)</option>
+                    <option value="DE">🇩🇪 Germany (DE)</option>
+                    <option value="FR">🇫🇷 France (FR)</option>
                   </select>
                 </div>
 
                 {/* Industry */}
-                <div className="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 font-medium">Industry:</span>
+                <div className="flex items-center space-x-2 text-xs text-slate-700 bg-slate-100 px-3 py-2 rounded-xl border border-slate-200">
+                  <span className="text-slate-500 font-medium">Industry:</span>
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    className="bg-transparent text-xs text-white focus:outline-none cursor-pointer font-medium"
+                    className="bg-transparent text-xs text-slate-900 focus:outline-none cursor-pointer font-bold"
                   >
-                    <option value="Ecommerce / Retail" className="bg-slate-900">Ecommerce / Retail</option>
-                    <option value="SaaS / B2B Software" className="bg-slate-900">SaaS / B2B Software</option>
-                    <option value="Digital Agency / Services" className="bg-slate-900">Digital Agency / Services</option>
-                    <option value="Healthcare & Wellness" className="bg-slate-900">Healthcare & Wellness</option>
-                    <option value="Finance & Fintech" className="bg-slate-900">Finance & Fintech</option>
+                    <option value="Ecommerce / Retail">Ecommerce / Retail</option>
+                    <option value="SaaS / B2B Software">SaaS / B2B Software</option>
+                    <option value="Digital Agency / Services">Digital Agency / Services</option>
+                    <option value="Healthcare & Wellness">Healthcare & Wellness</option>
+                    <option value="Finance & Fintech">Finance & Fintech</option>
                   </select>
-                </div>
-
-                {/* Quick Demo Buttons */}
-                <div className="hidden lg:flex items-center space-x-1.5 pl-2 text-xs text-slate-400">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Samples:</span>
-                  <button
-                    onClick={() => handlePrefillDemo('tools')}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700/80 rounded-lg text-slate-300 hover:text-white transition-colors border border-slate-700/50 text-[11px]"
-                  >
-                    Time / Tools
-                  </button>
-                  <button
-                    onClick={() => handlePrefillDemo('ecommerce')}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700/80 rounded-lg text-slate-300 hover:text-white transition-colors border border-slate-700/50 text-[11px]"
-                  >
-                    Ecommerce
-                  </button>
-                  <button
-                    onClick={() => handlePrefillDemo('saas')}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700/80 rounded-lg text-slate-300 hover:text-white transition-colors border border-slate-700/50 text-[11px]"
-                  >
-                    SaaS
-                  </button>
-                  <button
-                    onClick={() => handlePrefillDemo('agency')}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700/80 rounded-lg text-slate-300 hover:text-white transition-colors border border-slate-700/50 text-[11px]"
-                  >
-                    Agency
-                  </button>
                 </div>
               </div>
 
@@ -546,69 +519,209 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                 id="btn-run-site-comparison"
                 onClick={() => handleRunComparison()}
                 disabled={isLoading}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 rounded-xl text-sm font-extrabold text-slate-950 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 shadow-xl shadow-cyan-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all transform active:scale-95 cursor-pointer"
               >
                 {isLoading ? (
                   <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin text-slate-950" />
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin text-white" />
                     Comparing Sites...
                   </>
                 ) : (
                   <>
-                    <BarChart3 className="w-4 h-4 mr-2 text-slate-950" />
-                    COMPARE SITES
+                    <BarChart3 className="w-4 h-4 mr-2 text-white" />
+                    Compare Sites <ArrowRight className="w-4 h-4 ml-1.5" />
                   </>
                 )}
               </button>
             </div>
 
+            {/* Quick Demo Suggestions (Matching Screenshot 314) */}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+              <span className="font-semibold text-slate-600">Try with popular demos:</span>
+              <button
+                type="button"
+                onClick={() => handlePrefillDemo('tools')}
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                Time & Date Utilities
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => handlePrefillDemo('ecommerce')}
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                eCommerce Store
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => handlePrefillDemo('saas')}
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                SaaS Startup
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => handlePrefillDemo('healthcare')}
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                Healthcare Clinic
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => handlePrefillDemo('agency')}
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                Digital Agency
+              </button>
+            </div>
+
             {/* Live Progress Bar if Loading */}
             {isLoading && (
-              <div className="mt-5 pt-4 border-t border-slate-800">
-                <div className="flex items-center justify-between text-xs text-cyan-400 mb-2">
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between text-xs text-blue-700 mb-2">
                   <span className="font-medium flex items-center">
-                    <RefreshCw className="w-3.5 h-3.5 mr-2 animate-spin" />
+                    <RefreshCw className="w-3.5 h-3.5 mr-2 animate-spin text-blue-600" />
                     {loadingStep}
                   </span>
-                  <span className="font-mono text-slate-400 text-[11px]">Real-Time Analysis</span>
+                  <span className="font-mono text-slate-500 text-[11px]">Real-Time Analysis</span>
                 </div>
-                <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div className="bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 h-full rounded-full animate-pulse w-4/5 transition-all"></div>
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 h-full rounded-full animate-pulse w-4/5 transition-all"></div>
                 </div>
               </div>
             )}
 
             {/* Error banner */}
             {error && (
-              <div className="mt-4 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-start">
-                <AlertTriangle className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5 text-rose-400" />
+              <div className="mt-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start">
+                <AlertTriangle className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5 text-rose-600" />
                 <span>{error}</span>
               </div>
             )}
           </div>
+
+          {/* Feature Trust Badges Row (Matching Screenshot 314 bottom badges) */}
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-semibold text-slate-600">
+            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-xs p-3 rounded-xl border border-slate-200 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>40+ Direct Metric Comparisons</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-xs p-3 rounded-xl border border-slate-200 shadow-xs">
+              <Search className="w-4 h-4 text-blue-600 shrink-0" />
+              <span>Content & Keyword Gap Detection</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-xs p-3 rounded-xl border border-slate-200 shadow-xs">
+              <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>Speed & Technical SEO Benchmarks</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-xs p-3 rounded-xl border border-slate-200 shadow-xs">
+              <TrendingUp className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span>Prioritized 15-Step Action Roadmap</span>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* ----------------- EMPTY STATE / READY TO COMPARE GUIDE ----------------- */}
+      {!result && !isLoading && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">
+              How Competitive Site Comparison Works
+            </h2>
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Enter your website URL and any competitor URL above to launch our deep diagnostic crawler. In seconds, you will receive an actionable blueprint to outrank them.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4">
+                <Search className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">1. Keyword Gap Extraction</h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Discover high-search-volume queries where your competitor is ranking on Page 1 while your website is completely missing.
+              </p>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4">
+                <Layers className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">2. Technical & A11y Audit</h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Side-by-side audit of Core Web Vitals, WCAG 2.1 AA accessibility compliance, schema markup, and DOM architecture.
+              </p>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">3. Prioritized 15 Actions</h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Receive an algorithmic Top 15 roadmap ranked by Traffic Impact vs Implementation Effort to systematically capture search market share.
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Launch Cards */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-3xl p-8 text-center">
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              Ready to see a live comparison?
+            </h3>
+            <p className="text-sm text-slate-600 max-w-2xl mx-auto mb-6">
+              Click any sample industry comparison below to launch an instant audit preview:
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => handlePrefillDemo('tools')}
+                className="px-5 py-2.5 bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-sm transition-all"
+              >
+                Time & Duration vs TimeAndDate.com
+              </button>
+              <button
+                onClick={() => handlePrefillDemo('ecommerce')}
+                className="px-5 py-2.5 bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-sm transition-all"
+              >
+                E-Commerce Retail Comparison
+              </button>
+              <button
+                onClick={() => handlePrefillDemo('saas')}
+                className="px-5 py-2.5 bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-sm transition-all"
+              >
+                SaaS B2B Platform Comparison
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ----------------- RESULT REPORT SECTION ----------------- */}
       {result && (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           {/* Report Top Toolbar: Export / White-label / Share */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-slate-400">Comparison ID:</span>
-              <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg text-cyan-300 font-semibold">{result.id}</span>
-              <span className="text-xs text-slate-600">•</span>
-              <span className="text-xs text-slate-400">Duration:</span>
-              <span className="text-xs text-slate-300 font-mono">{(result.durationMs / 1000).toFixed(1)}s</span>
+              <span className="text-xs text-slate-500">Comparison ID:</span>
+              <span className="text-xs font-mono bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-blue-700 font-semibold">{result.id}</span>
+              <span className="text-xs text-slate-300">•</span>
+              <span className="text-xs text-slate-500">Duration:</span>
+              <span className="text-xs text-slate-700 font-mono">{(result.durationMs / 1000).toFixed(1)}s</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setWhiteLabelMode(!whiteLabelMode)}
-                className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
                   whiteLabelMode
-                    ? 'bg-purple-500/20 border-purple-500/40 text-purple-300'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-purple-50 border-purple-300 text-purple-700'
+                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
                 title="Toggle White-Label Client Mode"
               >
@@ -618,16 +731,16 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
 
               <button
                 onClick={handleCopyShareLink}
-                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 {copiedLink ? (
                   <>
-                    <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
+                    <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
                     Link Copied!
                   </>
                 ) : (
                   <>
-                    <Share2 className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                    <Share2 className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
                     Share Report
                   </>
                 )}
@@ -635,24 +748,24 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
 
               <button
                 onClick={handleExportCsv}
-                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <Download className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                <Download className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
                 Export CSV
               </button>
 
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <Printer className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                <Printer className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
                 Print / PDF
               </button>
             </div>
           </div>
 
           {/* Sticky Tab Navigation */}
-          <div className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur-md pt-2 pb-3 mb-8 border-b border-slate-800">
+          <div className="sticky top-0 z-30 bg-slate-50/95 backdrop-blur-md pt-2 pb-3 mb-8 border-b border-slate-200">
             <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto no-scrollbar" aria-label="Comparison views">
               {[
                 { id: 'overview', label: 'Executive Summary', icon: Award },
@@ -671,20 +784,20 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                    className={`flex items-center whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                       isActive
                         ? isDiscovered
-                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                          : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-xs'
+                          : 'bg-blue-600 text-white shadow-sm'
                         : isDiscovered
-                        ? 'text-amber-400/90 hover:text-amber-200 hover:bg-slate-900 border border-amber-500/20'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                        ? 'text-amber-700 hover:text-amber-900 hover:bg-amber-50 border border-amber-200'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 mr-1.5 ${isActive ? (isDiscovered ? 'text-amber-400' : 'text-cyan-400') : (isDiscovered ? 'text-amber-400' : 'text-slate-500')}`} />
+                    <Icon className={`w-3.5 h-3.5 mr-1.5 ${isActive ? (isDiscovered ? 'text-amber-800' : 'text-white') : (isDiscovered ? 'text-amber-600' : 'text-slate-400')}`} />
                     {tab.label}
                     {isDiscovered && !isActive && (
-                      <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
                         New
                       </span>
                     )}

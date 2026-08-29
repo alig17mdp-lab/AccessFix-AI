@@ -178,9 +178,7 @@ export function generateClientSiteComparison(req: SiteComparisonRequest): SiteCo
     comp.domain,
     yourSite.pageTitle,
     competitorSite.pageTitle,
-    req.industry,
-    yourSite.accessibilityScore,
-    competitorSite.accessibilityScore
+    req.industry
   );
 
   const seedTopic = nicheData.seedTopic || topic;
