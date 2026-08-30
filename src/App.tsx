@@ -21,6 +21,7 @@ import { KineticMotionExperience } from './components/KineticMotionExperience';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
 import { AUTHORS } from './data/authorsData';
+import { executeUniversalHealthScan, executeUniversalAccessibilityScan } from './utils/clientHealthScanner';
 import {
   ShieldCheck,
   Zap,
@@ -95,26 +96,10 @@ export default function App() {
   const handleRescanUrl = async (url: string) => {
     setIsHeroScanning(true);
     try {
-      const res = await fetch('/api/health-scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      });
-      if (res.ok) {
-        const unifiedData = await res.json();
-        setCurrentUnifiedScan(unifiedData);
-        setCurrentScan(unifiedData.accessibilityScan);
-        setActiveRoute('/health-report');
-      } else {
-        const fallbackRes = await fetch('/api/scan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url }),
-        });
-        const data = await fallbackRes.json();
-        setCurrentScan(data);
-        setActiveRoute('/report');
-      }
+      const unifiedData = await executeUniversalHealthScan(url);
+      setCurrentUnifiedScan(unifiedData);
+      setCurrentScan(unifiedData.accessibilityScan);
+      setActiveRoute('/health-report');
     } catch (e) {
       console.error('Rescan failed:', e);
     } finally {
@@ -123,68 +108,71 @@ export default function App() {
   };
 
   const handleAddWebsite = async (url: string, frequency: 'daily' | 'weekly' | 'monthly') => {
-    const res = await fetch('/api/websites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, scanFrequency: frequency }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Failed to add website');
+    try {
+      const res = await fetch('/api/websites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, scanFrequency: frequency }),
+      });
+      if (res.ok) {
+        const newSite = await res.json();
+        setMonitoredWebsites((prev) => [newSite, ...prev]);
+        return;
+      }
+    } catch {
+      // Fallback local persistence
     }
-    const newSite = await res.json();
+    
+    // Client-side addition fallback
+    const scan = await executeUniversalAccessibilityScan(url);
+    const newSite: MonitoredWebsite = {
+      id: `site_${Date.now()}`,
+      url,
+      domain: new URL(url.startsWith('http') ? url : `https://${url}`).hostname,
+      name: new URL(url.startsWith('http') ? url : `https://${url}`).hostname,
+      monitoringFrequency: frequency,
+      lastScanScore: scan.score,
+      lastScannedAt: new Date().toISOString(),
+      status: scan.score > 80 ? 'healthy' : scan.score > 60 ? 'warning' : 'critical',
+      lastScanResult: scan,
+    };
     setMonitoredWebsites((prev) => [newSite, ...prev]);
   };
 
   const handleRescanWebsite = async (url: string) => {
-    const res = await fetch('/api/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Rescan failed');
+    try {
+      const result = await executeUniversalAccessibilityScan(url);
+      setMonitoredWebsites((prev) =>
+        prev.map((w) =>
+          w.url === url
+            ? {
+                ...w,
+                lastScanScore: result.score,
+                lastScannedAt: result.scannedAt,
+                lastScanResult: result,
+              }
+            : w
+        )
+      );
+    } catch (err) {
+      console.error('Rescan failed', err);
     }
-    const result: ScanResult = await res.json();
-    setMonitoredWebsites((prev) =>
-      prev.map((w) =>
-        w.url === url
-          ? {
-              ...w,
-              lastScanScore: result.score,
-              lastScannedAt: result.scannedAt,
-              lastScanResult: result,
-            }
-          : w
-      )
-    );
   };
 
   const handleDeleteWebsite = async (id: string) => {
-    await fetch(`/api/websites/${id}`, { method: 'DELETE' });
+    try {
+      await fetch(`/api/websites/${id}`, { method: 'DELETE' });
+    } catch {}
     setMonitoredWebsites((prev) => prev.filter((w) => w.id !== id));
   };
 
   const handleViewSampleReport = async () => {
     setIsHeroScanning(true);
     try {
-      const res = await fetch('/api/health-scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'https://acme-store.example.com' }),
-      });
-      if (res.ok) {
-        const unifiedData = await res.json();
-        setCurrentUnifiedScan(unifiedData);
-        setCurrentScan(unifiedData.accessibilityScan);
-        setActiveRoute('/health-report');
-      } else {
-        const fallback = await fetch('/api/scan/sample', { method: 'POST' });
-        const data = await fallback.json();
-        setCurrentScan(data);
-        setActiveRoute('/report');
-      }
+      const unifiedData = await executeUniversalHealthScan('https://www.calculator.net');
+      setCurrentUnifiedScan(unifiedData);
+      setCurrentScan(unifiedData.accessibilityScan);
+      setActiveRoute('/health-report');
     } catch (e) {
       console.error(e);
     } finally {

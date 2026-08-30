@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { SEO_PAGES } from '../data/seoPagesData';
 import { ScanResult } from '../types';
+import { executeUniversalAccessibilityScan } from '../utils/clientHealthScanner';
 
 interface SeoLandingPageProps {
   slug: string;
@@ -101,15 +102,8 @@ export const SeoLandingPage: React.FC<SeoLandingPageProps> = ({
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim() }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        onScanComplete(data);
-      }
+      const data = await executeUniversalAccessibilityScan(url.trim());
+      onScanComplete(data);
     } catch (e) {
       console.error(e);
     } finally {

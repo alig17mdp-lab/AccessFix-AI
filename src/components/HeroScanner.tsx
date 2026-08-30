@@ -17,6 +17,7 @@ import {
   Flame,
 } from 'lucide-react';
 import { ScanResult, UnifiedHealthScan } from '../types';
+import { executeUniversalHealthScan } from '../utils/clientHealthScanner';
 
 interface HeroScannerProps {
   onScanComplete: (result: ScanResult, unifiedResult?: UnifiedHealthScan) => void;
@@ -60,51 +61,24 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
     // Dynamic progress states
     const stepInterval = setInterval(() => {
       setScanStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
-    }, 600);
+    }, 550);
 
     try {
-      // First try unified multi-pillar health scan
-      const response = await fetch('/api/health-scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: target }),
-      });
+      // Execute robust real-time multi-pillar health scan (dual server + CORS proxy + client DOM engine)
+      const unifiedResult = await executeUniversalHealthScan(target);
 
       clearInterval(stepInterval);
-
-      if (response.ok) {
-        const unifiedResult: UnifiedHealthScan = await response.json();
-        setScanStep(steps.length - 1);
-        setTimeout(() => {
-          setIsLoading(false);
-          onScanComplete(unifiedResult.accessibilityScan, unifiedResult);
-        }, 400);
-        return;
-      }
-
-      // Fallback to standard scan if needed
-      const fallbackRes = await fetch('/api/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: target }),
-      });
-
-      if (!fallbackRes.ok) {
-        const errorData = await fallbackRes.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Unable to scan target website. Please check the URL.');
-      }
-
-      const scanResult: ScanResult = await fallbackRes.json();
       setScanStep(steps.length - 1);
+
       setTimeout(() => {
         setIsLoading(false);
-        onScanComplete(scanResult);
-      }, 400);
+        onScanComplete(unifiedResult.accessibilityScan, unifiedResult);
+      }, 350);
     } catch (err: any) {
       clearInterval(stepInterval);
       setIsLoading(false);
       setErrorMessage(
-        err.message || 'Scan could not be completed. The website may be offline or blocking automated auditors.'
+        err.message || 'Scan could not be completed. Please ensure the domain name is valid.'
       );
     }
   };
