@@ -239,13 +239,13 @@ export default function App() {
             />
 
             {/* Why AccessFix AI Section */}
-            <section className="py-20 bg-white border-y border-slate-200/80">
+            <section className="py-20 bg-[#f8fafc] border-y border-slate-200/80 relative">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3.5 py-1 rounded-full">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-800 bg-blue-100/80 px-3.5 py-1 rounded-full border border-blue-200/60">
                     Complete Remediation Workflow
                   </span>
-                  <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                  <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
                     Beyond Simple Warnings: Actionable Code Fixes
                   </h2>
                   <p className="text-sm sm:text-base text-slate-600">
@@ -254,31 +254,31 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <div className="bg-white border border-slate-200/80 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100">
                       <Zap className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">1. Instant 40+ Point Audit</h3>
+                    <h3 className="text-xl font-bold text-slate-950">1. Instant 40+ Point Audit</h3>
                     <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                       Evaluates color contrast, image alt attributes, keyboard traps, ARIA landmarks, form inputs, and document structure against WCAG 2.1 Level AA.
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center">
+                  <div className="bg-white border border-slate-200/80 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 flex items-center justify-center border border-cyan-100">
                       <Sparkles className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">2. Plain-English Explanations</h3>
+                    <h3 className="text-xl font-bold text-slate-950">2. Plain-English Explanations</h3>
                     <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                       Translates complex WCAG specifications into plain language so product managers and business owners understand the real-world impact.
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                  <div className="bg-white border border-slate-200/80 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
                       <Code className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">3. Drop-in Code Remediations</h3>
+                    <h3 className="text-xl font-bold text-slate-950">3. Drop-in Code Remediations</h3>
                     <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                       Synthesizes corrected HTML, React JSX, WordPress PHP, and Shopify Liquid snippets ready to merge directly into your codebase.
                     </p>

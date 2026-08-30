@@ -91,23 +91,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         Skip to main content
       </a>
 
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 transition-all">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <button
               onClick={() => navigateTo('/')}
               aria-label="AccessFix AI Home"
-              className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1 group cursor-pointer"
+              className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 group cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm group-hover:bg-blue-700 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-800 to-blue-600 flex items-center justify-center text-white shadow-xs group-hover:from-blue-900 group-hover:to-blue-700 transition-all">
                 <div className="w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
-                  <div className="w-1 h-1 bg-white rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-cyan-300 rounded-full"></div>
                 </div>
               </div>
               <div className="text-left">
-                <span className="text-xl font-bold tracking-tight text-slate-800">
-                  AccessFix <span className="text-blue-600">AI</span>
+                <span className="text-xl font-extrabold tracking-tight text-slate-950">
+                  AccessFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-600">AI</span>
                 </span>
               </div>
             </button>
@@ -548,13 +548,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <>
                   <button
                     onClick={() => onOpenAuth('signin')}
-                    className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
                   >
                     Log in
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup')}
-                    className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition-colors cursor-pointer"
+                    className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 hover:from-blue-800 hover:to-blue-700 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
                   >
                     Get Started
                   </button>

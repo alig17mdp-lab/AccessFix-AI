@@ -394,10 +394,10 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
           </div>
 
           {/* THE 2 DUAL INPUT BOXES (USER REQUIREMENT) */}
-          <div className="mt-8 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden">
+          <div className="mt-8 bg-[#0a0f1d] rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
             {/* Background glowing gradient accents */}
             <div className="absolute -right-24 -top-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -left-24 -bottom-24 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-24 -bottom-24 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
 
             <form onSubmit={handleGenerate} className="relative z-10 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
@@ -525,7 +525,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                   type="submit"
                   disabled={isGenerating}
                   id="btn-generate-keyword-plan"
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2.5 transition-all transform active:scale-98 cursor-pointer shrink-0"
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-extrabold text-xs sm:text-sm px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2.5 transition-all transform active:scale-98 cursor-pointer shrink-0 border border-blue-400/20"
                 >
                   {isGenerating ? (
                     <>

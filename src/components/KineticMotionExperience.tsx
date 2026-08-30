@@ -136,10 +136,10 @@ export const KineticMotionExperience: React.FC = () => {
 
     window.addEventListener('resize', handleResize, { passive: true });
 
-    // Generate Adaptive Particles
+    // Generate Adaptive Particles - Option A (Cobalt, Ice Cyan, Sky, Emerald)
     const particleCount = fxMode === 'quantum' ? Math.min(Math.floor(width / 35), 45) : 18;
     const particles: Particle[] = [];
-    const colors = ['#38bdf8', '#818cf8', '#34d399', '#60a5fa', '#a78bfa'];
+    const colors = ['#2563eb', '#38bdf8', '#0ea5e9', '#10b981', '#60a5fa'];
 
     for (let i = 0; i < particleCount; i++) {
       const radius = Math.random() * 2 + 1;
@@ -310,7 +310,7 @@ export const KineticMotionExperience: React.FC = () => {
               animate={{
                 rotate: 360,
                 scale: isHoveringInteractive ? 1.4 : 1,
-                borderColor: isHoveringInteractive ? 'rgba(56, 189, 248, 0.8)' : 'rgba(99, 102, 241, 0.35)',
+                borderColor: isHoveringInteractive ? 'rgba(14, 165, 233, 0.9)' : 'rgba(37, 99, 235, 0.4)',
               }}
               transition={{
                 rotate: { duration: 10, repeat: Infinity, ease: 'linear' },
@@ -323,10 +323,10 @@ export const KineticMotionExperience: React.FC = () => {
             <motion.div
               animate={{
                 scale: isHoveringInteractive ? [1, 1.3, 1] : 1,
-                backgroundColor: isHoveringInteractive ? '#38bdf8' : '#6366f1',
+                backgroundColor: isHoveringInteractive ? '#0ea5e9' : '#2563eb',
               }}
               transition={{ repeat: Infinity, duration: 1.8 }}
-              className="absolute w-2 h-2 rounded-full shadow-[0_0_10px_rgba(56,189,248,0.9)]"
+              className="absolute w-2 h-2 rounded-full shadow-[0_0_12px_rgba(14,165,233,0.9)]"
             />
 
             {/* Smart HUD Target Indicator when hovering buttons/inputs */}

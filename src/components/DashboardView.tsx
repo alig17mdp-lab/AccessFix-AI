@@ -130,7 +130,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {onNavigate && (
             <button
               onClick={() => onNavigate('/tools/site-comparison')}
-              className="flex items-center gap-2 bg-white border border-cyan-300 text-cyan-800 hover:bg-cyan-50 px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-white border border-cyan-300/80 text-cyan-900 hover:bg-cyan-50/80 px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               <Zap className="w-4 h-4 text-cyan-600" />
               <span>Competitor Comparison</span>
@@ -138,7 +138,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           )}
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer border border-blue-400/20"
           >
             <Plus className="w-4 h-4" />
             <span>Add Monitored Website</span>

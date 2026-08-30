@@ -70,13 +70,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-gradient-to-b from-white via-slate-50/50 to-white">
+    <section className="py-16 sm:py-24 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9]/60 to-[#f8fafc] border-t border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3.5 py-1 rounded-full">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-800 bg-blue-100/80 px-3.5 py-1 rounded-full border border-blue-200/60">
             Transparent Pricing Plans
           </span>
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight">
             Protect Your Business with Continuous Accessibility
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
@@ -89,8 +89,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               onClick={() => setBillingCycle('monthly')}
               className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
                 billingCycle === 'monthly'
-                  ? 'bg-slate-900 text-white shadow-md'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-md'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               Monthly Billing
@@ -99,8 +99,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               onClick={() => setBillingCycle('yearly')}
               className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
                 billingCycle === 'yearly'
-                  ? 'bg-slate-900 text-white shadow-md'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-md'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               <span>Annual Billing</span>

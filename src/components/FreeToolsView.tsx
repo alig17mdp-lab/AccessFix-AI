@@ -393,7 +393,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
         {/* Quick link to Flagship tools */}
         <button
           onClick={() => onNavigate('/tools/site-comparison')}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-slate-900 text-white hover:bg-slate-800 transition-all cursor-pointer shadow-xs hover:scale-102"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-[#0a0f1d] text-white hover:bg-slate-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-slate-800"
         >
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
           <span>Site Comparison Engine</span>
@@ -401,9 +401,9 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
 
         <button
           onClick={() => onNavigate('/tools/keyword-planner')}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer shadow-xs hover:scale-102"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all cursor-pointer shadow-xs hover:scale-102 border border-blue-400/30"
         >
-          <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+          <Sparkles className="w-3.5 h-3.5 text-cyan-200" />
           <span>AI Keyword Planner (50 KWs)</span>
         </button>
 
