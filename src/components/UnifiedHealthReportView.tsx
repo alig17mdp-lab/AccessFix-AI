@@ -28,20 +28,44 @@ import { UnifiedHealthScan, HealthPillar, PriorityActionItem } from '../types';
 import { ReportView } from './ReportView';
 
 interface UnifiedHealthReportViewProps {
-  healthScan: UnifiedHealthScan;
-  onRescan: (url: string) => void;
-  onNavigateToTool: (toolSlug: string) => void;
-  onOpenAuth: () => void;
+  healthScan?: UnifiedHealthScan;
+  scan?: UnifiedHealthScan;
+  onRescan?: (url: string) => void;
+  onNavigateToTool?: (toolSlug: string) => void;
+  onNavigate?: (route: string) => void;
+  onBackToScan?: () => void;
+  onAddToMonitoring?: (url: string) => void;
+  onOpenAuth?: () => void;
 }
 
 export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = ({
-  healthScan,
+  healthScan: propHealthScan,
+  scan: propScan,
   onRescan,
   onNavigateToTool,
+  onNavigate,
+  onBackToScan,
+  onAddToMonitoring,
   onOpenAuth,
 }) => {
+  const healthScan = propHealthScan || propScan;
   const [activeTab, setActiveTab] = useState<HealthPillar | 'overview'>('overview');
   const [copiedActionId, setCopiedActionId] = useState<string | null>(null);
+
+  if (!healthScan) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center space-y-4">
+        <h2 className="text-xl font-bold text-slate-800">No scan data available</h2>
+        <p className="text-sm text-slate-500">Please initiate a fresh health scan to generate a report.</p>
+        <button
+          onClick={onBackToScan || (() => onNavigate && onNavigate('/'))}
+          className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-xs"
+        >
+          Return to Scanner
+        </button>
+      </div>
+    );
+  }
 
   const copySnippet = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -72,8 +96,8 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
             </span>
             <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {new Date(healthScan.scannedAt).toLocaleDateString()} at{' '}
-              {new Date(healthScan.scannedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(healthScan.scannedAt || Date.now()).toLocaleDateString()} at{' '}
+              {new Date(healthScan.scannedAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
 

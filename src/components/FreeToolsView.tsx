@@ -130,7 +130,7 @@ const TOOL_DEFINITIONS: Record<string, ToolMeta> = {
     label: 'AI Keyword Planner',
     category: 'Flagship Growth Engine',
     badge: '50-Keyword Blueprint • 25 Short-Tail + 25 Long-Tail',
-    title: 'AI Keyword Planner & Cluster Engine',
+    title: 'AI Keyword Planner & Semantic Clusters',
     seoOneLiner: 'Discover 50 high search volume, low competition keywords with verified CTR, CPM, CPC, and granular topic clusters in a structured tabular view.',
     icon: Sparkles,
   },

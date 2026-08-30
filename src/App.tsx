@@ -329,6 +329,7 @@ export default function App() {
         {/* ROUTE 2A: Unified Multi-Pillar Health Report View */}
         {activeRoute === '/health-report' && currentUnifiedScan && (
           <UnifiedHealthReportView
+            healthScan={currentUnifiedScan}
             scan={currentUnifiedScan}
             onBackToScan={() => setActiveRoute('/')}
             onAddToMonitoring={(url) => {
@@ -339,6 +340,7 @@ export default function App() {
             onOpenAuth={() => setAuthModalOpen(true)}
             onRescan={handleRescanUrl}
             onNavigate={handleNavigate}
+            onNavigateToTool={(toolSlug) => handleNavigate(`/tools/${toolSlug}`)}
           />
         )}
 

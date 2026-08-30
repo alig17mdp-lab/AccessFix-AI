@@ -26,27 +26,49 @@ import { ScanResult, AccessibilityIssue, SeverityLevel, IssueCategory, IssueStat
 import { downloadJsonReport, downloadCsvReport, copyMarkdownReport } from '../utils/exportHelpers';
 
 interface ReportViewProps {
-  scan: ScanResult;
-  onBackToScan: () => void;
+  scan?: ScanResult;
+  scanResult?: ScanResult;
+  onBackToScan?: () => void;
+  onRescan?: (url: string) => void;
   onAddToMonitoring?: (url: string) => void;
   onOpenAuth?: () => void;
 }
 
 export const ReportView: React.FC<ReportViewProps> = ({
-  scan,
+  scan: propScan,
+  scanResult,
   onBackToScan,
+  onRescan,
   onAddToMonitoring,
   onOpenAuth,
 }) => {
+  const scan = propScan || scanResult;
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeCodeTab, setActiveCodeTab] = useState<Record<string, 'html' | 'react' | 'wordpress' | 'shopify'>>({});
-  const [expandedIssueIds, setExpandedIssueIds] = useState<Set<string>>(new Set([scan.issues[0]?.id]));
-  const [issuesState, setIssuesState] = useState<AccessibilityIssue[]>(scan.issues);
+  const [expandedIssueIds, setExpandedIssueIds] = useState<Set<string>>(new Set(scan?.issues?.[0]?.id ? [scan.issues[0].id] : []));
+  const [issuesState, setIssuesState] = useState<AccessibilityIssue[]>(scan?.issues || []);
   const [aiLoadingIds, setAiLoadingIds] = useState<Set<string>>(new Set());
   const [markdownCopied, setMarkdownCopied] = useState(false);
+
+  if (!scan) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-12 text-center space-y-4">
+        <h2 className="text-xl font-bold text-slate-800">No report data found</h2>
+        <p className="text-xs text-slate-500">Please initiate a scan to view full diagnostics.</p>
+        {onBackToScan && (
+          <button
+            onClick={onBackToScan}
+            className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl"
+          >
+            Return to Scanner
+          </button>
+        )}
+      </div>
+    );
+  }
 
   const toggleExpand = (id: string) => {
     setExpandedIssueIds((prev) => {
@@ -300,7 +322,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
                 </h2>
               </div>
               <div className="text-right text-xs text-slate-500">
-                <div>Scanned on {new Date(scan.scannedAt).toLocaleDateString()}</div>
+                <div>Scanned on {new Date(scan.scannedAt || Date.now()).toLocaleDateString()}</div>
                 <div>Audit duration: {(scan.durationMs / 1000).toFixed(2)}s</div>
               </div>
             </div>

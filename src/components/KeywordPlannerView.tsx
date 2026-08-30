@@ -371,7 +371,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
               Free Tools
             </button>
             <span>/</span>
-            <span className="text-blue-700 font-bold">AI Keyword Planner & Cluster Engine</span>
+            <span className="text-blue-700 font-bold">AI Keyword Planner & Semantic Clusters</span>
           </nav>
 
           {/* Heading & Meta Badges */}
@@ -385,11 +385,11 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 tracking-tight leading-tight">
-              AI Keyword Planner & Cluster Engine
+              AI Keyword Planner & Semantic Clusters
             </h1>
 
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              Enter your main niche and subniche / seed keyword to generate a complete, high-performing 50-keyword blueprint. Discover high search volume, low competition, and lucrative CPM keywords categorized into actionable topic silos with transparent CTR modeling.
+              Discover 50 high search volume, low competition keywords with verified CTR, CPM, CPC, and granular topic clusters in a structured tabular view.
             </p>
           </div>
 

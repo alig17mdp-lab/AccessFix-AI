@@ -49,7 +49,7 @@ export function copyMarkdownReport(scan: ScanResult): string {
   const md = `# AccessFix AI Accessibility Audit Report
 **Target Domain:** ${scan.targetUrl}
 **Overall Health Score:** ${scan.score}/100
-**Scanned At:** ${new Date(scan.scannedAt).toLocaleDateString()}
+**Scanned At:** ${new Date(scan.scannedAt || Date.now()).toLocaleDateString()}
 **Total Issues Detected:** ${scan.issues.length}
 - Critical: ${scan.summary.criticalCount}
 - High Priority: ${scan.summary.highCount}
