@@ -1925,6 +1925,14 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
               </div>
             </div>
           )}
+
+          {/* 10px AI-Generated Data & Independent Verification Notice */}
+          <div className="mt-8 flex items-start sm:items-center gap-2.5 p-3 rounded-2xl bg-slate-900 border border-slate-800 text-[10px] text-slate-400 leading-relaxed">
+            <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5 sm:mt-0" />
+            <p>
+              <strong className="text-slate-200 font-semibold">AI Intelligence Notice:</strong> Competitive benchmarks, estimated ranking gaps, and roadmap timelines are algorithmically generated for strategic guidance. Search engine algorithms and competitor footprints shift continuously. We advise verifying critical metrics with your native search console and web analytics tools.
+            </p>
+          </div>
         </main>
       )}
     </div>

@@ -146,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {toolsOpen && (
                   <div className="absolute top-full left-0 mt-1 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] overflow-y-auto">
-                    {/* Featured Tool */}
+                    {/* Featured Tool 1 */}
                     <button
                       type="button"
                       onClick={() => navigateTo('/tools/site-comparison')}
@@ -163,6 +163,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div className="text-[11px] text-slate-600 truncate">Side-by-side technical & keyword audit</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-cyan-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    {/* Featured Tool 2: AI Keyword Planner */}
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/tools/keyword-planner')}
+                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-left transition-all cursor-pointer group border border-blue-200/80 mb-2 shadow-xs"
+                    >
+                      <div className="p-2 rounded-lg bg-blue-600 text-white shadow-xs group-hover:scale-105 transition-transform">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                          AI Keyword Planner & Clusters
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-blue-600 text-white">NEW</span>
+                        </div>
+                        <div className="text-[11px] text-slate-600 truncate">25 short + 25 long-tail keywords with volume, CTR & CPM</div>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -573,6 +592,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="block w-full text-left text-sm font-bold text-cyan-700 bg-cyan-50 p-2 rounded-lg hover:text-cyan-900 cursor-pointer"
               >
                 📊 Site Comparison (NEW)
+              </button>
+              <button
+                onClick={() => navigateTo('/tools/keyword-planner')}
+                className="block w-full text-left text-sm font-bold text-blue-700 bg-blue-50 p-2 rounded-lg hover:text-blue-900 cursor-pointer"
+              >
+                ✨ AI Keyword Planner (NEW)
               </button>
               <button
                 onClick={() => navigateTo('/tools/color-contrast-checker')}

@@ -115,6 +115,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </li>
               <li>
                 <button
+                  onClick={() => navigateTo('/tools/keyword-planner')}
+                  className="text-blue-400 font-semibold hover:text-blue-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>AI Keyword Planner (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => navigateTo('/tools/color-contrast-checker')}
                   className="hover:text-emerald-400 transition-colors text-left"
                 >

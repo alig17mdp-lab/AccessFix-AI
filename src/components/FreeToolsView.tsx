@@ -23,16 +23,122 @@ import {
   Sliders,
   ExternalLink,
   ChevronRight,
+  Info,
 } from 'lucide-react';
 import { calculateContrast } from '../utils/contrastCalculator';
+import { KeywordPlannerView } from './KeywordPlannerView';
 
 interface FreeToolsViewProps {
   initialTool?: string;
   onNavigate: (route: string) => void;
 }
 
+interface ToolMeta {
+  id: string;
+  label: string;
+  category: string;
+  badge: string;
+  title: string;
+  seoOneLiner: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const TOOL_DEFINITIONS: Record<string, ToolMeta> = {
+  'contrast': {
+    id: 'contrast',
+    label: 'Color Contrast Checker',
+    category: 'Accessibility Compliance',
+    badge: 'WCAG 2.1/2.2 AA & AAA Visual Compliance',
+    title: 'WCAG Color Contrast Ratio Calculator',
+    seoOneLiner: 'Calculate real-time luminance contrast ratios and test foreground/background color combinations against WCAG 2.1 AA/AAA compliance benchmarks.',
+    icon: Palette,
+  },
+  'alt-text': {
+    id: 'alt-text',
+    label: 'AI Alt Text Generator',
+    category: 'Screen Reader Optimization',
+    badge: 'Automated WCAG 1.1.1 Image Descriptions',
+    title: 'AI Image Alt Text Generator & OCR Context Engine',
+    seoOneLiner: 'Generate descriptive, screen-reader-compliant alternative text attributes and ARIA labels optimized for visual accessibility and Google Image indexing.',
+    icon: Image,
+  },
+  'heading': {
+    id: 'heading',
+    label: 'Heading Hierarchy Validator',
+    category: 'Semantic SEO & Structure',
+    badge: 'Semantic H1–H6 Document Structure Audit',
+    title: 'Heading Hierarchy Validator & Structure Inspector',
+    seoOneLiner: 'Audit document outline semantics, detect skipped heading levels, and optimize your page structure for assistive screen readers and search engines.',
+    icon: Heading,
+  },
+  'form': {
+    id: 'form',
+    label: 'Form Accessibility Validator',
+    category: 'WCAG 3.3.2 Form Controls',
+    badge: 'Interactive Form Control & Error Announcer Audit',
+    title: 'Form Accessibility & Input Labeling Auditor',
+    seoOneLiner: 'Inspect HTML forms for explicit label associations, ARIA descriptions, required field announcers, and accessible keyboard error states.',
+    icon: FormInput,
+  },
+  'keyboard': {
+    id: 'keyboard',
+    label: 'Keyboard Nav Simulator',
+    category: 'Assistive Tech Navigation',
+    badge: 'Focus Order & Interactive Trap Diagnostic',
+    title: 'Keyboard Navigation & Tab Order Simulator',
+    seoOneLiner: 'Simulate sequential keyboard tab order, detect focus traps, verify visual focus indicators, and test skip-link routing for non-mouse users.',
+    icon: Keyboard,
+  },
+  'meta-optimizer': {
+    id: 'meta-optimizer',
+    label: 'Meta Tag Optimizer',
+    category: 'SERP CTR Engineering',
+    badge: 'Real-Time SERP & Social Graph Snippet Architect',
+    title: 'Meta Tag Optimizer & Social Preview Studio',
+    seoOneLiner: 'Craft pixel-perfect meta titles, descriptions, and OpenGraph social preview cards with character counters and click-through-rate enhancement.',
+    icon: Search,
+  },
+  'schema-generator': {
+    id: 'schema-generator',
+    label: 'JSON-LD Schema Builder',
+    category: 'Technical Structured Data',
+    badge: 'Google Rich Results & Knowledge Graph Markup',
+    title: 'JSON-LD Structured Data Schema Builder',
+    seoOneLiner: 'Generate and validate Google Rich Snippet JSON-LD structured schemas for WebApplication, FAQPage, Organization, and Technical Articles.',
+    icon: Code2,
+  },
+  'keyword-explorer': {
+    id: 'keyword-explorer',
+    label: 'Keyword Opportunity Finder',
+    category: 'Search Intelligence',
+    badge: 'Search Volume & Low-KD Gap Analysis',
+    title: 'Keyword Opportunity & SERP Gap Finder',
+    seoOneLiner: 'Identify high-intent organic search queries, analyze search volume trends, and uncover under-optimized keyword ranking opportunities.',
+    icon: Target,
+  },
+  'content-brief': {
+    id: 'content-brief',
+    label: 'AI Content Brief Builder',
+    category: 'AEO / GEO Content Modeling',
+    badge: 'Semantic Topic Silo & Editorial Blueprint',
+    title: 'AI Content Brief & Topic Silo Architect',
+    seoOneLiner: 'Generate comprehensive editorial content briefs featuring semantic entity coverage, H2/H3 heading blueprints, and target word count recommendations.',
+    icon: FileText,
+  },
+  'keyword-planner': {
+    id: 'keyword-planner',
+    label: 'AI Keyword Planner',
+    category: 'Flagship Growth Engine',
+    badge: '50-Keyword Blueprint • 25 Short-Tail + 25 Long-Tail',
+    title: 'AI Keyword Planner & Cluster Engine',
+    seoOneLiner: 'Discover 50 high search volume, low competition keywords with verified CTR, CPM, CPC, and granular topic clusters in a structured tabular view.',
+    icon: Sparkles,
+  },
+};
+
 export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'contrast', onNavigate }) => {
   const normalizeToolId = (id: string) => {
+    if (id === 'keyword-planner' || id === 'keyword-planning' || id === 'keywords-planner') return 'keyword-planner';
     if (id === 'color-contrast' || id === 'contrast') return 'contrast';
     if (id === 'alt-text' || id === 'alt-text-checker') return 'alt-text';
     if (id === 'heading' || id === 'heading-checker') return 'heading';
@@ -263,56 +369,56 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
     prevLevel = h.level;
   });
 
+  const currentToolMeta = TOOL_DEFINITIONS[activeTool] || TOOL_DEFINITIONS['contrast'];
+  const ActiveIcon = currentToolMeta.icon;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10">
-      {/* Tool Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
-          Free AI Website Growth & Compliance Utilities
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Professional Developer & SEO Tool Suite
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8" id="free-tools-view">
+      {/* Dynamic SEO Tool Header (Dynamic per tool with SEO-optimized 1-line description) */}
+      <div className="text-center max-w-4xl mx-auto space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs">
+          <ActiveIcon className="w-3.5 h-3.5 text-blue-600" />
+          <span>{currentToolMeta.badge}</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+          {currentToolMeta.title}
         </h1>
-        <p className="text-sm text-slate-600">
-          Fast, client-side diagnostic utilities for accessibility compliance, keyword exploration, Core Web Vitals estimation, and technical schema generation.
+        <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed">
+          {currentToolMeta.seoOneLiner}
         </p>
       </div>
 
-      {/* Competitive Intelligence Callout Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-cyan-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            Flagship Competitive Intelligence Engine
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-            Compare Your Site vs Competitors Side-by-Side
-          </h2>
-          <p className="text-sm text-slate-300">
-            Uncover content depth gaps, technical speed hurdles, schema discrepancies, and accessibility advantages with prioritized 30/60/90 day action blueprints.
-          </p>
-        </div>
+      {/* Tool Categories & Switcher Bar */}
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 pb-2">
+        {/* Quick link to Flagship tools */}
         <button
           onClick={() => onNavigate('/tools/site-comparison')}
-          className="px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg flex items-center gap-2 whitespace-nowrap cursor-pointer hover:scale-105"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-slate-900 text-white hover:bg-slate-800 transition-all cursor-pointer shadow-xs hover:scale-102"
         >
-          <span>Launch Site Comparison</span>
-          <ArrowRight className="w-4 h-4" />
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Site Comparison Engine</span>
         </button>
-      </div>
 
-      {/* Tool Categories Switcher */}
-      <div className="flex flex-wrap items-center justify-center gap-2">
+        <button
+          onClick={() => onNavigate('/tools/keyword-planner')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer shadow-xs hover:scale-102"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+          <span>AI Keyword Planner (50 KWs)</span>
+        </button>
+
+        <div className="hidden md:block h-5 w-px bg-slate-200 mx-1" />
+
         {[
-          { id: 'contrast', label: 'Color Contrast Checker', icon: Palette, category: 'A11y' },
-          { id: 'alt-text', label: 'AI Alt Text Generator', icon: Image, category: 'A11y' },
-          { id: 'heading', label: 'Heading Hierarchy Validator', icon: Heading, category: 'A11y' },
-          { id: 'form', label: 'Form Accessibility Validator', icon: FormInput, category: 'A11y' },
-          { id: 'keyboard', label: 'Keyboard Nav Simulator', icon: Keyboard, category: 'A11y' },
-          { id: 'meta-optimizer', label: 'Meta Tag Optimizer', icon: Search, category: 'SEO' },
-          { id: 'schema-generator', label: 'JSON-LD Schema Builder', icon: Code2, category: 'SEO' },
-          { id: 'keyword-explorer', label: 'Keyword Opportunity Finder', icon: Target, category: 'Growth' },
-          { id: 'content-brief', label: 'AI Content Brief Builder', icon: FileText, category: 'Content' },
+          { id: 'contrast', label: 'Color Contrast', icon: Palette },
+          { id: 'alt-text', label: 'Alt Text Generator', icon: Image },
+          { id: 'heading', label: 'Heading Validator', icon: Heading },
+          { id: 'form', label: 'Form Validator', icon: FormInput },
+          { id: 'keyboard', label: 'Keyboard Nav', icon: Keyboard },
+          { id: 'meta-optimizer', label: 'Meta Tag Optimizer', icon: Search },
+          { id: 'schema-generator', label: 'JSON-LD Builder', icon: Code2 },
+          { id: 'keyword-explorer', label: 'Keyword Gap Finder', icon: Target },
+          { id: 'content-brief', label: 'Content Briefs', icon: FileText },
         ].map((t) => {
           const Icon = t.icon;
           const isSelected = activeTool === t.id;
@@ -320,18 +426,25 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
             <button
               key={t.id}
               onClick={() => setActiveTool(t.id)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-blue-50 border-2 border-blue-600 text-blue-800 shadow-xs'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-blue-600'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-600' : 'text-slate-500'}`} />
               <span>{t.label}</span>
             </button>
           );
         })}
       </div>
+
+      {/* TOOL 0: Full World-Class AI Keyword Planner & Semantic Clusters */}
+      {activeTool === 'keyword-planner' && (
+        <div className="animate-in fade-in">
+          <KeywordPlannerView onNavigate={onNavigate} />
+        </div>
+      )}
 
       {/* TOOL 1: Color Contrast */}
       {activeTool === 'contrast' && (
@@ -467,8 +580,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 value={altSubject}
                 onChange={(e) => setAltSubject(e.target.value)}
                 rows={3}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden"
-                placeholder="E.g., Screenshot of eCommerce checkout page showing coupon code box..."
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
+                placeholder="e.g., Screenshot of eCommerce checkout page showing coupon code box..."
               />
             </div>
 
@@ -529,7 +642,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
               value={headingText}
               onChange={(e) => setHeadingText(e.target.value)}
               rows={8}
-              className="w-full text-xs font-mono p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden"
+              placeholder="<h1>Main Page Title</h1>&#10;<h2>Section Heading</h2>&#10;<h3>Subtopic</h3>"
+              className="w-full text-xs font-mono p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
             />
           </div>
 
@@ -567,7 +681,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
               rows={7}
               value={formHtmlInput}
               onChange={(e) => setFormHtmlInput(e.target.value)}
-              className="w-full text-xs font-mono p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden"
+              placeholder="<form>&#10;  <label for='email'>Email</label>&#10;  <input id='email' type='email' />&#10;</form>"
+              className="w-full text-xs font-mono p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
             />
           </div>
 
@@ -679,7 +794,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={targetKeyword}
                 onChange={(e) => setTargetKeyword(e.target.value)}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
                 placeholder="e.g., website accessibility checker"
               />
             </div>
@@ -689,7 +804,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={domainName}
                 onChange={(e) => setDomainName(e.target.value)}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
                 placeholder="e.g., accessfix.ai"
               />
             </div>
@@ -767,7 +882,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={schemaName}
                 onChange={(e) => setSchemaName(e.target.value)}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
+                placeholder="e.g., AccessFix AI"
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
               />
             </div>
             <div>
@@ -776,7 +892,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={schemaUrl}
                 onChange={(e) => setSchemaUrl(e.target.value)}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
+                placeholder="e.g., https://accessfix.ai"
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
               />
             </div>
           </div>
@@ -813,8 +930,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
               type="text"
               value={keywordSeed}
               onChange={(e) => setKeywordSeed(e.target.value)}
-              className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
-              placeholder="Enter seed topic (e.g. accessibility audit)..."
+              className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
+              placeholder="e.g., accessibility audit, seo tools..."
             />
             <button
               onClick={() => {}}
@@ -872,7 +989,8 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={briefKeyword}
                 onChange={(e) => setBriefKeyword(e.target.value)}
-                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200"
+                placeholder="e.g., Complete WCAG 2.1 Checklist for SaaS..."
+                className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
               />
               <button
                 onClick={() => {}}
@@ -910,6 +1028,14 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
           </div>
         </div>
       )}
+
+      {/* 10px AI-Generated Data & Independent Verification Notice */}
+      <div className="max-w-4xl mx-auto flex items-start sm:items-center gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-[10px] text-slate-500 leading-relaxed">
+        <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5 sm:mt-0" />
+        <p>
+          <strong className="text-slate-700 font-semibold">AI Intelligence Notice:</strong> This data is algorithmically synthesized for directional research and diagnostic benchmarking. Search metrics, code audits, and market authenticity vary dynamically over time. Please conduct your own research and verify with primary search console tools before final deployment.
+        </p>
+      </div>
     </div>
   );
 };

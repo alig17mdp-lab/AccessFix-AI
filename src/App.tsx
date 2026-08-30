@@ -16,6 +16,7 @@ import { LegalPage } from './components/LegalPage';
 import { AdminView } from './components/AdminView';
 import { AuthModal } from './components/AuthModal';
 import { SiteComparisonView } from './components/SiteComparisonView';
+import { KeywordPlannerView } from './components/KeywordPlannerView';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
 import { AUTHORS } from './data/authorsData';
@@ -449,8 +450,16 @@ export default function App() {
           <SiteComparisonView onNavigate={handleNavigate} />
         )}
 
-        {/* ROUTE 10: Free Tools Suite (Accessibility + SEO + Growth) */}
-        {activeRoute.startsWith('/tools') && activeRoute !== '/tools/site-comparison' && (
+        {/* ROUTE 10: World-Class AI Keyword Planner & Semantic Clusters */}
+        {(activeRoute === '/tools/keyword-planner' || activeRoute === '/tools/keyword-planning') && (
+          <KeywordPlannerView onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 11: Free Tools Suite (Accessibility + SEO + Growth) */}
+        {activeRoute.startsWith('/tools') &&
+          activeRoute !== '/tools/site-comparison' &&
+          activeRoute !== '/tools/keyword-planner' &&
+          activeRoute !== '/tools/keyword-planning' && (
           <FreeToolsView
             initialTool={
               activeRoute === '/tools/alt-text-checker'
