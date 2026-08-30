@@ -117,6 +117,7 @@ function auditLiveHtml(html: string, targetUrl: string, domain: string, ttfbMs: 
   const h2Count = h2Elements.length;
   const h3Count = doc.querySelectorAll('h3').length;
   const totalHeadings = h1Elements.length + h2Count + h3Count;
+  const textContent = doc.body?.textContent || '';
 
   const images = Array.from(doc.querySelectorAll('img'));
   const totalImages = images.length;
