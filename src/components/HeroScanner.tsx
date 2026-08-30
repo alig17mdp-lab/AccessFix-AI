@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import {
   Globe,
   ArrowRight,
@@ -110,7 +111,26 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
 
   return (
     <section className="relative overflow-hidden pt-12 pb-20 lg:pt-18 lg:pb-24 bg-white border-b border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Subtle Floating Ambient Badges (Kinetic Motion Accent) */}
+      <motion.div
+        animate={{ y: [0, -8, 0], rotate: [0, 1.5, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        className="hidden xl:flex absolute left-8 top-28 items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 text-white shadow-xl backdrop-blur-md border border-slate-800 text-[11px] font-semibold"
+      >
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        <span>WCAG 2.2 AAA Ready</span>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 8, 0], rotate: [0, -1.5, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="hidden xl:flex absolute right-8 top-32 items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 text-cyan-300 shadow-xl backdrop-blur-md border border-slate-800 text-[11px] font-semibold"
+      >
+        <Zap className="w-3.5 h-3.5 text-amber-400" />
+        <span>Core Web Vitals &lt; 0.8s</span>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto space-y-6">
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 border border-blue-100 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-tight">

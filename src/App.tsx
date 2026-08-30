@@ -17,6 +17,7 @@ import { AdminView } from './components/AdminView';
 import { AuthModal } from './components/AuthModal';
 import { SiteComparisonView } from './components/SiteComparisonView';
 import { KeywordPlannerView } from './components/KeywordPlannerView';
+import { KineticMotionExperience } from './components/KineticMotionExperience';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
 import { AUTHORS } from './data/authorsData';
@@ -519,6 +520,9 @@ export default function App() {
           <LegalPage section={activeRoute.replace('/', '') as any} />
         )}
       </main>
+
+      {/* Ambient Quantum Kinetic Motion Experience (Cursor Synapse Halo, Particles, Holographic Radar) */}
+      <KineticMotionExperience />
 
       {/* Floating Accessibility Preferences Toolbar */}
       <AccessibilityToolbar />
