@@ -125,7 +125,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                 key={plan.id}
                 className={`bg-white rounded-3xl p-8 flex flex-col justify-between transition-all relative border overflow-hidden ${
                   plan.isComingSoon
-                    ? 'border-slate-300/80 shadow-md'
+                    ? 'border-amber-300/70 bg-gradient-to-b from-amber-50/20 via-white to-white shadow-md'
                     : plan.popular
                     ? 'border-blue-600 ring-4 ring-blue-600/15 shadow-2xl shadow-blue-600/10'
                     : 'border-slate-200 shadow-md hover:shadow-xl'
@@ -142,7 +142,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
 
                 {/* Top Center Badge */}
                 {plan.isComingSoon ? (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-md flex items-center gap-1.5 border border-amber-300/50 z-20">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-md flex items-center gap-1.5 border border-amber-300/50 z-20 whitespace-nowrap">
                     <Clock className="w-3 h-3 text-amber-100 animate-pulse" />
                     <span>COMING SOON</span>
                   </div>
@@ -159,7 +159,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                       <h3 className="text-xl font-bold text-slate-950">{plan.name}</h3>
                       {plan.isComingSoon && (
                         <span className="text-[10px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md uppercase">
-                          In Final Beta
+                          Coming Soon
                         </span>
                       )}
                     </div>
@@ -197,7 +197,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                       type="button"
                       disabled={true}
                       aria-disabled="true"
-                      className="w-full py-3.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none flex items-center justify-center gap-2 select-none"
+                      className="w-full py-3.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none flex items-center justify-center gap-2 select-none pointer-events-none"
                     >
                       <Lock className="w-3.5 h-3.5 text-slate-400" />
                       <span>COMING SOON ({plan.buttonText})</span>

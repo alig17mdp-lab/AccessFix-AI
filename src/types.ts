@@ -388,7 +388,7 @@ export interface SeoPageData {
 // UNIFIED WEBSITE HEALTH & GROWTH PLATFORM TYPES
 // -------------------------------------------------------------
 
-export type HealthPillar = 'accessibility' | 'seo' | 'technicalSeo' | 'performance' | 'content';
+export type HealthPillar = 'accessibility' | 'seo' | 'technicalSeo' | 'performance' | 'content' | 'rankingKeywords' | 'contentGap';
 
 export type ActionImpact = 'high' | 'medium' | 'low';
 export type ActionEffort = 'low' | 'medium' | 'high';
@@ -564,6 +564,82 @@ export interface ContentAuditResult {
   contentRecommendations: string[];
 }
 
+export interface RankingKeywordItem {
+  keyword: string;
+  estimatedPosition: number; // 1-20
+  searchVolume: number;
+  difficulty: number; // 0-100
+  intent: 'informational' | 'transactional' | 'commercial' | 'navigational';
+  cpcUsd: number;
+  rankingStrength: 'dominant' | 'strong' | 'moderate' | 'emerging';
+  foundIn: ('title' | 'h1' | 'h2' | 'body' | 'meta' | 'anchor')[];
+  trafficSharePercent: number;
+  trend: 'rising' | 'stable' | 'declining';
+  serpFeatures: string[];
+  positiveStrengthNotes: string;
+}
+
+export interface RankingKeywordsAnalysisResult {
+  totalDiscoveredKeywords: number;
+  top10RankingsCount: number;
+  totalOrganicVisibilityScore: number; // 0-100
+  estimatedMonthlyTrafficPotential: number;
+  primaryRankingKeywords: RankingKeywordItem[];
+  intentDistribution: {
+    informational: number;
+    transactional: number;
+    commercial: number;
+    navigational: number;
+  };
+  keyPositiveStrengths: string[];
+}
+
+export interface MissingFaqItem {
+  question: string;
+  searchIntent: 'informational' | 'commercial' | 'transactional';
+  estimatedMonthlyQueries: number;
+  answerEngineRelevance: 'critical' | 'high' | 'medium';
+  recommendedDirectAnswerSnippet: string; // Under 25 words direct answer for AEO / AI Overviews
+  detailedGuidance: string;
+}
+
+export interface MissingTopicSectionItem {
+  sectionTitle: string;
+  recommendedHeadingLevel: 'h2' | 'h3';
+  topicPriority: 'critical' | 'high' | 'medium';
+  potentialOrganicLiftPercent: number;
+  whyItMatters: string;
+  suggestedContentPoints: string[];
+}
+
+export interface ContentGapAnalysisResult {
+  overallContentCoverageScore: number; // 0-100
+  missingHighOpportunityKeywords: {
+    keyword: string;
+    searchVolume: number;
+    difficulty: number;
+    intent: 'informational' | 'transactional' | 'commercial' | 'navigational';
+    trafficOpportunityScore: number;
+    recommendedPageType: string;
+    whyMissing: string;
+  }[];
+  missingFaqs: MissingFaqItem[];
+  missingTopicSections: MissingTopicSectionItem[];
+  semanticEntityExpansionGaps: {
+    entity: string;
+    category: string;
+    recommendedUsageCount: number;
+    relevanceReason: string;
+  }[];
+  contentFormatGaps: {
+    formatType: string;
+    status: 'missing' | 'partial' | 'implemented';
+    impact: 'high' | 'medium';
+    description: string;
+  }[];
+  actionableExpansionPlan: string[];
+}
+
 export interface UnifiedHealthScan {
   id: string;
   targetUrl: string;
@@ -586,6 +662,8 @@ export interface UnifiedHealthScan {
   technicalSeoAudit: TechnicalSeoAuditResult;
   performanceAudit: PerformanceAuditResult;
   contentAudit: ContentAuditResult;
+  rankingKeywordsAnalysis?: RankingKeywordsAnalysisResult;
+  contentGapAnalysis?: ContentGapAnalysisResult;
 }
 
 // -------------------------------------------------------------

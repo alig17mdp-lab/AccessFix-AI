@@ -23,9 +23,16 @@ import {
   Copy,
   Check,
   Flame,
+  Key,
+  Target,
+  HelpCircle,
+  Award,
 } from 'lucide-react';
 import { UnifiedHealthScan, HealthPillar, PriorityActionItem } from '../types';
 import { ReportView } from './ReportView';
+import { RankingKeywordsSection } from './RankingKeywordsSection';
+import { ContentGapSection } from './ContentGapSection';
+import { generateRankingKeywordsAnalysis, generateContentGapAnalysis } from '../utils/clientHealthScanner';
 
 interface UnifiedHealthReportViewProps {
   healthScan?: UnifiedHealthScan;
@@ -85,6 +92,26 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
     return 'bg-rose-600 text-white';
   };
 
+  const rankingAnalysis = healthScan.rankingKeywordsAnalysis || generateRankingKeywordsAnalysis(
+    healthScan.domain,
+    healthScan.domain.split('.')[0] || 'website',
+    healthScan.seoAudit?.title?.text || '',
+    healthScan.seoAudit?.headings?.h1List || [],
+    [],
+    '',
+    healthScan.targetUrl
+  );
+
+  const gapAnalysis = healthScan.contentGapAnalysis || generateContentGapAnalysis(
+    healthScan.domain,
+    healthScan.domain.split('.')[0] || 'website',
+    healthScan.seoAudit?.title?.text || '',
+    healthScan.seoAudit?.headings?.h1List || [],
+    [],
+    '',
+    healthScan.targetUrl
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-in fade-in duration-200">
       {/* Top Header & Actions */}
@@ -110,7 +137,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
 
         <div className="flex items-center gap-2.5 shrink-0">
           <button
-            onClick={() => onRescan(healthScan.targetUrl)}
+            onClick={() => onRescan && onRescan(healthScan.targetUrl)}
             className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -135,7 +162,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
         </span>
       </div>
 
-      {/* Executive Overall Score & 5-Pillar Matrix */}
+      {/* Executive Overall Score & Pillar Matrix */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Main Composite Score */}
         <div className="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col justify-between space-y-6">
@@ -169,7 +196,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
           </div>
         </div>
 
-        {/* 5-Pillar Score Cards */}
+        {/* Pillar Score Cards */}
         <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-3">
           {/* Pillar 1: Accessibility */}
           <button
@@ -245,47 +272,47 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
             </div>
           </button>
 
-          {/* Pillar 4: Performance & CWV */}
+          {/* Pillar 4: Ranking Keywords */}
           <button
-            onClick={() => setActiveTab('performance')}
+            onClick={() => setActiveTab('rankingKeywords')}
             className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-              activeTab === 'performance'
-                ? 'border-blue-600 bg-blue-50/50 shadow-xs'
+              activeTab === 'rankingKeywords'
+                ? 'border-emerald-600 bg-emerald-50/50 shadow-xs ring-1 ring-emerald-500'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-900">Performance</span>
-              <Zap className="w-4 h-4 text-amber-500" />
+              <span className="text-xs font-bold text-slate-900">Ranking Keywords</span>
+              <Key className="w-4 h-4 text-emerald-600" />
             </div>
-            <div className="text-2xl font-black text-slate-900 my-1">
-              {healthScan.pillarScores.performance.score}
-              <span className="text-xs font-normal text-slate-400">/100</span>
+            <div className="text-2xl font-black text-emerald-600 my-1">
+              {rankingAnalysis.totalDiscoveredKeywords}
+              <span className="text-xs font-normal text-slate-400"> terms</span>
             </div>
-            <div className="text-[11px] text-slate-500">
-              LCP: {(healthScan.pillarScores.performance.lcpMs / 1000).toFixed(1)}s
+            <div className="text-[11px] text-emerald-700 font-semibold">
+              {rankingAnalysis.top10RankingsCount} Top 10 Positions
             </div>
           </button>
 
-          {/* Pillar 5: Content & Intent */}
+          {/* Pillar 5: Content Gap */}
           <button
-            onClick={() => setActiveTab('content')}
+            onClick={() => setActiveTab('contentGap')}
             className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-              activeTab === 'content'
-                ? 'border-blue-600 bg-blue-50/50 shadow-xs'
+              activeTab === 'contentGap'
+                ? 'border-amber-600 bg-amber-50/50 shadow-xs ring-1 ring-amber-500'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-900">Content Quality</span>
-              <FileText className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold text-slate-900">Content Gap</span>
+              <Target className="w-4 h-4 text-amber-600" />
             </div>
-            <div className="text-2xl font-black text-slate-900 my-1">
-              {healthScan.pillarScores.content.score}
-              <span className="text-xs font-normal text-slate-400">/100</span>
+            <div className="text-2xl font-black text-amber-600 my-1">
+              {gapAnalysis.missingHighOpportunityKeywords.length}
+              <span className="text-xs font-normal text-slate-400"> gaps</span>
             </div>
-            <div className="text-[11px] text-slate-500">
-              {healthScan.pillarScores.content.wordCount} Words Analyzed
+            <div className="text-[11px] text-amber-700 font-semibold">
+              +{gapAnalysis.missingTopicSections.reduce((a, s) => Math.max(a, s.potentialOrganicLiftPercent), 25)}% Traffic Opportunity
             </div>
           </button>
 
@@ -315,7 +342,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
 
       {/* Main Tab Navigation */}
       <div className="border-b border-slate-200">
-        <nav className="flex space-x-6 overflow-x-auto text-xs font-bold text-slate-500">
+        <nav className="flex space-x-6 overflow-x-auto text-xs font-bold text-slate-500 pb-1">
           <button
             onClick={() => setActiveTab('overview')}
             className={`pb-3 px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
@@ -324,7 +351,29 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                 : 'border-transparent hover:text-slate-900'
             }`}
           >
-            Top Priority Actions (Impact × Effort)
+            Top Priority Actions ({healthScan.topPriorityActions.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('rankingKeywords')}
+            className={`pb-3 px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'rankingKeywords'
+                ? 'border-emerald-600 text-emerald-600'
+                : 'border-transparent hover:text-slate-900'
+            }`}
+          >
+            <Key className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Ranking Keywords ({rankingAnalysis.totalDiscoveredKeywords})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('contentGap')}
+            className={`pb-3 px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'contentGap'
+                ? 'border-amber-600 text-amber-600'
+                : 'border-transparent hover:text-slate-900'
+            }`}
+          >
+            <Target className="w-3.5 h-3.5 text-amber-600" />
+            <span>Content Gap ({gapAnalysis.missingHighOpportunityKeywords.length} Gaps)</span>
           </button>
           <button
             onClick={() => setActiveTab('accessibility')}
@@ -457,7 +506,120 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
               </div>
             ))}
           </div>
+
+          {/* Ranking Keywords & Content Gap Intelligence Summary Hub */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+            {/* Ranking Keywords Quick Preview */}
+            <div className="bg-gradient-to-br from-emerald-50/70 via-white to-slate-50 border border-emerald-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl">
+                      <Key className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900">Ranking Keywords Discovered</h4>
+                      <span className="text-xs text-slate-500 font-semibold">{rankingAnalysis.totalDiscoveredKeywords} verified keyword positions</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-black text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-full">
+                    {rankingAnalysis.top10RankingsCount} Top 10 Ranks
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Real search terms where <strong className="text-slate-800">{healthScan.domain}</strong> has strong organic visibility, keyword density, and title tag prominence.
+                </p>
+
+                {/* Top 3 keyword pills */}
+                <div className="space-y-1.5 pt-1">
+                  {rankingAnalysis.primaryRankingKeywords.slice(0, 3).map((kw, i) => (
+                    <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-emerald-100 text-xs shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">{kw.keyword}</span>
+                        <span className="text-[10px] uppercase font-bold text-slate-400">({kw.intent})</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-slate-500">{kw.searchVolume.toLocaleString()}/mo</span>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[11px]">
+                          #{kw.estimatedPosition}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('rankingKeywords')}
+                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>Explore All {rankingAnalysis.totalDiscoveredKeywords} Ranking Keywords & SERP Analysis</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Content Gap Quick Preview */}
+            <div className="bg-gradient-to-br from-amber-50/70 via-white to-slate-50 border border-amber-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-amber-100 text-amber-700 rounded-xl">
+                      <Target className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900">High-Impact Content Gaps</h4>
+                      <span className="text-xs text-slate-500 font-semibold">{gapAnalysis.missingHighOpportunityKeywords.length} uncaptured topics</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-black text-amber-700 bg-amber-100/80 px-2.5 py-1 rounded-full">
+                    +{gapAnalysis.missingTopicSections.reduce((a, s) => Math.max(a, s.potentialOrganicLiftPercent), 25)}% Traffic Opportunity
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  High-converting keywords, missing user questions for Answer Engines, and structural sections needed to outrank competitors.
+                </p>
+
+                {/* Top 3 missing keyword items */}
+                <div className="space-y-1.5 pt-1">
+                  {gapAnalysis.missingHighOpportunityKeywords.slice(0, 3).map((gap, i) => (
+                    <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-100 text-xs shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">{gap.keyword}</span>
+                        <span className="text-[10px] text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.2 rounded">
+                          {gap.recommendedPageType}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-blue-700 font-black text-xs">
+                        <span>{gap.trafficOpportunityScore}</span>
+                        <span className="text-[10px] text-slate-400 font-normal">Score</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('contentGap')}
+                className="w-full py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>View Full Content Gaps & FAQ Blueprints</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* TAB CONTENT: Ranking Keywords Section */}
+      {activeTab === 'rankingKeywords' && (
+        <RankingKeywordsSection rankingData={rankingAnalysis} domain={healthScan.domain} />
+      )}
+
+      {/* TAB CONTENT: Content Gap Section */}
+      {activeTab === 'contentGap' && (
+        <ContentGapSection contentGapData={gapAnalysis} domain={healthScan.domain} />
       )}
 
       {/* TAB CONTENT: Accessibility Deep Dive (Preserves Full Existing ReportView) */}

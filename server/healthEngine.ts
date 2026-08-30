@@ -7,8 +7,11 @@ import {
   ContentAuditResult,
   PriorityActionItem,
   SeoAuditCheck,
+  RankingKeywordsAnalysisResult,
+  ContentGapAnalysisResult,
 } from '../src/types';
 import { executeAccessibilityScan, validateAndSanitizeUrl } from './scannerEngine';
+import { generateRankingKeywordsAnalysis, generateContentGapAnalysis } from '../src/utils/clientHealthScanner';
 
 /**
  * Unified Website Health & Growth Scanner Engine
@@ -854,5 +857,23 @@ export async function executeUnifiedHealthScan(rawUrl: string): Promise<UnifiedH
     technicalSeoAudit,
     performanceAudit,
     contentAudit,
+    rankingKeywordsAnalysis: generateRankingKeywordsAnalysis(
+      domain,
+      domain.split('.')[0] || 'website',
+      titleText,
+      h1Elements,
+      $('h2').map((_, el) => $(el).text().trim()).get().filter(Boolean),
+      bodyText,
+      targetUrl
+    ),
+    contentGapAnalysis: generateContentGapAnalysis(
+      domain,
+      domain.split('.')[0] || 'website',
+      titleText,
+      h1Elements,
+      $('h2').map((_, el) => $(el).text().trim()).get().filter(Boolean),
+      bodyText,
+      targetUrl
+    ),
   };
 }
