@@ -24,6 +24,7 @@ import {
   FileText,
   Target,
   ArrowRight,
+  ArrowLeft,
   ExternalLink,
 } from 'lucide-react';
 import { UserProfile } from '../types';
@@ -94,23 +95,41 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <button
-              onClick={() => navigateTo('/')}
-              aria-label="AccessFix AI Home"
-              className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 group cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-800 to-blue-600 flex items-center justify-center text-white shadow-xs group-hover:from-blue-900 group-hover:to-blue-700 transition-all">
-                <div className="w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-cyan-300 rounded-full"></div>
+            {/* Logo & Back to Scanner Button */}
+            <div className="flex items-center gap-2">
+              {/* Back to Scanner Arrow Button */}
+              <button
+                id="header-back-to-scanner-btn"
+                onClick={() => navigateTo('/')}
+                title="Back to Scanner (Landing Page)"
+                aria-label="Back to Scanner landing page"
+                className={`group flex items-center justify-center w-8 h-8 rounded-lg border transition-all cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                  activeRoute === '/'
+                    ? 'bg-slate-100/70 text-slate-400 border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300'
+                    : 'bg-white text-slate-700 border-slate-300/90 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-400 shadow-xs active:scale-95'
+                }`}
+              >
+                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+              </button>
+
+              {/* Logo */}
+              <button
+                onClick={() => navigateTo('/')}
+                aria-label="AccessFix AI Home"
+                className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 group cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-800 to-blue-600 flex items-center justify-center text-white shadow-xs group-hover:from-blue-900 group-hover:to-blue-700 transition-all">
+                  <div className="w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-cyan-300 rounded-full"></div>
+                  </div>
                 </div>
-              </div>
-              <div className="text-left">
-                <span className="text-xl font-extrabold tracking-tight text-slate-950">
-                  AccessFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-600">AI</span>
-                </span>
-              </div>
-            </button>
+                <div className="text-left">
+                  <span className="text-xl font-extrabold tracking-tight text-slate-950">
+                    AccessFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-600">AI</span>
+                  </span>
+                </div>
+              </button>
+            </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-600">
