@@ -3,6 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        function isWsError(msg) {
+          if (!msg) return false;
+          var str = typeof msg === 'string' ? msg : (msg.message || String(msg));
+          return str.indexOf('WebSocket closed without opened') !== -1 ||
+                 str.indexOf('failed to connect to websocket') !== -1;
+        }
+        window.addEventListener('error', function(e) {
+          if (isWsError(e.message) || isWsError(e.error)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return true;
+          }
+        }, true);
+        window.addEventListener('unhandledrejection', function(e) {
+          if (isWsError(e.reason)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return true;
+          }
+        }, true);
+        var origError = console.error;
+        console.error = function() {
+          for (var i = 0; i < arguments.length; i++) {
+            if (isWsError(arguments[i])) return;
+          }
+          return origError.apply(console, arguments);
+        };
+        var origWarn = console.warn;
+        console.warn = function() {
+          for (var i = 0; i < arguments.length; i++) {
+            if (isWsError(arguments[i])) return;
+          }
+          return origWarn.apply(console, arguments);
+        };
+      })();
+    </script>
     <title>AccessFix AI - Free Website Accessibility Checker & WCAG Fixer</title>
     <meta
       name="description"

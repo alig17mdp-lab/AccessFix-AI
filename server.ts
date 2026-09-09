@@ -208,6 +208,107 @@ async function startServer() {
     return res.json(comparison);
   });
 
+  // DOMAIN RATING & AUTHORITY CHECKER API
+  app.post('/api/tools/domain-rating', async (req: Request, res: Response) => {
+    try {
+      const { domain } = req.body;
+      if (!domain) {
+        return res.status(400).json({ error: 'Domain name is required.' });
+      }
+
+      let cleanDomain = String(domain).trim().toLowerCase();
+      cleanDomain = cleanDomain.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0].split('?')[0];
+
+      return res.json({
+        success: true,
+        domain: cleanDomain,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err: any) {
+      console.error('Domain rating API error:', err);
+      return res.status(500).json({ error: err.message || 'Failed to analyze domain rating.' });
+    }
+  });
+
+  // SITEMAP AUDITOR & FETCHER API
+  app.post('/api/tools/fetch-sitemap', async (req: Request, res: Response) => {
+    try {
+      let { url } = req.body;
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ error: 'Sitemap URL is required.' });
+      }
+
+      url = url.trim();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      // If user typed domain without path, suggest /sitemap.xml
+      try {
+        const parsed = new URL(url);
+        if (parsed.pathname === '/' || parsed.pathname === '') {
+          parsed.pathname = '/sitemap.xml';
+          url = parsed.toString();
+        }
+      } catch {
+        return res.status(400).json({ error: 'Invalid URL format provided.' });
+      }
+
+      console.log(`[SitemapAuditor] Fetching sitemap from: ${url}`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 9000);
+
+      try {
+        const fetchRes = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; AccessFix-SitemapAuditor/2.0; +https://accessfix.ai)',
+            'Accept': 'application/xml, text/xml, application/xhtml+xml, text/html;q=0.9, */*;q=0.8',
+          },
+          redirect: 'follow',
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!fetchRes.ok) {
+          return res.status(fetchRes.status).json({
+            error: `Failed to fetch sitemap: HTTP ${fetchRes.status} (${fetchRes.statusText}) from ${url}`,
+          });
+        }
+
+        const text = await fetchRes.text();
+        if (!text || text.trim().length === 0) {
+          return res.status(400).json({ error: 'The retrieved sitemap content was empty.' });
+        }
+
+        // Check if response is an HTML page (like Cloudflare or 404 page disguised)
+        if (text.includes('<!DOCTYPE html') && !text.includes('<urlset') && !text.includes('<sitemapindex')) {
+          return res.status(400).json({
+            error: `The endpoint returned an HTML document rather than an XML sitemap. Verify that ${url} points directly to an XML file.`,
+            rawSnippet: text.slice(0, 300),
+          });
+        }
+
+        return res.json({
+          success: true,
+          url,
+          xml: text,
+          byteLength: Buffer.byteLength(text, 'utf8'),
+        });
+      } catch (fetchErr: any) {
+        clearTimeout(timeoutId);
+        if (fetchErr.name === 'AbortError') {
+          return res.status(504).json({ error: `Connection timed out while fetching ${url} (exceeded 9 seconds).` });
+        }
+        return res.status(502).json({ error: `Could not connect to ${url}: ${fetchErr.message}` });
+      }
+    } catch (err: any) {
+      console.error('Fetch sitemap error:', err);
+      return res.status(500).json({ error: err.message || 'An unexpected error occurred while retrieving sitemap.' });
+    }
+  });
+
 
   // Run live or simulated accessibility scan
   app.post('/api/scan', async (req: Request, res: Response) => {
@@ -459,7 +560,7 @@ async function startServer() {
 
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, hmr: false },
       appType: 'spa',
     });
     app.use(vite.middlewares);

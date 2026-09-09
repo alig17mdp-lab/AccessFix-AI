@@ -123,6 +123,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </li>
               <li>
                 <button
+                  onClick={() => navigateTo('/tools/domain-rating-checker')}
+                  className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>Domain Rating Checker (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/sitemap-auditor')}
+                  className="text-teal-400 font-semibold hover:text-teal-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>XML Sitemap Auditor (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => navigateTo('/tools/color-contrast-checker')}
                   className="hover:text-emerald-400 transition-colors text-left"
                 >

@@ -24,9 +24,12 @@ import {
   ExternalLink,
   ChevronRight,
   Info,
+  FileCode,
 } from 'lucide-react';
 import { calculateContrast } from '../utils/contrastCalculator';
 import { KeywordPlannerView } from './KeywordPlannerView';
+import { DomainRatingChecker } from './DomainRatingChecker';
+import { SitemapAuditorView } from './SitemapAuditorView';
 
 interface FreeToolsViewProps {
   initialTool?: string;
@@ -134,10 +137,30 @@ const TOOL_DEFINITIONS: Record<string, ToolMeta> = {
     seoOneLiner: 'Discover 50 high search volume, low competition keywords with verified CTR, CPM, CPC, and granular topic clusters in a structured tabular view.',
     icon: Sparkles,
   },
+  'domain-rating': {
+    id: 'domain-rating',
+    label: 'Domain Rating Checker',
+    category: 'Authority & Backlink Intelligence',
+    badge: 'Real-Time DR, DA, Backlinks & Competitor Gaps',
+    title: 'Domain Rating & Backlinks Authority Checker',
+    seoOneLiner: 'Calculate real-time Domain Rating (DR), Domain Authority (DA), referring domains, backlinks, ranking keywords, competitors, and suggested backlink sites.',
+    icon: Globe,
+  },
+  'sitemap-auditor': {
+    id: 'sitemap-auditor',
+    label: 'XML Sitemap Auditor',
+    category: 'Technical SEO & Crawl Intelligence',
+    badge: 'Google Search Console Validator & Fixer',
+    title: 'XML Sitemap Audit & GSC Validator',
+    seoOneLiner: 'Audit website sitemaps for W3C lastmod errors, insecure HTTP protocols, broken XML namespaces, and download a 100% GSC-compliant repaired sitemap.xml.',
+    icon: FileCode,
+  },
 };
 
 export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'contrast', onNavigate }) => {
   const normalizeToolId = (id: string) => {
+    if (id === 'sitemap-auditor' || id === 'sitemap-audit' || id === 'sitemap' || id === 'sitemap-validator' || id === 'sitemap-checker') return 'sitemap-auditor';
+    if (id === 'domain-rating' || id === 'domain-rating-checker' || id === 'domain-authority' || id === 'domain-authority-checker' || id === 'backlinks' || id === 'backlink-checker') return 'domain-rating';
     if (id === 'keyword-planner' || id === 'keyword-planning' || id === 'keywords-planner') return 'keyword-planner';
     if (id === 'color-contrast' || id === 'contrast') return 'contrast';
     if (id === 'alt-text' || id === 'alt-text-checker') return 'alt-text';
@@ -404,7 +427,29 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all cursor-pointer shadow-xs hover:scale-102 border border-blue-400/30"
         >
           <Sparkles className="w-3.5 h-3.5 text-cyan-200" />
-          <span>AI Keyword Planner (50 KWs)</span>
+          <span>AI Keyword Planner</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveTool('domain-rating');
+            onNavigate('/tools/domain-rating-checker');
+          }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-indigo-800 via-blue-700 to-indigo-800 text-white hover:from-indigo-900 hover:to-blue-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-indigo-400/40"
+        >
+          <Globe className="w-3.5 h-3.5 text-blue-300" />
+          <span>Domain Rating Checker</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveTool('sitemap-auditor');
+            onNavigate('/tools/sitemap-auditor');
+          }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-teal-800 via-emerald-700 to-teal-800 text-white hover:from-teal-900 hover:to-emerald-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-teal-400/40"
+        >
+          <FileCode className="w-3.5 h-3.5 text-emerald-300" />
+          <span>Sitemap Auditor</span>
         </button>
 
         <div className="hidden md:block h-5 w-px bg-slate-200 mx-1" />
@@ -439,7 +484,21 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
         })}
       </div>
 
-      {/* TOOL 0: Full World-Class AI Keyword Planner & Semantic Clusters */}
+      {/* TOOL -1: Flagship XML Sitemap Audit & GSC Validator */}
+      {activeTool === 'sitemap-auditor' && (
+        <div className="animate-in fade-in">
+          <SitemapAuditorView onNavigate={onNavigate} />
+        </div>
+      )}
+
+      {/* TOOL 0: Flagship Domain Rating & Authority Checker */}
+      {activeTool === 'domain-rating' && (
+        <div className="animate-in fade-in">
+          <DomainRatingChecker onNavigate={onNavigate} />
+        </div>
+      )}
+
+      {/* TOOL 0.5: Full World-Class AI Keyword Planner & Semantic Clusters */}
       {activeTool === 'keyword-planner' && (
         <div className="animate-in fade-in">
           <KeywordPlannerView onNavigate={onNavigate} />

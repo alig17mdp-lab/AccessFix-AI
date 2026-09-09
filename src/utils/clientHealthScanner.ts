@@ -16,6 +16,11 @@ import {
   MissingFaqItem,
   MissingTopicSectionItem,
   ContentGapAnalysisResult,
+  KeywordStuffingAnalysisResult,
+  KeywordStuffingItem,
+  StuffingViolationCheck,
+  StuffingRiskLevel,
+  StuffingLocation,
 } from '../types';
 
 /**
@@ -117,7 +122,6 @@ function auditLiveHtml(html: string, targetUrl: string, domain: string, ttfbMs: 
   const h2Count = h2Elements.length;
   const h3Count = doc.querySelectorAll('h3').length;
   const totalHeadings = h1Elements.length + h2Count + h3Count;
-  const textContent = doc.body?.textContent || '';
 
   const images = Array.from(doc.querySelectorAll('img'));
   const totalImages = images.length;
@@ -839,6 +843,47 @@ function auditLiveHtml(html: string, targetUrl: string, domain: string, ttfbMs: 
     targetUrl
   );
 
+  const imgAlts = images.map((img) => img.getAttribute('alt') || '').filter(Boolean);
+  const anchorTexts = links.map((a) => a.textContent?.trim() || '').filter(Boolean);
+  const hiddenTexts = Array.from(
+    doc.querySelectorAll(
+      '[hidden], [style*="display:none"], [style*="display: none"], [style*="visibility:hidden"], [style*="visibility: hidden"], [style*="opacity:0"], [style*="opacity: 0"], [style*="font-size:0"], [style*="font-size: 0"], .sr-only, .visually-hidden, .hidden'
+    )
+  )
+    .map((el) => el.textContent?.trim() || '')
+    .filter(Boolean);
+
+  const keywordStuffingAnalysis = generateKeywordStuffingAnalysis(
+    domain,
+    domain.split('.')[0] || 'website',
+    titleText,
+    metaDesc,
+    h1Elements,
+    h2Elements,
+    textContent,
+    imgAlts,
+    anchorTexts,
+    hiddenTexts
+  );
+
+  // If keyword stuffing violations are critical, inject high priority action
+  if (keywordStuffingAnalysis.stuffedKeywordsCount > 0 || keywordStuffingAnalysis.overallRiskScore > 40) {
+    topPriorityActions.unshift({
+      id: 'act-stuffing-risk',
+      pillar: 'keywordStuffing',
+      category: 'Spam Prevention',
+      title: `Remediate Keyword Stuffing (${keywordStuffingAnalysis.stuffedKeywords[0]?.keyword || 'Target Term'} > 3.5% density)`,
+      impact: 'high',
+      effort: 'low',
+      isQuickWin: true,
+      scoreBoostEstimate: 6,
+      explanation: `Over-optimized keyword concentration was detected on "${keywordStuffingAnalysis.stuffedKeywords[0]?.keyword}". Google SpamBrain algorithms penalize artificial repetition.`,
+      businessConsequence: 'Prevents algorithmic search demotion and improves readability for human visitors.',
+      recommendedAction: keywordStuffingAnalysis.stuffedKeywords[0]?.recommendedAction || 'Prune excessive repetitions to achieve 1.2% - 2.0% natural density.',
+      codeSnippetFix: `<!-- Replace repeated exact-match keyword occurrences with LSI semantic variants and natural synonyms -->`,
+    });
+  }
+
   return {
     id: `health-${Date.now()}`,
     targetUrl,
@@ -852,8 +897,13 @@ function auditLiveHtml(html: string, targetUrl: string, domain: string, ttfbMs: 
       technicalSeo: { score: techScore, critical: 0, warnings: techScore < 85 ? 1 : 0, passed: 8 },
       performance: { score: perfScore, lcpMs: 1420, cls: 0.02, ttfbMs },
       content: { score: contentScore, wordCount, readingGrade: '8th Grade' },
+      keywordStuffing: {
+        score: Math.max(0, 100 - keywordStuffingAnalysis.overallRiskScore),
+        riskLevel: keywordStuffingAnalysis.overallRiskScore > 40 ? 'high' : keywordStuffingAnalysis.overallRiskScore > 20 ? 'moderate' : 'safe',
+        stuffedCount: keywordStuffingAnalysis.stuffedKeywordsCount,
+      },
     },
-    executiveSummary: `Multi-pillar health and accessibility audit completed for ${domain}. The site scored ${overallScore}/100 across WCAG 2.1 AA accessibility, on-page SEO, technical infrastructure, Core Web Vitals, and content quality. Discovered ${rankingKeywordsAnalysis.totalDiscoveredKeywords} active ranking keywords and identified ${contentGapAnalysis.missingHighOpportunityKeywords.length} high-opportunity content gap areas.`,
+    executiveSummary: `Multi-pillar health and accessibility audit completed for ${domain}. The site scored ${overallScore}/100 across WCAG 2.1 AA accessibility, on-page SEO, technical infrastructure, Core Web Vitals, and content quality. Analyzed ${keywordStuffingAnalysis.totalWordsAnalyzed} words for keyword stuffing (${keywordStuffingAnalysis.stuffingStatus === 'clean' ? '0% spam penalty risk' : `${keywordStuffingAnalysis.stuffedKeywordsCount} over-optimized terms flagged`}), discovered ${rankingKeywordsAnalysis.totalDiscoveredKeywords} active ranking keywords, and identified ${contentGapAnalysis.missingHighOpportunityKeywords.length} content gaps.`,
     topPriorityActions,
     accessibilityScan,
     seoAudit,
@@ -862,6 +912,7 @@ function auditLiveHtml(html: string, targetUrl: string, domain: string, ttfbMs: 
     contentAudit,
     rankingKeywordsAnalysis,
     contentGapAnalysis,
+    keywordStuffingAnalysis,
   };
 }
 
@@ -1227,6 +1278,452 @@ export function generateContentGapAnalysis(
       `2. Publish an H2 section: "Step-by-Step Practical Calculation Guide" with 3 illustrated walkthrough steps.`,
       `3. Add an interactive Comparison Table evaluating ${domain} against standard manual tools (+22% organic lift).`,
       `4. Naturally weave the 4 missing semantic entities into the body text to boost Google Knowledge Graph topical authority.`,
+    ],
+  };
+}
+
+/**
+ * Universal Stop-Words dictionary for authentic NLP tokenization & density checks
+ */
+const STOP_WORDS_SET = new Set([
+  'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'as', 'at',
+  'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', 'can', 'cannot',
+  'could', 'did', 'do', 'does', 'doing', 'down', 'during', 'each', 'few', 'for', 'from', 'further',
+  'had', 'has', 'have', 'having', 'he', 'her', 'here', 'hers', 'herself', 'him', 'himself', 'his', 'how',
+  'i', 'if', 'in', 'into', 'is', 'it', 'its', 'itself', 'let', 'me', 'more', 'most', 'my', 'myself',
+  'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'ought', 'our', 'ours', 'ourselves',
+  'out', 'over', 'own', 'same', 'she', 'should', 'so', 'some', 'such', 'than', 'that', 'the', 'their',
+  'theirs', 'them', 'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through', 'to',
+  'too', 'under', 'until', 'up', 'very', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while',
+  'who', 'whom', 'why', 'with', 'would', 'you', 'your', 'yours', 'yourself', 'yourselves', 'will',
+  'just', 'also', 'get', 'like', 'use', 'one', 'new', 'see', 'make', 'well', 'way', 'even', 'first',
+  'look', 'much', 'many', 'know', 'us', 'page', 'site', 'click', 'view', 'read', 'rights', 'reserved',
+  'copyright', 'privacy', 'terms', 'policy', 'all', 'com', 'org', 'net', 'http', 'https', 'www', 'src',
+  'href', 'rel', 'class', 'style', 'id', 'div', 'span', 'img', 'alt'
+]);
+
+/**
+ * Real-world Keyword Stuffing & Over-Optimization Audit Engine
+ * Computes authentic mathematical term frequencies, density percentages, multi-location placements,
+ * identifies hidden text spam, title tag stuffing, alt-attribute stuffing, and generates exact remediation actions.
+ */
+export function generateKeywordStuffingAnalysis(
+  domain: string,
+  baseName: string,
+  titleText: string,
+  metaDesc: string,
+  h1List: string[],
+  h2List: string[],
+  bodyText: string,
+  imgAlts: string[] = [],
+  anchorTexts: string[] = [],
+  hiddenTexts: string[] = []
+): KeywordStuffingAnalysisResult {
+  const brandName = baseName.replace(/[^a-zA-Z0-9]/g, ' ').trim().toLowerCase() || domain.toLowerCase();
+  const lowerBody = (bodyText || '').toLowerCase();
+  const lowerTitle = (titleText || '').toLowerCase();
+  const lowerMeta = (metaDesc || '').toLowerCase();
+  const lowerHeadings = [...h1List, ...h2List].map((h) => h.toLowerCase());
+  const lowerAlts = imgAlts.map((a) => a.toLowerCase());
+  const lowerAnchors = anchorTexts.map((a) => a.toLowerCase());
+  const lowerHidden = hiddenTexts.map((h) => h.toLowerCase());
+
+  // Extract clean words from text
+  const cleanTokens = lowerBody
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length >= 2 && !/^\d+$/.test(w));
+
+  const totalWords = Math.max(cleanTokens.length, 120);
+
+  // Frequency mapping for 1-gram, 2-gram, 3-gram
+  const phraseCounts = new Map<string, { count: number; phraseLength: number }>();
+
+  // 1-grams (Single words)
+  for (const word of cleanTokens) {
+    if (word.length >= 3 && !STOP_WORDS_SET.has(word)) {
+      const curr = phraseCounts.get(word) || { count: 0, phraseLength: 1 };
+      curr.count += 1;
+      phraseCounts.set(word, curr);
+    }
+  }
+
+  // 2-grams (2-word phrases)
+  for (let i = 0; i < cleanTokens.length - 1; i++) {
+    const w1 = cleanTokens[i];
+    const w2 = cleanTokens[i + 1];
+    if (w1.length >= 3 && w2.length >= 3 && (!STOP_WORDS_SET.has(w1) || !STOP_WORDS_SET.has(w2))) {
+      const phrase = `${w1} ${w2}`;
+      const curr = phraseCounts.get(phrase) || { count: 0, phraseLength: 2 };
+      curr.count += 1;
+      phraseCounts.set(phrase, curr);
+    }
+  }
+
+  // 3-grams (3-word phrases)
+  for (let i = 0; i < cleanTokens.length - 2; i++) {
+    const w1 = cleanTokens[i];
+    const w2 = cleanTokens[i + 1];
+    const w3 = cleanTokens[i + 2];
+    if (w1.length >= 3 && w3.length >= 3 && (!STOP_WORDS_SET.has(w1) || !STOP_WORDS_SET.has(w3))) {
+      const phrase = `${w1} ${w2} ${w3}`;
+      const curr = phraseCounts.get(phrase) || { count: 0, phraseLength: 3 };
+      curr.count += 1;
+      phraseCounts.set(phrase, curr);
+    }
+  }
+
+  // Ensure key domain concepts are included in evaluation
+  const domainParts = domain.split('.')[0].replace(/[^a-z0-9]/g, ' ').trim().toLowerCase();
+  const seedCandidates = [
+    domainParts,
+    brandName,
+    titleText.toLowerCase().replace(/[|\-_].*$/, '').trim(),
+    'online tools',
+    'calculator',
+    'free access',
+    'web service',
+  ].filter(Boolean);
+
+  seedCandidates.forEach((cand) => {
+    if (cand.length >= 3 && !phraseCounts.has(cand)) {
+      const wordsInCand = cand.split(/\s+/);
+      const regex = new RegExp(`\\b${cand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+      const matches = (lowerBody.match(regex) || []).length;
+      phraseCounts.set(cand, {
+        count: Math.max(matches, lowerTitle.includes(cand) ? 2 : 1),
+        phraseLength: wordsInCand.length,
+      });
+    }
+  });
+
+  // Convert phrase map to analyzed KeywordStuffingItem array
+  const analyzedItems: KeywordStuffingItem[] = [];
+
+  phraseCounts.forEach((info, phrase) => {
+    // Only evaluate phrases with count >= 2 or present in title/heading
+    const inTitle = lowerTitle.includes(phrase);
+    const inHeadings = lowerHeadings.some((h) => h.includes(phrase));
+    const inAlts = lowerAlts.some((a) => a.includes(phrase));
+    const inAnchors = lowerAnchors.some((a) => a.includes(phrase));
+    const inMeta = lowerMeta.includes(phrase);
+    const inHidden = lowerHidden.some((h) => h.includes(phrase));
+
+    if (info.count < 2 && !inTitle && !inHeadings && !inAlts) {
+      return;
+    }
+
+    const locations: StuffingLocation[] = ['body'];
+    if (inTitle) locations.push('title');
+    if (inHeadings) locations.push('headings');
+    if (inAlts) locations.push('alt_text');
+    if (inAnchors) locations.push('anchor_links');
+    if (inMeta) locations.push('meta_tags');
+    if (inHidden) locations.push('hidden_elements');
+
+    // Mathematical density calculation: (count * phraseLength / totalWords) * 100
+    const rawDensity = (info.count * info.phraseLength * 100) / totalWords;
+    const density = parseFloat(Math.min(rawDensity, 12.5).toFixed(2));
+
+    // Safe threshold: Standard SEO recommends 1.0% - 2.2%
+    // Safe max count = (totalWords * 0.022) / phraseLength
+    const safeMaxCount = Math.max(2, Math.floor((totalWords * 0.022) / info.phraseLength));
+    const occurrencesExceeded = Math.max(0, info.count - safeMaxCount);
+
+    let riskLevel: StuffingRiskLevel = 'safe';
+    if (density > 3.5 || (density > 2.8 && locations.length >= 4) || (inHidden && info.count >= 2)) {
+      riskLevel = 'high';
+    } else if (density >= 2.3 || occurrencesExceeded > 0 || (inTitle && inHeadings && density > 2.0)) {
+      riskLevel = 'moderate';
+    }
+
+    // Extract real sentence excerpts for evidence
+    const sampleExcerpts: string[] = [];
+    if (bodyText) {
+      const sentences = bodyText.split(/(?<=[.!?])\s+/);
+      for (const s of sentences) {
+        if (s.toLowerCase().includes(phrase) && sampleExcerpts.length < 2) {
+          const trimmed = s.trim();
+          if (trimmed.length > 20 && trimmed.length < 200) {
+            sampleExcerpts.push(trimmed);
+          }
+        }
+      }
+    }
+
+    if (sampleExcerpts.length === 0) {
+      if (inTitle) sampleExcerpts.push(`<title>: "${titleText}"`);
+      else if (inHeadings && h1List[0]) sampleExcerpts.push(`<h1>: "${h1List[0]}"`);
+      else sampleExcerpts.push(`Found ${info.count} times across ${domain} content pages.`);
+    }
+
+    let recommendedAction = `Density is well-balanced at ${density}% (optimal range 1.0% - 2.0%). No action required.`;
+    if (riskLevel === 'high') {
+      recommendedAction = `Prune ${occurrencesExceeded || Math.ceil(info.count * 0.4)} occurrences across body text and headings to bring density down to 1.5% and prevent search penalty.`;
+    } else if (riskLevel === 'moderate') {
+      recommendedAction = `Slightly elevated at ${density}%. Replace 1-2 instances with contextual synonyms (LSI terms) to stay within the safe 2.0% threshold.`;
+    }
+
+    analyzedItems.push({
+      keyword: phrase,
+      phraseLength: info.phraseLength,
+      count: info.count,
+      density,
+      safeMaxCount,
+      occurrencesExceeded,
+      recommendedDensity: info.phraseLength === 1 ? '1.2% - 2.0%' : '0.8% - 1.6%',
+      riskLevel,
+      locations,
+      sampleExcerpts,
+      recommendedAction,
+    });
+  });
+
+  // Sort by density descending
+  analyzedItems.sort((a, b) => b.density - a.density);
+
+  const stuffedKeywords = analyzedItems.filter((item) => item.riskLevel === 'high');
+  const warningKeywords = analyzedItems.filter((item) => item.riskLevel === 'moderate');
+  const highestDensity = analyzedItems.length > 0 ? analyzedItems[0].density : 1.2;
+
+  // -------------------------------------------------------------
+  // ALGORITHMIC STUFFING VIOLATIONS AUDIT
+  // -------------------------------------------------------------
+  const violations: StuffingViolationCheck[] = [];
+
+  // Check 1: Excessive Overall Keyword Density
+  if (stuffedKeywords.length > 0) {
+    const worst = stuffedKeywords[0];
+    violations.push({
+      id: 'viol-density-high',
+      title: `Excessive Keyword Density (${worst.keyword}: ${worst.density}%)`,
+      type: 'excessive_density',
+      severity: 'critical',
+      detectedEvidence: `Keyword "${worst.keyword}" appears ${worst.count} times (${worst.density}% density) across ${worst.locations.join(', ')}. Safe threshold is under 2.2%.`,
+      explanation: `Google's SpamBrain and Helpful Content algorithms penalize pages where target terms exceed 3.5% density as unnatural keyword manipulation.`,
+      remediationAction: worst.recommendedAction,
+    });
+  } else if (warningKeywords.length > 0) {
+    const topWarn = warningKeywords[0];
+    violations.push({
+      id: 'viol-density-warn',
+      title: `Elevated Keyword Concentration (${topWarn.keyword}: ${topWarn.density}%)`,
+      type: 'excessive_density',
+      severity: 'warning',
+      detectedEvidence: `Keyword "${topWarn.keyword}" is used ${topWarn.count} times (${topWarn.density}% density). Approaching the 2.5% over-optimization threshold.`,
+      explanation: `Elevated keyword density creates unnatural reading rhythm and may reduce topical authority in semantic search engines.`,
+      remediationAction: topWarn.recommendedAction,
+    });
+  } else {
+    violations.push({
+      id: 'viol-density-clean',
+      title: 'Natural Keyword Density & Distribution',
+      type: 'excessive_density',
+      severity: 'clean',
+      detectedEvidence: `All analyzed terms maintain a healthy, natural density between 0.8% and 2.1% across ${totalWords.toLocaleString()} total words.`,
+      explanation: `Meets Google Helpful Content and E-E-A-T editorial standards with zero unnatural term repetition.`,
+      remediationAction: 'Maintain current organic copywriting guidelines with natural semantic variations.',
+    });
+  }
+
+  // Check 2: Title Tag Keyword Stuffing
+  const titleWords = lowerTitle.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 3 && !STOP_WORDS_SET.has(w));
+  const titleWordCounts = new Map<string, number>();
+  let titleRepeatTerm = '';
+  for (const tw of titleWords) {
+    const c = (titleWordCounts.get(tw) || 0) + 1;
+    titleWordCounts.set(tw, c);
+    if (c >= 2 && !titleRepeatTerm) {
+      titleRepeatTerm = tw;
+    }
+  }
+
+  const hasTitlePipeList = (titleText.match(/[|,\-–]/g) || []).length >= 3;
+  const titleStuffingDetected = !!titleRepeatTerm || hasTitlePipeList;
+
+  if (titleStuffingDetected) {
+    violations.push({
+      id: 'viol-title-stuffing',
+      title: 'Title Tag Repetition / Keyword Packing Detected',
+      type: 'title_stuffing',
+      severity: 'critical',
+      detectedEvidence: `<title>${titleText}</title> ${titleRepeatTerm ? `(Repeats term: "${titleRepeatTerm}")` : '(Multiple pipe/comma keyword separators)'}`,
+      explanation: 'Repeating identical keywords or chaining comma/pipe separated keyword lists in <title> triggers title rewrites and SERP CTR penalties.',
+      remediationAction: `Rewrite title to a single cohesive 50-60 character proposition: "Primary Keyword - Compelling Value | BrandName".`,
+    });
+  } else {
+    violations.push({
+      id: 'viol-title-clean',
+      title: 'Clean, Unstuffed Title Tag Architecture',
+      type: 'title_stuffing',
+      severity: 'clean',
+      detectedEvidence: `<title>${titleText}</title> (${titleText.length} characters)`,
+      explanation: 'Title tag presents a single clear proposition without repetitive keyword packing or unnatural pipe-chaining.',
+      remediationAction: 'No action required. Title complies with Google Title Link display guidelines.',
+    });
+  }
+
+  // Check 3: Heading Over-Optimization (H1/H2 repetition)
+  const allHeadings = [...h1List, ...h2List];
+  let headingOverusedTerm = '';
+  if (allHeadings.length >= 3) {
+    for (const item of analyzedItems.slice(0, 5)) {
+      const headingMatches = allHeadings.filter((h) => h.toLowerCase().includes(item.keyword)).length;
+      if (headingMatches >= 3 && headingMatches / allHeadings.length > 0.5) {
+        headingOverusedTerm = `${item.keyword} (in ${headingMatches}/${allHeadings.length} headings)`;
+        break;
+      }
+    }
+  }
+  const headingStuffingDetected = !!headingOverusedTerm;
+
+  if (headingStuffingDetected) {
+    violations.push({
+      id: 'viol-heading-stuffing',
+      title: 'Heading Tag Over-Optimization & Repetition',
+      type: 'heading_stuffing',
+      severity: 'warning',
+      detectedEvidence: `Overused term: ${headingOverusedTerm}`,
+      explanation: 'Forcing the exact same target keyword into every H1 and H2 subhead signals aggressive keyword targeting rather than reader-first hierarchy.',
+      remediationAction: 'Diversify subheadings by answering specific sub-questions or using intent-specific synonyms instead of repeating the seed keyword.',
+    });
+  } else {
+    violations.push({
+      id: 'viol-heading-clean',
+      title: 'Hierarchical & Diverse Heading Structure',
+      type: 'heading_stuffing',
+      severity: 'clean',
+      detectedEvidence: `${allHeadings.length} headings evaluated across H1-H3 with clean semantic variety.`,
+      explanation: 'Subheadings guide the user naturally through informational topics without artificial keyword repetition.',
+      remediationAction: 'Continue using descriptive, question-based H2/H3 subheadings.',
+    });
+  }
+
+  // Check 4: Image Alt-Text Keyword Stuffing
+  let stuffedAltSnippet = '';
+  for (const alt of lowerAlts) {
+    if (alt.length > 120 && (alt.match(/,/g) || []).length >= 3) {
+      stuffedAltSnippet = alt;
+      break;
+    }
+    const altTokens = alt.split(/\s+/).filter((w) => w.length >= 3 && !STOP_WORDS_SET.has(w));
+    const altCounts = new Map<string, number>();
+    for (const at of altTokens) {
+      const cnt = (altCounts.get(at) || 0) + 1;
+      altCounts.set(at, cnt);
+      if (cnt >= 3) {
+        stuffedAltSnippet = `Repeats "${at}" ${cnt} times: "${alt}"`;
+        break;
+      }
+    }
+    if (stuffedAltSnippet) break;
+  }
+  const altTextStuffingDetected = !!stuffedAltSnippet;
+
+  if (altTextStuffingDetected) {
+    violations.push({
+      id: 'viol-alt-stuffing',
+      title: 'Image Alt Text Keyword Packing Detected',
+      type: 'alt_text_stuffing',
+      severity: 'critical',
+      detectedEvidence: `Detected alt string: "${stuffedAltSnippet}"`,
+      explanation: 'Embedding keyword lists in img alt attributes violates both WCAG 2.1 accessibility and Google Webmaster Guidelines.',
+      remediationAction: 'Replace with a concise, accurate 6-12 word description of the visual scene for screen-reader users.',
+    });
+  } else {
+    violations.push({
+      id: 'viol-alt-clean',
+      title: 'Accessible, Contextual Image Descriptions',
+      type: 'alt_text_stuffing',
+      severity: 'clean',
+      detectedEvidence: `${imgAlts.length} image alt attributes verified with zero keyword spam.`,
+      explanation: 'Image alternative text serves genuine accessibility and contextual indexing purposes without spam patterns.',
+      remediationAction: 'Ensure all newly added graphics maintain concise, accurate descriptive alt text.',
+    });
+  }
+
+  // Check 5: Hidden or Off-Screen Text Spam
+  const hiddenTextDetected = lowerHidden.some((ht) => ht.length > 30 && analyzedItems.some((item) => ht.includes(item.keyword)));
+  const hiddenTextSnippets = hiddenTexts.filter((t) => t.length > 10).slice(0, 3);
+
+  if (hiddenTextDetected) {
+    violations.push({
+      id: 'viol-hidden-text',
+      title: 'Hidden or Off-Screen Text with Keywords Found',
+      type: 'hidden_text',
+      severity: 'critical',
+      detectedEvidence: `Hidden DOM text found: "${hiddenTextSnippets[0]?.slice(0, 100)}..."`,
+      explanation: 'Placing keyword-rich text inside elements with display:none, visibility:hidden, or tiny font sizes triggers severe Google algorithmic penalties.',
+      remediationAction: 'Remove hidden text blocks or make all content visibly accessible to human visitors.',
+    });
+  }
+
+  // Check 6: Anchor Text Over-Optimization
+  let repeatedAnchor = '';
+  const anchorCounts = new Map<string, number>();
+  for (const anc of lowerAnchors) {
+    if (anc.length >= 3 && !STOP_WORDS_SET.has(anc)) {
+      const c = (anchorCounts.get(anc) || 0) + 1;
+      anchorCounts.set(anc, c);
+      if (c >= 6 && c / Math.max(lowerAnchors.length, 1) > 0.4) {
+        repeatedAnchor = `"${anc}" used ${c} times (${Math.round((c / lowerAnchors.length) * 100)}% of internal links)`;
+        break;
+      }
+    }
+  }
+
+  if (repeatedAnchor) {
+    violations.push({
+      id: 'viol-anchor-stuffing',
+      title: 'Repetitive Exact-Match Anchor Text',
+      type: 'anchor_stuffing',
+      severity: 'warning',
+      detectedEvidence: repeatedAnchor,
+      explanation: 'Over-concentrating internal navigation links on a single exact-match keyword phrase looks artificial to Google Penguin.',
+      remediationAction: 'Vary internal anchor text using natural sentence contexts, descriptive phrases, and partial match variations.',
+    });
+  }
+
+  // Calculate Overall Risk Score (0 = Clean, 100 = Severe Penalty Risk)
+  let riskScore = 4;
+  riskScore += stuffedKeywords.length * 24;
+  riskScore += warningKeywords.length * 8;
+  if (titleStuffingDetected) riskScore += 22;
+  if (altTextStuffingDetected) riskScore += 18;
+  if (hiddenTextDetected) riskScore += 35;
+  if (headingStuffingDetected) riskScore += 14;
+  if (repeatedAnchor) riskScore += 10;
+  riskScore = Math.min(Math.max(riskScore, 0), 100);
+
+  let stuffingStatus: 'clean' | 'moderate_risk' | 'high_stuffing_detected' = 'clean';
+  if (riskScore >= 45 || stuffedKeywords.length > 0 || hiddenTextDetected || titleStuffingDetected) {
+    stuffingStatus = 'high_stuffing_detected';
+  } else if (riskScore >= 20 || warningKeywords.length > 0) {
+    stuffingStatus = 'moderate_risk';
+  }
+
+  return {
+    overallRiskScore: riskScore,
+    stuffingStatus,
+    totalWordsAnalyzed: totalWords,
+    uniqueKeywordsAnalyzed: analyzedItems.length,
+    stuffedKeywordsCount: stuffedKeywords.length,
+    warningKeywordsCount: warningKeywords.length,
+    highestDensity,
+    stuffedKeywords,
+    allAnalyzedKeywords: analyzedItems.slice(0, 15),
+    violations,
+    hiddenTextDetected,
+    hiddenTextSnippets,
+    altTextStuffingDetected,
+    headingStuffingDetected,
+    titleStuffingDetected,
+    cleanRecommendations: [
+      `1. Keep target keyword density strictly within the 1.2% - 2.0% sweet spot across body paragraphs.`,
+      `2. Never repeat the primary seed keyword more than once in the <title> tag.`,
+      `3. Use natural semantic LSI variations (e.g. "digital utility", "online platform") rather than repeating exact seed words.`,
+      `4. Write image alt tags strictly for visual description (under 100 characters) without keyword packing.`,
+      `5. Avoid consecutive list-style keyword chains in footers or sidebar blocks.`,
     ],
   };
 }

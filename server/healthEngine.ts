@@ -11,7 +11,11 @@ import {
   ContentGapAnalysisResult,
 } from '../src/types';
 import { executeAccessibilityScan, validateAndSanitizeUrl } from './scannerEngine';
-import { generateRankingKeywordsAnalysis, generateContentGapAnalysis } from '../src/utils/clientHealthScanner';
+import {
+  generateRankingKeywordsAnalysis,
+  generateContentGapAnalysis,
+  generateKeywordStuffingAnalysis,
+} from '../src/utils/clientHealthScanner';
 
 /**
  * Unified Website Health & Growth Scanner Engine
@@ -811,6 +815,26 @@ export async function executeUnifiedHealthScan(rawUrl: string): Promise<UnifiedH
 
   const durationMs = Date.now() - startTime;
 
+  const imgAlts = $('img').map((_, el) => $(el).attr('alt') || '').get().filter(Boolean);
+  const anchorTexts = $('a').map((_, el) => $(el).text().trim()).get().filter(Boolean);
+  const hiddenTexts = $('[hidden], [style*="display:none"], [style*="display: none"], [style*="visibility:hidden"], [style*="visibility: hidden"], .sr-only, .visually-hidden, .hidden')
+    .map((_, el) => $(el).text().trim())
+    .get()
+    .filter(Boolean);
+
+  const keywordStuffingAnalysis = generateKeywordStuffingAnalysis(
+    domain,
+    domain.split('.')[0] || 'website',
+    titleText,
+    metaDescText,
+    h1Elements,
+    $('h2').map((_, el) => $(el).text().trim()).get().filter(Boolean),
+    bodyText,
+    imgAlts,
+    anchorTexts,
+    hiddenTexts
+  );
+
   return {
     id: `unified-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     targetUrl,
@@ -849,8 +873,13 @@ export async function executeUnifiedHealthScan(rawUrl: string): Promise<UnifiedH
         wordCount,
         readingGrade,
       },
+      keywordStuffing: {
+        score: Math.max(0, 100 - keywordStuffingAnalysis.overallRiskScore),
+        riskLevel: keywordStuffingAnalysis.overallRiskScore > 40 ? 'high' : keywordStuffingAnalysis.overallRiskScore > 20 ? 'moderate' : 'safe',
+        stuffedCount: keywordStuffingAnalysis.stuffedKeywordsCount,
+      },
     },
-    executiveSummary: `AccessFix AI multi-vector health scan evaluated ${domain} across 5 core growth pillars. Overall site health is rated at ${overallScore}/100 with ${topPriorityActions.filter((a) => a.isQuickWin).length} immediate Quick-Win optimizations available. Resolving the top priority actions will improve search engine discoverability, user accessibility, and page load velocity.`,
+    executiveSummary: `AccessFix AI multi-vector health scan evaluated ${domain} across core growth pillars. Overall site health is rated at ${overallScore}/100 with ${topPriorityActions.filter((a) => a.isQuickWin).length} immediate Quick-Win optimizations available. Analyzed ${keywordStuffingAnalysis.totalWordsAnalyzed} words for keyword stuffing (${keywordStuffingAnalysis.stuffingStatus === 'clean' ? '0% spam penalty risk' : `${keywordStuffingAnalysis.stuffedKeywordsCount} over-optimized terms flagged`}).`,
     topPriorityActions: topPriorityActions.slice(0, 5),
     accessibilityScan,
     seoAudit,
@@ -875,5 +904,6 @@ export async function executeUnifiedHealthScan(rawUrl: string): Promise<UnifiedH
       bodyText,
       targetUrl
     ),
+    keywordStuffingAnalysis,
   };
 }

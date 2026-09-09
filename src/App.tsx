@@ -17,6 +17,8 @@ import { AdminView } from './components/AdminView';
 import { AuthModal } from './components/AuthModal';
 import { SiteComparisonView } from './components/SiteComparisonView';
 import { KeywordPlannerView } from './components/KeywordPlannerView';
+import { DomainRatingChecker } from './components/DomainRatingChecker';
+import { SitemapAuditorView } from './components/SitemapAuditorView';
 import { KineticMotionExperience } from './components/KineticMotionExperience';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
@@ -332,6 +334,32 @@ export default function App() {
             onNavigateToTool={(toolSlug) => handleNavigate(`/tools/${toolSlug}`)}
           />
         )}
+        {activeRoute === '/health-report' && !currentUnifiedScan && (
+          <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+              <ShieldCheck className="w-8 h-8" />
+            </div>
+            <h2 className="text-3xl font-black text-slate-900">Universal Website Health &amp; Compliance Audit</h2>
+            <p className="text-slate-600 max-w-xl mx-auto text-sm leading-relaxed">
+              No audit report is currently loaded in your session. Launch a live scan or explore our instant sample audit report.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+              <button
+                onClick={handleViewSampleReport}
+                disabled={isHeroScanning}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+              >
+                {isHeroScanning ? 'Analyzing Website...' : 'Load Live Sample Audit (calculator.net)'}
+              </button>
+              <button
+                onClick={() => setActiveRoute('/')}
+                className="px-6 py-3 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-bold rounded-xl shadow-2xs transition-colors cursor-pointer"
+              >
+                Scan My Own Domain
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ROUTE 2B: Deep-Dive Accessibility Scan Report View */}
         {activeRoute === '/report' && currentScan && (
@@ -446,11 +474,37 @@ export default function App() {
           <KeywordPlannerView onNavigate={handleNavigate} />
         )}
 
+        {/* ROUTE 10.5: Flagship Domain Rating & Authority Checker */}
+        {(activeRoute === '/tools/domain-rating-checker' ||
+          activeRoute === '/tools/domain-rating' ||
+          activeRoute === '/tools/domain-authority-checker' ||
+          activeRoute === '/tools/backlink-checker') && (
+          <DomainRatingChecker onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.6: Flagship XML Sitemap Audit & GSC Validator */}
+        {(activeRoute === '/tools/sitemap-auditor' ||
+          activeRoute === '/tools/sitemap-audit' ||
+          activeRoute === '/tools/sitemap-validator' ||
+          activeRoute === '/tools/sitemap-checker' ||
+          activeRoute === '/tools/sitemap') && (
+          <SitemapAuditorView onNavigate={handleNavigate} />
+        )}
+
         {/* ROUTE 11: Free Tools Suite (Accessibility + SEO + Growth) */}
         {activeRoute.startsWith('/tools') &&
           activeRoute !== '/tools/site-comparison' &&
           activeRoute !== '/tools/keyword-planner' &&
-          activeRoute !== '/tools/keyword-planning' && (
+          activeRoute !== '/tools/keyword-planning' &&
+          activeRoute !== '/tools/domain-rating-checker' &&
+          activeRoute !== '/tools/domain-rating' &&
+          activeRoute !== '/tools/domain-authority-checker' &&
+          activeRoute !== '/tools/backlink-checker' &&
+          activeRoute !== '/tools/sitemap-auditor' &&
+          activeRoute !== '/tools/sitemap-audit' &&
+          activeRoute !== '/tools/sitemap-validator' &&
+          activeRoute !== '/tools/sitemap-checker' &&
+          activeRoute !== '/tools/sitemap' && (
           <FreeToolsView
             initialTool={
               activeRoute === '/tools/alt-text-checker'

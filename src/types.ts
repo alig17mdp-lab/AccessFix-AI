@@ -388,7 +388,7 @@ export interface SeoPageData {
 // UNIFIED WEBSITE HEALTH & GROWTH PLATFORM TYPES
 // -------------------------------------------------------------
 
-export type HealthPillar = 'accessibility' | 'seo' | 'technicalSeo' | 'performance' | 'content' | 'rankingKeywords' | 'contentGap';
+export type HealthPillar = 'accessibility' | 'seo' | 'technicalSeo' | 'performance' | 'content' | 'rankingKeywords' | 'contentGap' | 'keywordStuffing';
 
 export type ActionImpact = 'high' | 'medium' | 'low';
 export type ActionEffort = 'low' | 'medium' | 'high';
@@ -640,6 +640,52 @@ export interface ContentGapAnalysisResult {
   actionableExpansionPlan: string[];
 }
 
+export type StuffingRiskLevel = 'safe' | 'moderate' | 'high';
+export type StuffingLocation = 'body' | 'title' | 'headings' | 'alt_text' | 'meta_tags' | 'anchor_links' | 'hidden_elements';
+
+export interface KeywordStuffingItem {
+  keyword: string;
+  phraseLength: number; // 1, 2, or 3-word phrase
+  count: number;
+  density: number; // e.g. 4.2 (%)
+  safeMaxCount: number; // e.g. 5
+  occurrencesExceeded: number; // e.g. +7 occurrences above safe 2.2% threshold
+  recommendedDensity: string; // e.g. "1.2% - 2.0%"
+  riskLevel: StuffingRiskLevel;
+  locations: StuffingLocation[];
+  sampleExcerpts: string[];
+  recommendedAction: string;
+}
+
+export interface StuffingViolationCheck {
+  id: string;
+  title: string;
+  type: 'excessive_density' | 'title_stuffing' | 'heading_stuffing' | 'alt_text_stuffing' | 'hidden_text' | 'anchor_stuffing' | 'repetition_pattern';
+  severity: 'critical' | 'warning' | 'clean';
+  detectedEvidence: string;
+  explanation: string;
+  remediationAction: string;
+}
+
+export interface KeywordStuffingAnalysisResult {
+  overallRiskScore: number; // 0 to 100 (0 = 100% clean, 100 = severe penalty risk)
+  stuffingStatus: 'clean' | 'moderate_risk' | 'high_stuffing_detected';
+  totalWordsAnalyzed: number;
+  uniqueKeywordsAnalyzed: number;
+  stuffedKeywordsCount: number; // terms with > 3.5% density
+  warningKeywordsCount: number; // terms with 2.3% - 3.5% density
+  highestDensity: number; // highest detected single density %
+  stuffedKeywords: KeywordStuffingItem[];
+  allAnalyzedKeywords: KeywordStuffingItem[];
+  violations: StuffingViolationCheck[];
+  hiddenTextDetected: boolean;
+  hiddenTextSnippets: string[];
+  altTextStuffingDetected: boolean;
+  headingStuffingDetected: boolean;
+  titleStuffingDetected: boolean;
+  cleanRecommendations: string[];
+}
+
 export interface UnifiedHealthScan {
   id: string;
   targetUrl: string;
@@ -654,6 +700,7 @@ export interface UnifiedHealthScan {
     technicalSeo: { score: number; critical: number; warnings: number; passed: number };
     performance: { score: number; lcpMs: number; cls: number; ttfbMs: number };
     content: { score: number; wordCount: number; readingGrade: string };
+    keywordStuffing?: { score: number; riskLevel: StuffingRiskLevel; stuffedCount: number };
   };
   executiveSummary: string;
   topPriorityActions: PriorityActionItem[];
@@ -664,6 +711,7 @@ export interface UnifiedHealthScan {
   contentAudit: ContentAuditResult;
   rankingKeywordsAnalysis?: RankingKeywordsAnalysisResult;
   contentGapAnalysis?: ContentGapAnalysisResult;
+  keywordStuffingAnalysis?: KeywordStuffingAnalysisResult;
 }
 
 // -------------------------------------------------------------

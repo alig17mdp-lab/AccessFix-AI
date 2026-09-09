@@ -27,12 +27,18 @@ import {
   Target,
   HelpCircle,
   Award,
+  ShieldAlert,
 } from 'lucide-react';
 import { UnifiedHealthScan, HealthPillar, PriorityActionItem } from '../types';
 import { ReportView } from './ReportView';
 import { RankingKeywordsSection } from './RankingKeywordsSection';
 import { ContentGapSection } from './ContentGapSection';
-import { generateRankingKeywordsAnalysis, generateContentGapAnalysis } from '../utils/clientHealthScanner';
+import { KeywordStuffingSection } from './KeywordStuffingSection';
+import {
+  generateRankingKeywordsAnalysis,
+  generateContentGapAnalysis,
+  generateKeywordStuffingAnalysis,
+} from '../utils/clientHealthScanner';
 
 interface UnifiedHealthReportViewProps {
   healthScan?: UnifiedHealthScan;
@@ -110,6 +116,19 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
     [],
     '',
     healthScan.targetUrl
+  );
+
+  const stuffingAnalysis = healthScan.keywordStuffingAnalysis || generateKeywordStuffingAnalysis(
+    healthScan.domain,
+    healthScan.domain.split('.')[0] || 'website',
+    healthScan.seoAudit?.title?.text || '',
+    healthScan.seoAudit?.metaDescription?.text || '',
+    healthScan.seoAudit?.headings?.h1List || [],
+    healthScan.seoAudit?.headings?.h2List || [],
+    '',
+    [],
+    [],
+    []
   );
 
   return (
@@ -316,6 +335,41 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
             </div>
           </button>
 
+          {/* Pillar 6: Keyword Stuffing */}
+          <button
+            onClick={() => setActiveTab('keywordStuffing')}
+            className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+              activeTab === 'keywordStuffing'
+                ? 'border-rose-600 bg-rose-50/50 shadow-xs ring-1 ring-rose-500'
+                : 'border-slate-200 bg-white hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-900">Keyword Stuffing</span>
+              {stuffingAnalysis.stuffingStatus === 'high_stuffing_detected' ? (
+                <AlertTriangle className="w-4 h-4 text-rose-600" />
+              ) : stuffingAnalysis.stuffingStatus === 'moderate_risk' ? (
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              )}
+            </div>
+            <div className={`text-2xl font-black my-1 ${
+              stuffingAnalysis.stuffingStatus === 'high_stuffing_detected'
+                ? 'text-rose-600'
+                : stuffingAnalysis.stuffingStatus === 'moderate_risk'
+                ? 'text-amber-600'
+                : 'text-emerald-600'
+            }`}>
+              {stuffingAnalysis.stuffingStatus === 'clean' ? '0% Risk' : `${stuffingAnalysis.stuffedKeywordsCount} Stuffed`}
+            </div>
+            <div className={`text-[11px] font-semibold ${
+              stuffingAnalysis.stuffingStatus === 'clean' ? 'text-emerald-700' : 'text-rose-700'
+            }`}>
+              {stuffingAnalysis.stuffingStatus === 'clean' ? 'Natural Density (Safe)' : `${stuffingAnalysis.overallRiskScore}/100 Penalty Risk`}
+            </div>
+          </button>
+
           {/* Tab: View All Action Items */}
           <button
             onClick={() => setActiveTab('overview')}
@@ -374,6 +428,19 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
           >
             <Target className="w-3.5 h-3.5 text-amber-600" />
             <span>Content Gap ({gapAnalysis.missingHighOpportunityKeywords.length} Gaps)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('keywordStuffing')}
+            className={`pb-3 px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'keywordStuffing'
+                ? 'border-rose-600 text-rose-600'
+                : 'border-transparent hover:text-slate-900'
+            }`}
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+            <span>
+              Keyword Stuffing ({stuffingAnalysis.stuffingStatus === 'clean' ? '0% Risk' : `${stuffingAnalysis.stuffedKeywordsCount} Flagged`})
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('accessibility')}
@@ -507,8 +574,8 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
             ))}
           </div>
 
-          {/* Ranking Keywords & Content Gap Intelligence Summary Hub */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+          {/* Ranking Keywords, Content Gap & Keyword Stuffing Intelligence Summary Hub */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
             {/* Ranking Keywords Quick Preview */}
             <div className="bg-gradient-to-br from-emerald-50/70 via-white to-slate-50 border border-emerald-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between space-y-4">
               <div className="space-y-3">
@@ -518,8 +585,8 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                       <Key className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-base font-bold text-slate-900">Ranking Keywords Discovered</h4>
-                      <span className="text-xs text-slate-500 font-semibold">{rankingAnalysis.totalDiscoveredKeywords} verified keyword positions</span>
+                      <h4 className="text-base font-bold text-slate-900">Ranking Keywords</h4>
+                      <span className="text-xs text-slate-500 font-semibold">{rankingAnalysis.totalDiscoveredKeywords} verified positions</span>
                     </div>
                   </div>
                   <span className="text-xs font-black text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-full">
@@ -528,7 +595,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Real search terms where <strong className="text-slate-800">{healthScan.domain}</strong> has strong organic visibility, keyword density, and title tag prominence.
+                  Real search terms where <strong className="text-slate-800">{healthScan.domain}</strong> has active organic visibility and title tag prominence.
                 </p>
 
                 {/* Top 3 keyword pills */}
@@ -554,7 +621,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                 onClick={() => setActiveTab('rankingKeywords')}
                 className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
-                <span>Explore All {rankingAnalysis.totalDiscoveredKeywords} Ranking Keywords & SERP Analysis</span>
+                <span>Explore All {rankingAnalysis.totalDiscoveredKeywords} Ranking Keywords</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -573,12 +640,12 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                     </div>
                   </div>
                   <span className="text-xs font-black text-amber-700 bg-amber-100/80 px-2.5 py-1 rounded-full">
-                    +{gapAnalysis.missingTopicSections.reduce((a, s) => Math.max(a, s.potentialOrganicLiftPercent), 25)}% Traffic Opportunity
+                    +{gapAnalysis.missingTopicSections.reduce((a, s) => Math.max(a, s.potentialOrganicLiftPercent), 25)}% Lift
                   </span>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  High-converting keywords, missing user questions for Answer Engines, and structural sections needed to outrank competitors.
+                  High-converting keywords, missing user questions for Answer Engines, and structural sections needed to rank.
                 </p>
 
                 {/* Top 3 missing keyword items */}
@@ -604,7 +671,87 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                 onClick={() => setActiveTab('contentGap')}
                 className="w-full py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
-                <span>View Full Content Gaps & FAQ Blueprints</span>
+                <span>View Full Content Gaps &amp; Blueprints</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Keyword Stuffing Quick Preview */}
+            <div className={`bg-gradient-to-br ${
+              stuffingAnalysis.stuffingStatus === 'high_stuffing_detected'
+                ? 'from-rose-50/70 via-white to-slate-50 border-rose-300'
+                : stuffingAnalysis.stuffingStatus === 'moderate_risk'
+                ? 'from-amber-50/70 via-white to-slate-50 border-amber-300'
+                : 'from-emerald-50/70 via-white to-slate-50 border-emerald-200'
+            } border rounded-3xl p-6 shadow-xs flex flex-col justify-between space-y-4`}>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-2 rounded-xl ${
+                      stuffingAnalysis.stuffingStatus === 'high_stuffing_detected'
+                        ? 'bg-rose-100 text-rose-700'
+                        : stuffingAnalysis.stuffingStatus === 'moderate_risk'
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-emerald-100 text-emerald-700'
+                    }`}>
+                      <ShieldAlert className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900">Keyword Stuffing &amp; Density</h4>
+                      <span className="text-xs text-slate-500 font-semibold">{stuffingAnalysis.totalWordsAnalyzed.toLocaleString()} words evaluated</span>
+                    </div>
+                  </div>
+                  <span className={`text-xs font-black px-2.5 py-1 rounded-full ${
+                    stuffingAnalysis.stuffingStatus === 'high_stuffing_detected'
+                      ? 'text-rose-700 bg-rose-100/80'
+                      : stuffingAnalysis.stuffingStatus === 'moderate_risk'
+                      ? 'text-amber-700 bg-amber-100/80'
+                      : 'text-emerald-700 bg-emerald-100/80'
+                  }`}>
+                    {stuffingAnalysis.stuffingStatus === 'clean' ? '100% Clean' : `${stuffingAnalysis.overallRiskScore}/100 Risk`}
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Real-time mathematical density check ensuring Google Helpful Content &amp; SpamBrain algorithm compliance.
+                </p>
+
+                {/* Top 3 analyzed terms */}
+                <div className="space-y-1.5 pt-1">
+                  {stuffingAnalysis.allAnalyzedKeywords.slice(0, 3).map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">{item.keyword}</span>
+                        <span className="text-[10px] text-slate-400">({item.count}x)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`font-black text-xs ${
+                          item.density > 3.5 ? 'text-rose-600' : item.density >= 2.3 ? 'text-amber-600' : 'text-emerald-700'
+                        }`}>
+                          {item.density}%
+                        </span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded uppercase ${
+                          item.riskLevel === 'high' ? 'bg-rose-100 text-rose-800' : item.riskLevel === 'moderate' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          {item.riskLevel}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('keywordStuffing')}
+                className={`w-full py-2.5 px-4 ${
+                  stuffingAnalysis.stuffingStatus === 'high_stuffing_detected'
+                    ? 'bg-rose-600 hover:bg-rose-700'
+                    : stuffingAnalysis.stuffingStatus === 'moderate_risk'
+                    ? 'bg-amber-600 hover:bg-amber-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
+                } text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer`}
+              >
+                <span>View Full Keyword Stuffing Diagnostics</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -620,6 +767,11 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
       {/* TAB CONTENT: Content Gap Section */}
       {activeTab === 'contentGap' && (
         <ContentGapSection contentGapData={gapAnalysis} domain={healthScan.domain} />
+      )}
+
+      {/* TAB CONTENT: Keyword Stuffing Section */}
+      {activeTab === 'keywordStuffing' && (
+        <KeywordStuffingSection stuffingData={stuffingAnalysis} domain={healthScan.domain} />
       )}
 
       {/* TAB CONTENT: Accessibility Deep Dive (Preserves Full Existing ReportView) */}

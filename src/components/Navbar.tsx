@@ -26,6 +26,7 @@ import {
   ArrowRight,
   ArrowLeft,
   ExternalLink,
+  FileCode,
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -201,6 +202,44 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div className="text-[11px] text-slate-600 truncate">25 short + 25 long-tail keywords with volume, CTR & CPM</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    {/* Featured Tool 3: Domain Rating & Backlinks Checker */}
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/tools/domain-rating-checker')}
+                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 text-left transition-all cursor-pointer group border border-indigo-200/80 mb-2 shadow-xs"
+                    >
+                      <div className="p-2 rounded-lg bg-indigo-600 text-white shadow-xs group-hover:scale-105 transition-transform">
+                        <Globe className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                          Domain Rating & Backlinks
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-indigo-600 text-white">NEW</span>
+                        </div>
+                        <div className="text-[11px] text-slate-600 truncate">DR, DA, referring domains, keywords & competitors</div>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    {/* Featured Tool 4: XML Sitemap Audit & GSC Validator */}
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/tools/sitemap-auditor')}
+                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 hover:from-teal-100 hover:to-emerald-100 text-left transition-all cursor-pointer group border border-teal-200/80 mb-2 shadow-xs"
+                    >
+                      <div className="p-2 rounded-lg bg-teal-600 text-white shadow-xs group-hover:scale-105 transition-transform">
+                        <FileCode className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                          XML Sitemap Auditor
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-teal-600 text-white">NEW</span>
+                        </div>
+                        <div className="text-[11px] text-slate-600 truncate">Audit URL/file, detect mistakes & download clean XML</div>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-teal-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -617,6 +656,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="block w-full text-left text-sm font-bold text-blue-700 bg-blue-50 p-2 rounded-lg hover:text-blue-900 cursor-pointer"
               >
                 ✨ AI Keyword Planner (NEW)
+              </button>
+              <button
+                onClick={() => navigateTo('/tools/domain-rating-checker')}
+                className="block w-full text-left text-sm font-bold text-indigo-700 bg-indigo-50 p-2 rounded-lg hover:text-indigo-900 cursor-pointer"
+              >
+                🌐 Domain Rating Checker (NEW)
+              </button>
+              <button
+                onClick={() => navigateTo('/tools/sitemap-auditor')}
+                className="block w-full text-left text-sm font-bold text-teal-700 bg-teal-50 p-2 rounded-lg hover:text-teal-900 cursor-pointer"
+              >
+                📑 XML Sitemap Auditor (NEW)
               </button>
               <button
                 onClick={() => navigateTo('/tools/color-contrast-checker')}
