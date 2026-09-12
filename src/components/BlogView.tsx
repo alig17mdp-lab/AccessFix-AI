@@ -194,7 +194,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 >
                   <img
                     src={featuredPillarPost.author.avatar}
-                    alt={featuredPillarPost.author.name}
+                    alt={`${featuredPillarPost.author.name} - ${featuredPillarPost.author.role}`}
+                    width={36}
+                    height={36}
+                    loading="lazy"
+                    decoding="async"
                     className="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-500/40"
                   />
                   <div className="text-xs">
@@ -215,6 +219,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 <img
                   src={featuredPillarPost.featuredImage.url}
                   alt={featuredPillarPost.featuredImage.alt}
+                  width={600}
+                  height={315}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
@@ -338,8 +347,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
                       <img
                         src={post.featuredImage.url}
                         alt={post.featuredImage.alt}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        width={400}
+                        height={210}
                         loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-3 left-3 flex items-center gap-2">
                         <span className="bg-slate-900/85 backdrop-blur-xs text-white text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
@@ -355,17 +367,13 @@ export const BlogView: React.FC<BlogViewProps> = ({
 
                     {/* Card Content */}
                     <div className="p-6 space-y-3">
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                        <span className="flex items-center gap-1 font-medium">
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                        <span className="flex items-center gap-1 font-medium text-slate-600">
                           <Clock className="w-3 h-3 text-emerald-600" />
                           <span>{post.readTime}</span>
                         </span>
                         <span>•</span>
-                        <span>{post.wordCount} words</span>
-                        <span>•</span>
-                        <span className="text-emerald-700 font-semibold">
-                          Score: {post.qualityScore.total}/100
-                        </span>
+                        <span className="text-slate-400">Updated {post.updatedAt}</span>
                       </div>
 
                       <h2 className="text-lg font-extrabold text-slate-900 group-hover:text-emerald-600 transition-colors leading-snug">
@@ -399,7 +407,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     >
                       <img
                         src={post.author.avatar}
-                        alt={post.author.name}
+                        alt={`${post.author.name} - ${post.author.role}`}
+                        width={28}
+                        height={28}
+                        loading="lazy"
+                        decoding="async"
                         className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200"
                       />
                       <div className="text-[11px]">

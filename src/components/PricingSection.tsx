@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Sparkles, ShieldCheck, Zap, Building, Lock, Clock } from 'lucide-react';
+import { Check, Sparkles, ShieldCheck, Zap, Building, Lock, Clock, Users, Share2, UserCheck, UserPlus, CheckCircle2 } from 'lucide-react';
 import { PricingPlan } from '../types';
 
 interface PricingSectionProps {
@@ -20,8 +20,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
       description: 'Instant on-demand scans for single websites and personal blogs.',
       monthlyPrice: 0,
       yearlyPrice: 0,
+      teamSeats: 1,
       features: [
         '5 On-Demand Scans per month',
+        'Single User Account',
         '40+ Automated WCAG 2.1 checks',
         'Plain-English AI issue summaries',
         'Basic HTML remediation snippets',
@@ -35,11 +37,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
       id: 'pro',
       name: 'Professional',
       description: 'Ideal for ecommerce stores, high-growth SaaS, and web consultants.',
-      monthlyPrice: 29,
-      yearlyPrice: 279,
+      monthlyPrice: 9,
+      yearlyPrice: 89,
+      teamSeats: 1,
       features: [
         '50 Scans per month',
         '5 Monitored Websites',
+        'Single User License',
         'Automated Weekly Scheduled Scans',
         'Regression Email & Webhook Alerts',
         'Gemini 3.7 AI Multi-Framework Fixes (React, Shopify Liquid, WordPress PHP)',
@@ -53,18 +57,20 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
     {
       id: 'agency',
       name: 'Agency & Enterprise',
-      description: 'Scale accessibility retainers and white-label client reporting.',
-      monthlyPrice: 99,
-      yearlyPrice: 949,
+      description: 'Scale accessibility retainers, client domains, and collaborative auditing with 5 team seats.',
+      monthlyPrice: 49,
+      yearlyPrice: 469,
+      teamSeats: 5,
       features: [
-        'Unlimited Monthly Scans',
+        '5 Team Members Included (Multi-User Sharing System)',
+        'Role-Based Access Control (Admin, Auditor, Viewer)',
+        'Unlimited Monthly Scans (Shared Quota)',
         '25 Monitored Client Domains',
         'Daily Automated Scheduled Auditing',
         'Custom Branded White-Label PDF Audits',
-        'Client Management Hub',
+        'Client Management Hub & Team Activity Logs',
         'Priority Gemini AI Queue',
-        'Unlimited Team Seat Access',
-        'Dedicated SLA & Email Support',
+        'Dedicated SLA & Priority Support',
       ],
       popular: false,
       isComingSoon: true,
@@ -83,7 +89,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             Protect Your Business with Continuous Accessibility
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
-            Start free with on-demand audits, or unlock automated weekly monitoring and white-label agency reports.
+            Start free with on-demand audits, or unlock automated weekly monitoring, white-label agency reports, and 5-member team sharing.
           </p>
 
           {/* Billing Cycle Toggle */}
@@ -168,6 +174,24 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                     </p>
                   </div>
 
+                  {/* 5 Team Members Callout Pill for Agency & Enterprise */}
+                  {plan.id === 'agency' && (
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-3 flex items-start gap-2.5">
+                      <div className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                        <Users className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                          <span>5 Team Members</span>
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 bg-blue-600 text-white rounded">Sharing System</span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
+                          Multi-user team sharing with role-based access for your whole agency.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-black text-slate-900">${price}</span>
                     <span className="text-xs font-semibold text-slate-500">
@@ -183,7 +207,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                       {plan.features.map((feat, i) => (
                         <li key={i} className="flex items-start gap-2 text-slate-600">
                           <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                          <span>{feat}</span>
+                          <span className={feat.includes('5 Team Members') ? 'font-bold text-slate-900' : ''}>
+                            {feat}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -219,6 +245,119 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               </div>
             );
           })}
+        </div>
+
+        {/* Dedicated Section: Agency & Enterprise Team Sharing System */}
+        <div className="mt-16 bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/90 shadow-lg relative overflow-hidden">
+          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-50/80 rounded-full blur-3xl pointer-events-none -z-10" />
+
+          {/* Section Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-800 text-xs font-black uppercase tracking-wider">
+                <Users className="w-3.5 h-3.5 text-blue-600" />
+                <span>Agency & Enterprise Sharing System</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+                Collaborative 5-Member Team Workspace
+              </h3>
+              <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+                The Agency & Enterprise plan includes a built-in multi-user sharing system designed for agencies, engineering teams, and compliance consultants. Invite up to 5 team members to co-manage client domains, share unlimited scanning quotas, and collaborate on accessibility remediation.
+              </p>
+            </div>
+
+            {/* Visual Seat Quota Callout */}
+            <div className="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-2xl p-4 sm:p-5 flex items-center gap-4 shrink-0 shadow-md border border-slate-800">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-2xl shadow-inner">
+                5
+              </div>
+              <div>
+                <div className="text-xs font-extrabold uppercase tracking-wide text-blue-300">Team Seats Included</div>
+                <div className="text-sm font-bold text-white">Multi-User Sharing System</div>
+                <div className="text-[11px] text-slate-400">Included in the $49/mo Agency plan</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Feature Pillars of the Sharing System */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
+            <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+              <div className="w-10 h-10 rounded-xl bg-blue-100/80 text-blue-700 border border-blue-200/80 flex items-center justify-center shadow-xs">
+                <Share2 className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">Shared Quotas & Domains</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                All 5 members share the 25 monitored client domains and unlimited on-demand audits. No individual licenses or per-seat surcharges required.
+              </p>
+            </div>
+
+            <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100/80 text-indigo-700 border border-indigo-200/80 flex items-center justify-center shadow-xs">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">Role-Based Access Control</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Assign roles per member: <strong>Admin</strong> (billing & domain settings), <strong>Auditor</strong> (run scans & AI code fixes), and <strong>Viewer</strong> (client-ready reports).
+              </p>
+            </div>
+
+            <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shadow-xs">
+                <Building className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">Client Hub & White-Label</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Co-manage client portfolios, share custom-branded PDF compliance certificates with agency branding, and present remediation reports directly to clients.
+              </p>
+            </div>
+
+            <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+              <div className="w-10 h-10 rounded-xl bg-amber-100/80 text-amber-700 border border-amber-200/80 flex items-center justify-center shadow-xs">
+                <UserPlus className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">Instant Email Invites</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Seamlessly invite developers, content editors, or external clients via email. Reassign seats, revoke access, or update permissions anytime in 1 click.
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive Visual Team Role Breakdown Bar */}
+          <div className="mt-8 pt-6 border-t border-slate-100 bg-gradient-to-r from-slate-50 via-blue-50/40 to-slate-50 rounded-2xl p-5 border border-slate-200/60">
+            <div className="text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span>Team Member Roles in the 5-Seat Sharing System:</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div className="bg-white p-3.5 rounded-xl border border-slate-200/70 shadow-xs">
+                <div className="font-bold text-blue-700 flex items-center gap-1.5 mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Account Owner & Admin</span>
+                </div>
+                <div className="text-[11px] text-slate-500 leading-relaxed">
+                  Full control over billing, 25 client domains, team seat invites, and workspace-wide settings.
+                </div>
+              </div>
+              <div className="bg-white p-3.5 rounded-xl border border-slate-200/70 shadow-xs">
+                <div className="font-bold text-indigo-700 flex items-center gap-1.5 mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Technical Auditor / Dev</span>
+                </div>
+                <div className="text-[11px] text-slate-500 leading-relaxed">
+                  Executes scheduled & on-demand audits, triggers Gemini AI code fixes, and tracks resolved WCAG issues.
+                </div>
+              </div>
+              <div className="bg-white p-3.5 rounded-xl border border-slate-200/70 shadow-xs">
+                <div className="font-bold text-emerald-700 flex items-center gap-1.5 mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Client / Stakeholder Viewer</span>
+                </div>
+                <div className="text-[11px] text-slate-500 leading-relaxed">
+                  Read-only access to view live compliance scores, track audit progress, and download branded PDF reports.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

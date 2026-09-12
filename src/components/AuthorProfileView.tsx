@@ -41,7 +41,11 @@ export const AuthorProfileView: React.FC<AuthorProfileViewProps> = ({
         <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
           <img
             src={author.avatar}
-            alt={author.name}
+            alt={`${author.name} - ${author.role} at AccessFix AI`}
+            width={144}
+            height={144}
+            loading="eager"
+            decoding="async"
             className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover ring-4 ring-emerald-500/20 shadow-md shrink-0"
           />
 

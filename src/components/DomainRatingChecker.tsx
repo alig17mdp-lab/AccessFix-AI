@@ -249,7 +249,7 @@ Generated via AccessFix AI Domain Rating Checker`;
       {/* Self-referencing Canonical Tag (Compliance Law 13) */}
       <link rel="canonical" href="https://accessfix.ai/tools/domain-rating-checker" />
 
-      {/* Structured Schema Markup: WebApplication & FAQPage (Compliance Law 14) */}
+      {/* Structured Schema Markup: WebApplication & FAQPage (Compliance Law 14 & 17) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -258,10 +258,10 @@ Generated via AccessFix AI Domain Rating Checker`;
             '@graph': [
               {
                 '@type': 'WebApplication',
-                name: 'Domain Rating Checker & Authority Analyzer',
+                name: 'Free Domain Rating Checker & DA PA Authority Analyzer',
                 url: 'https://accessfix.ai/tools/domain-rating-checker',
                 description:
-                  'Calculate real-time Domain Rating (DR), Domain Authority (DA), referring domains, backlinks, ranking keywords, competitors, and suggested link opportunities.',
+                  'Free DA PA checker, Ahrefs-standard DR checker, Moz Domain Authority analyzer, Semrush Authority Score benchmark, and free backlink Spam Score calculator.',
                 applicationCategory: 'SearchOptimizationApplication',
                 operatingSystem: 'All',
                 browserRequirements: 'Requires JavaScript. Requires HTML5.',
@@ -281,34 +281,50 @@ Generated via AccessFix AI Domain Rating Checker`;
                 mainEntity: [
                   {
                     '@type': 'Question',
-                    name: 'What is a domain rating checker?',
+                    name: 'How to determine domain rating?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'A domain rating checker is an analytical SEO tool that evaluates backlink quantity and quality to calculate domain authority on a 0-100 logarithmic scale.',
+                      text: 'Domain rating is determined by calculating the quantity and quality of unique referring domains linking to a website on a 0-100 logarithmic scale.',
                     },
                   },
                   {
                     '@type': 'Question',
-                    name: 'What is the difference between Domain Rating (DR) and Domain Authority (DA)?',
+                    name: 'Is there a free website ranking checker?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'Domain Rating measures backlink profile strength based on referring domains, while Domain Authority predicts a website search engine ranking potential using multiple machine learning factors.',
+                      text: 'Yes, AccessFix AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.',
                     },
                   },
                   {
                     '@type': 'Question',
-                    name: 'How can I check domain rating and backlinks free?',
+                    name: 'How much domain rating is good?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'Enter any website URL into the AccessFix AI domain rating checker above to instantly inspect live DR, DA, backlinks, and competitors without registration.',
+                      text: 'A Domain Rating of 40 to 60 is good for mid-market sites, 60 to 80 is strong, and 80+ is elite authority for competitive keywords.',
                     },
                   },
                   {
                     '@type': 'Question',
-                    name: 'What is considered a good Domain Rating score?',
+                    name: 'How can I check the reputation of my domain?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'A Domain Rating between 40 and 60 is competitive for mid-market sites, while a DR of 70+ indicates elite authority capable of ranking for competitive head terms.',
+                      text: 'Check domain reputation by auditing your backlink Spam Score, anchor text naturalness (80%+ branded), referring domain quality, and toxic link ratios.',
+                    },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'What is a DA PA checker and how does it compare to DR?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'A DA PA checker measures Moz Domain Authority and Page Authority, whereas DR measures Ahrefs-standard backlink equity across referring domains.',
+                    },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'How does the free Spam Score checker evaluate penalty risk?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'The Spam Score checker measures link farm footprints, site-wide footer links, unnatural anchor ratios, and low-trust TLDs to quantify algorithmic penalty risks.',
                     },
                   },
                 ],
@@ -326,7 +342,7 @@ Generated via AccessFix AI Domain Rating Checker`;
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-bold shadow-2xs">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>20-Year Veteran SEO Engine • Ahrefs &amp; Semrush Benchmark Caliber</span>
+            <span>20-Year Veteran SEO Engine • Ahrefs DR &amp; Moz DA Benchmark Caliber</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
@@ -334,10 +350,31 @@ Generated via AccessFix AI Domain Rating Checker`;
           </h1>
 
           <p className="text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">
-            Instantly check <strong className="text-white">Domain Rating (DR)</strong>,{' '}
-            <strong className="text-white">Domain Authority (DA)</strong>, live referring domains, dofollow backlinks,
-            organic ranking keywords, organic competitors, and high-probability suggested link building sites.
+            Free <strong className="text-white">DR Checker</strong>, <strong className="text-white">DA PA Checker</strong>, and{' '}
+            <strong className="text-white">Spam Score Analyzer</strong>. Instantly evaluate live Domain Rating (DR), Domain Authority (DA),
+            Page Authority (PA), referring domains, dofollow backlinks, ranking keywords, and authority gaps.
           </p>
+
+          {/* Quick Search Intent Chips (People Also Search For - Exact Entity Alignment) */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            {[
+              { label: 'DA PA Checker', desc: 'Moz Scale' },
+              { label: 'Authority Score Checker', desc: 'Semrush Scale' },
+              { label: 'DR Checker', desc: 'Ahrefs Scale' },
+              { label: 'Domain Authority Checker', desc: 'Rank Predictor' },
+              { label: 'Spam Score Checker Free', desc: '0–100% Risk' },
+              { label: 'Domain Rating Checker Ahrefs', desc: 'Live Equity' },
+            ].map((chip) => (
+              <span
+                key={chip.label}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/90 border border-slate-700/80 text-slate-300 text-[11px] font-medium"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                <strong className="text-slate-200 font-semibold">{chip.label}</strong>
+                <span className="text-slate-500 text-[10px]">({chip.desc})</span>
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* Interactive Search Bar Form */}
@@ -423,9 +460,9 @@ Generated via AccessFix AI Domain Rating Checker`;
         </form>
 
         {/* ========================================================================= */}
-        {/* EXECUTIVE METRIC CARDS (DR, DA, Backlinks, Referring Domains, Traffic)   */}
+        {/* EXECUTIVE METRIC CARDS (DR, DA/PA, Spam Score, Backlinks, Ref Domains)    */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 pt-2">
           {/* Metric 1: Domain Rating */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
@@ -443,27 +480,51 @@ Generated via AccessFix AI Domain Rating Checker`;
                 : report.domainRating >= 60
                 ? 'Strong Authority'
                 : report.domainRating >= 40
-                ? 'Moderate Competitive'
-                : 'Emerging Authority'}
+                ? 'Moderate'
+                : 'Emerging'}
             </div>
           </div>
 
-          {/* Metric 2: Domain Authority */}
+          {/* Metric 2: Domain Authority & Page Authority */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Domain Authority</span>
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">DA &amp; PA</span>
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400">Moz Scale</span>
             </div>
             <div className="text-3xl sm:text-4xl font-black text-indigo-400">
               {report.domainAuthority}
               <span className="text-xs text-slate-500 font-semibold ml-1">/100</span>
             </div>
-            <div className="text-[11px] text-slate-400 font-medium">
-              URL Rating: <strong className="text-slate-200">{report.urlRating}</strong>
+            <div className="text-[11px] text-slate-400 font-medium truncate">
+              PA (URL Rating): <strong className="text-slate-200">{report.urlRating}</strong>
             </div>
           </div>
 
-          {/* Metric 3: Total Backlinks */}
+          {/* Metric 3: Spam Score (Screenshot 414 PAA & Search Intent) */}
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Spam Score</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                report.spamScore <= 5
+                  ? 'bg-emerald-500/20 text-emerald-400'
+                  : report.spamScore <= 15
+                  ? 'bg-amber-500/20 text-amber-400'
+                  : 'bg-rose-500/20 text-rose-400'
+              }`}>
+                {report.spamScore <= 5 ? 'Low Risk' : report.spamScore <= 15 ? 'Moderate' : 'High Risk'}
+              </span>
+            </div>
+            <div className={`text-3xl sm:text-4xl font-black ${
+              report.spamScore <= 5 ? 'text-emerald-400' : report.spamScore <= 15 ? 'text-amber-400' : 'text-rose-400'
+            }`}>
+              {report.spamScore}%
+            </div>
+            <div className="text-[11px] text-slate-400 font-medium truncate">
+              {report.spamScore <= 5 ? 'Clean Link Profile' : 'Disavow Audit Suggested'}
+            </div>
+          </div>
+
+          {/* Metric 4: Total Backlinks */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Backlinks</span>
@@ -475,11 +536,11 @@ Generated via AccessFix AI Domain Rating Checker`;
               {formatCompactNumber(report.totalBacklinks)}
             </div>
             <div className="text-[11px] text-slate-400 font-medium truncate">
-              {formatCompactNumber(report.dofollowCount)} Dofollow links
+              {formatCompactNumber(report.dofollowCount)} Dofollow
             </div>
           </div>
 
-          {/* Metric 4: Referring Domains */}
+          {/* Metric 5: Referring Domains */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ref. Domains</span>
@@ -491,11 +552,11 @@ Generated via AccessFix AI Domain Rating Checker`;
               {formatCompactNumber(report.referringDomains)}
             </div>
             <div className="text-[11px] text-slate-400 font-medium truncate">
-              {report.eduGovLinksCount} .edu / .gov citations
+              {report.eduGovLinksCount} .edu / .gov
             </div>
           </div>
 
-          {/* Metric 5: Organic Keywords */}
+          {/* Metric 6: Organic Keywords */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Keywords</span>
@@ -511,8 +572,8 @@ Generated via AccessFix AI Domain Rating Checker`;
             </div>
           </div>
 
-          {/* Metric 6: Organic Traffic & Value */}
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
+          {/* Metric 7: Organic Traffic & Value */}
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2 col-span-2 sm:col-span-1">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Organic Traffic</span>
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Monthly</span>
@@ -521,7 +582,7 @@ Generated via AccessFix AI Domain Rating Checker`;
               {formatCompactNumber(report.monthlyOrganicTraffic)}
             </div>
             <div className="text-[11px] text-slate-400 font-medium truncate">
-              Valued at ${formatCompactNumber(report.organicTrafficValueUsd)}/mo
+              ${formatCompactNumber(report.organicTrafficValueUsd)}/mo value
             </div>
           </div>
         </div>
@@ -1318,59 +1379,87 @@ Generated via AccessFix AI Domain Rating Checker`;
             </div>
 
             <div className="space-y-4">
-              {/* FAQ Item 1 */}
+              {/* FAQ Item 1 (Screenshot 414 PAA #1) */}
               <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
                 <h3 className="text-base font-bold text-slate-900">
-                  What is a domain rating checker?
+                  How to determine domain rating?
                 </h3>
                 <p className="text-xs text-slate-800 leading-relaxed">
                   <strong className="text-slate-950 font-black">
-                    A domain rating checker is an analytical SEO tool that evaluates backlink quantity and quality to calculate domain authority on a 0-100 logarithmic scale.
+                    Domain rating is determined by calculating the quantity and quality of unique referring domains linking to a website on a 0-100 logarithmic scale.
                   </strong>{' '}
                   It scans referring domains, anchor text ratios, and dofollow link distribution to benchmark your organic
                   ranking potential against direct SERP competitors.
                 </p>
               </div>
 
-              {/* FAQ Item 2 */}
+              {/* FAQ Item 2 (Screenshot 414 PAA #2) */}
               <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
                 <h3 className="text-base font-bold text-slate-900">
-                  What is the difference between Domain Rating (DR) and Domain Authority (DA)?
+                  Is there a free website ranking checker?
                 </h3>
                 <p className="text-xs text-slate-800 leading-relaxed">
                   <strong className="text-slate-950 font-black">
-                    Domain Rating measures backlink profile strength based on referring domains, while Domain Authority predicts a website search engine ranking potential using multiple machine learning factors.
-                  </strong>{' '}
-                  DR is an Ahrefs-standard metric focused strictly on backlink equity, whereas Moz’s DA considers overall
-                  SERP competitiveness and search model metrics.
-                </p>
-              </div>
-
-              {/* FAQ Item 3 */}
-              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
-                <h3 className="text-base font-bold text-slate-900">
-                  How can I check domain rating and backlinks free?
-                </h3>
-                <p className="text-xs text-slate-800 leading-relaxed">
-                  <strong className="text-slate-950 font-black">
-                    Enter any website URL into the AccessFix AI domain rating checker above to instantly inspect live DR, DA, backlinks, and competitors without registration.
+                    Yes, AccessFix AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.
                   </strong>{' '}
                   Our free utility provides instant access to verified backlinks, anchor profiles, keyword visibility,
                   and suggested outreach opportunities with zero usage limits.
                 </p>
               </div>
 
-              {/* FAQ Item 4 */}
+              {/* FAQ Item 3 (Screenshot 414 PAA #3) */}
               <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
                 <h3 className="text-base font-bold text-slate-900">
-                  What is considered a good Domain Rating score?
+                  How much domain rating is good?
                 </h3>
                 <p className="text-xs text-slate-800 leading-relaxed">
                   <strong className="text-slate-950 font-black">
-                    A Domain Rating between 40 and 60 is competitive for mid-market sites, while a DR of 70+ indicates elite authority capable of ranking for competitive head terms.
+                    A Domain Rating of 40 to 60 is good for mid-market sites, 60 to 80 is strong, and 80+ is elite authority for competitive keywords.
                   </strong>{' '}
                   New websites typically start at DR 0–15, climbing into the 30–50 range after establishing natural citations
                   from recognized industry blogs and directory publications.
+                </p>
+              </div>
+
+              {/* FAQ Item 4 (Screenshot 414 PAA #4) */}
+              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                <h3 className="text-base font-bold text-slate-900">
+                  How can I check the reputation of my domain?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed">
+                  <strong className="text-slate-950 font-black">
+                    Check domain reputation by auditing your backlink Spam Score, anchor text naturalness (80%+ branded), referring domain quality, and toxic link ratios.
+                  </strong>{' '}
+                  Domains with Spam Scores below 5% and low authority gaps possess clean reputations, insulating them from
+                  algorithmic search engine penalty updates.
+                </p>
+              </div>
+
+              {/* FAQ Item 5 (Screenshot 414 People Also Search For) */}
+              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                <h3 className="text-base font-bold text-slate-900">
+                  What is a DA PA checker and how does it compare to Ahrefs DR?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed">
+                  <strong className="text-slate-950 font-black">
+                    A DA PA checker measures Moz Domain Authority and Page Authority, whereas DR measures Ahrefs-standard backlink equity across referring domains.
+                  </strong>{' '}
+                  DR evaluates the pure link network graph, whereas DA and PA integrate predictive machine learning to project
+                  likelihood of outranking competing URLs in search results.
+                </p>
+              </div>
+
+              {/* FAQ Item 6 (Screenshot 414 People Also Search For) */}
+              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                <h3 className="text-base font-bold text-slate-900">
+                  How does the free Spam Score checker evaluate website penalty risk?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed">
+                  <strong className="text-slate-950 font-black">
+                    The Spam Score checker measures link farm footprints, site-wide footer links, unnatural anchor ratios, and low-trust TLDs to quantify algorithmic penalty risks.
+                  </strong>{' '}
+                  Scores from 1% to 30% indicate low risk, 31% to 60% indicate moderate risk, and 61% to 100% indicate acute
+                  risk requiring immediate link disavow remediation.
                 </p>
               </div>
             </div>

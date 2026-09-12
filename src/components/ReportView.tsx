@@ -240,10 +240,11 @@ export const ReportView: React.FC<ReportViewProps> = ({
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold px-3 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-800 font-bold px-3.5 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
+            title="Download or Print Free SEO Audit Report PDF"
           >
-            <Printer className="w-3.5 h-3.5 text-slate-500" />
-            <span>Print / PDF</span>
+            <Printer className="w-3.5 h-3.5 text-blue-700" />
+            <span>Download Report (PDF)</span>
           </button>
           <button
             onClick={() => downloadCsvReport(scan)}

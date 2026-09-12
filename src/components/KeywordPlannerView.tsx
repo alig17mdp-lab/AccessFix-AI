@@ -33,6 +33,11 @@ import {
   FolderTree,
   X,
   Info,
+  Eye,
+  Flame,
+  Compass,
+  MessageSquare,
+  AlertCircle,
 } from 'lucide-react';
 import {
   generateKeywordPlan,
@@ -68,15 +73,35 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
 
   // Tab State
   const [activeTab, setActiveTab] = useState<
-    'all' | 'short_tail' | 'long_tail' | 'high_cpm' | 'low_kd' | 'clusters' | 'roadmap' | 'faq'
+    'untapped' | 'all' | 'short_tail' | 'long_tail' | 'high_cpm' | 'low_kd' | 'clusters' | 'roadmap' | 'faq'
+  >('untapped');
+
+  // Ahrefs Untapped Quick Filter Presets
+  const [ahrefsPreset, setAhrefsPreset] = useState<
+    'all' | 'lowest_dr_20' | 'reddit_forum' | 'zero_backlinks' | 'golden_ratio' | 'high_tp' | 'untapped_questions'
   >('all');
+
+  // Advanced Granular Ahrefs Filters
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
+  const [lowestDrFilter, setLowestDrFilter] = useState<string>('all'); // 'all', '15', '20', '25', '35'
+  const [maxKdFilter, setMaxKdFilter] = useState<string>('all'); // 'all', '10', '20', '30', '50'
+  const [minVolFilter, setMinVolFilter] = useState<string>('all'); // 'all', '250', '500', '1000', '5000'
+  const [minTpFilter, setMinTpFilter] = useState<string>('all'); // 'all', '1000', '2500', '5000', '10000'
+  const [wordCountFilter, setWordCountFilter] = useState<string>('all'); // 'all', '3', '4', '5'
+  const [serpFlawFilter, setSerpFlawFilter] = useState<string>('all'); // 'all', 'low_dr', 'ugc_forum', 'zero_backlinks', 'outdated_serp', 'snippet_opportunity'
+  const [includeTerm, setIncludeTerm] = useState<string>('');
+  const [excludeTerm, setExcludeTerm] = useState<string>('');
 
   // Table Filters & Sorting
   const [tableSearch, setTableSearch] = useState<string>('');
   const [intentFilter, setIntentFilter] = useState<string>('all');
   const [kdFilter, setKdFilter] = useState<string>('all');
-  const [sortField, setSortField] = useState<'volume' | 'kd' | 'ctr' | 'cpm' | 'opportunity'>('opportunity');
+  const [sortField, setSortField] = useState<'untapped' | 'volume' | 'tp' | 'kd' | 'lowest_dr' | 'ctr' | 'cpm' | 'opportunity'>('untapped');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // SERP Inspector Drawer / Modal
+  const [inspectingKeyword, setInspectingKeyword] = useState<KeywordPlanItem | null>(null);
+  const [copiedStrategy, setCopiedStrategy] = useState<boolean>(false);
 
   // Bulk Selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -85,6 +110,42 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState<boolean>(false);
   const [copiedSelected, setCopiedSelected] = useState<boolean>(false);
+
+  // Active filters count
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (ahrefsPreset !== 'all') count++;
+    if (lowestDrFilter !== 'all') count++;
+    if (maxKdFilter !== 'all') count++;
+    if (minVolFilter !== 'all') count++;
+    if (minTpFilter !== 'all') count++;
+    if (wordCountFilter !== 'all') count++;
+    if (serpFlawFilter !== 'all') count++;
+    if (includeTerm.trim()) count++;
+    if (excludeTerm.trim()) count++;
+    if (intentFilter !== 'all') count++;
+    if (kdFilter !== 'all') count++;
+    if (tableSearch.trim()) count++;
+    return count;
+  }, [ahrefsPreset, lowestDrFilter, maxKdFilter, minVolFilter, minTpFilter, wordCountFilter, serpFlawFilter, includeTerm, excludeTerm, intentFilter, kdFilter, tableSearch]);
+
+  // Reset all filters to default
+  const resetAllFilters = () => {
+    setAhrefsPreset('all');
+    setLowestDrFilter('all');
+    setMaxKdFilter('all');
+    setMinVolFilter('all');
+    setMinTpFilter('all');
+    setWordCountFilter('all');
+    setSerpFlawFilter('all');
+    setIncludeTerm('');
+    setExcludeTerm('');
+    setTableSearch('');
+    setIntentFilter('all');
+    setKdFilter('all');
+    setSortField('untapped');
+    setSortOrder('desc');
+  };
 
   // Handle Form Submission
   const handleGenerate = (e?: React.FormEvent) => {
@@ -134,8 +195,22 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
   const filteredKeywords = useMemo(() => {
     let list: KeywordPlanItem[] = [];
 
+    // Base collection by tab
     if (activeTab === 'all') {
       list = [...planResult.allKeywords];
+    } else if (activeTab === 'untapped') {
+      // Prioritize keywords with high untapped index or low competition SERPs
+      list = [...planResult.allKeywords].filter(
+        (k) =>
+          k.untappedScore >= 70 ||
+          (k.difficulty <= 28 && k.lowestDrTop10 <= 25) ||
+          k.pageReferringDomains <= 1 ||
+          k.serpFlaw.type === 'ugc_forum'
+      );
+      if (list.length < 15) {
+        // Guarantee rich result set
+        list = [...planResult.allKeywords].filter((k) => k.difficulty <= 35);
+      }
     } else if (activeTab === 'short_tail') {
       list = [...planResult.shortTailKeywords];
     } else if (activeTab === 'long_tail') {
@@ -148,6 +223,68 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
       list = [...planResult.allKeywords];
     }
 
+    // Apply Ahrefs Quick Filter Preset
+    if (ahrefsPreset === 'lowest_dr_20') {
+      list = list.filter((k) => k.lowestDrTop10 <= 20 && k.lowestDrPosition <= 5);
+    } else if (ahrefsPreset === 'reddit_forum') {
+      list = list.filter((k) => k.serpFlaw.type === 'ugc_forum' || k.lowestDrCompetitor.includes('reddit'));
+    } else if (ahrefsPreset === 'zero_backlinks') {
+      list = list.filter((k) => k.pageReferringDomains <= 1);
+    } else if (ahrefsPreset === 'golden_ratio') {
+      list = list.filter((k) => k.difficulty <= 18 && k.searchVolume >= 500);
+    } else if (ahrefsPreset === 'high_tp') {
+      list = list.filter((k) => k.trafficPotential >= 3000);
+    } else if (ahrefsPreset === 'untapped_questions') {
+      list = list.filter((k) => k.wordCount >= 4 && (/how|why|what|can|best|guide|vs|free/i.test(k.keyword) || k.intent === 'informational'));
+    }
+
+    // Apply Lowest DR Filter (Ahrefs signature)
+    if (lowestDrFilter !== 'all') {
+      const maxDr = Number(lowestDrFilter);
+      list = list.filter((k) => k.lowestDrTop10 <= maxDr);
+    }
+
+    // Apply Max KD Filter
+    if (maxKdFilter !== 'all') {
+      const maxKd = Number(maxKdFilter);
+      list = list.filter((k) => k.difficulty <= maxKd);
+    }
+
+    // Apply Min Search Volume Filter
+    if (minVolFilter !== 'all') {
+      const minVol = Number(minVolFilter);
+      list = list.filter((k) => k.searchVolume >= minVol);
+    }
+
+    // Apply Min Traffic Potential (TP)
+    if (minTpFilter !== 'all') {
+      const minTp = Number(minTpFilter);
+      list = list.filter((k) => k.trafficPotential >= minTp);
+    }
+
+    // Apply Min Word Count Filter
+    if (wordCountFilter !== 'all') {
+      const minWc = Number(wordCountFilter);
+      list = list.filter((k) => k.wordCount >= minWc);
+    }
+
+    // Apply SERP Flaw Type Filter
+    if (serpFlawFilter !== 'all') {
+      list = list.filter((k) => k.serpFlaw.type === serpFlawFilter);
+    }
+
+    // Apply Include Keyword Term
+    if (includeTerm.trim()) {
+      const term = includeTerm.trim().toLowerCase();
+      list = list.filter((k) => k.keyword.toLowerCase().includes(term));
+    }
+
+    // Apply Exclude Keyword Term
+    if (excludeTerm.trim()) {
+      const term = excludeTerm.trim().toLowerCase();
+      list = list.filter((k) => !k.keyword.toLowerCase().includes(term));
+    }
+
     // Apply text search
     if (tableSearch.trim()) {
       const q = tableSearch.toLowerCase();
@@ -155,7 +292,9 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
         (k) =>
           k.keyword.toLowerCase().includes(q) ||
           k.clusterName.toLowerCase().includes(q) ||
-          k.recommendedFormat.toLowerCase().includes(q)
+          k.recommendedFormat.toLowerCase().includes(q) ||
+          k.lowestDrCompetitor.toLowerCase().includes(q) ||
+          k.serpFlaw.label.toLowerCase().includes(q)
       );
     }
 
@@ -164,7 +303,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
       list = list.filter((k) => k.intent === intentFilter);
     }
 
-    // Apply KD Filter
+    // Apply KD Tier Filter
     if (kdFilter === 'easy') {
       list = list.filter((k) => k.difficulty <= 20);
     } else if (kdFilter === 'low') {
@@ -179,9 +318,20 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
     list.sort((a, b) => {
       let valA = 0;
       let valB = 0;
-      if (sortField === 'volume') {
+      if (sortField === 'untapped') {
+        valA = a.untappedScore;
+        valB = b.untappedScore;
+      } else if (sortField === 'volume') {
         valA = a.searchVolume;
         valB = b.searchVolume;
+      } else if (sortField === 'tp') {
+        valA = a.trafficPotential;
+        valB = b.trafficPotential;
+      } else if (sortField === 'lowest_dr') {
+        // Lowest DR sort: low DR is best opportunity, so invert or sort standard
+        valA = a.lowestDrTop10;
+        valB = b.lowestDrTop10;
+        return sortOrder === 'desc' ? valA - valB : valB - valA;
       } else if (sortField === 'kd') {
         valA = a.difficulty;
         valB = b.difficulty;
@@ -200,7 +350,24 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
     });
 
     return list;
-  }, [planResult, activeTab, tableSearch, intentFilter, kdFilter, sortField, sortOrder]);
+  }, [
+    planResult,
+    activeTab,
+    ahrefsPreset,
+    lowestDrFilter,
+    maxKdFilter,
+    minVolFilter,
+    minTpFilter,
+    wordCountFilter,
+    serpFlawFilter,
+    includeTerm,
+    excludeTerm,
+    tableSearch,
+    intentFilter,
+    kdFilter,
+    sortField,
+    sortOrder,
+  ]);
 
   // Selection toggle
   const toggleSelect = (id: string) => {
@@ -250,11 +417,20 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
     const headers = [
       'Rank',
       'Keyword',
+      'Word Count',
       'Type',
       'Search Intent',
       'Monthly Volume',
+      'Traffic Potential (TP)',
       'Keyword Difficulty (KD%)',
       'Difficulty Tier',
+      'Lowest DR in Top 10',
+      'Lowest DR Competitor',
+      'Lowest DR Position',
+      'Page Referring Domains (RD)',
+      'SERP Flaw Type',
+      'SERP Flaw Description',
+      'Untapped Opportunity Score (0-100)',
       'Estimated CTR (%)',
       'Estimated CPM (USD)',
       'Estimated CPC (USD)',
@@ -267,11 +443,20 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
     const rows = planResult.allKeywords.map((k) => [
       k.rank,
       `"${k.keyword.replace(/"/g, '""')}"`,
+      k.wordCount,
       k.type,
       k.intent,
       k.searchVolume,
+      k.trafficPotential,
       k.difficulty,
       k.difficultyTier,
+      k.lowestDrTop10,
+      `"${k.lowestDrCompetitor}"`,
+      k.lowestDrPosition,
+      k.pageReferringDomains,
+      `"${k.serpFlaw.type}"`,
+      `"${k.serpFlaw.label.replace(/"/g, '""')}"`,
+      k.untappedScore,
       `${k.estimatedCtr}%`,
       `$${k.cpmUsd}`,
       `$${k.cpcUsd}`,
@@ -699,6 +884,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-3 border-b border-slate-200 scrollbar-thin">
           {[
+            { id: 'untapped', label: `🔥 Untapped Keywords (Ahrefs Engine)`, icon: Flame },
             { id: 'all', label: `All 50 Master Keywords (${planResult.allKeywords.length})`, icon: Sparkles },
             { id: 'short_tail', label: `25 Short-Tail Keywords (${planResult.shortTailKeywords.length})`, icon: Zap },
             { id: 'long_tail', label: `25 Long-Tail Keywords (${planResult.longTailKeywords.length})`, icon: Target },
@@ -706,7 +892,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
             { id: 'low_kd', label: 'Low KD Quick Wins (<30%)', icon: TrendingUp },
             { id: 'clusters', label: `Topic Clusters & Silos (${planResult.topicClusters.length})`, icon: FolderTree },
             { id: 'roadmap', label: '4-Stage Content Roadmap', icon: Clock },
-            { id: 'faq', label: 'Keyword Planning FAQ', icon: HelpCircle },
+            { id: 'faq', label: 'Untapped Keyword FAQ', icon: HelpCircle },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -721,7 +907,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                     : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : tab.id === 'untapped' ? 'text-orange-500' : 'text-slate-500'}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -730,11 +916,76 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
 
         {/* WORKSPACE CONTENT BASED ON ACTIVE TAB */}
 
-        {/* TAB 1, 2, 3, 4, 5: TABULAR KEYWORD DATA */}
-        {['all', 'short_tail', 'long_tail', 'high_cpm', 'low_kd'].includes(activeTab) && (
+        {/* TAB 1, 2, 3, 4, 5, 6: TABULAR KEYWORD DATA */}
+        {['untapped', 'all', 'short_tail', 'long_tail', 'high_cpm', 'low_kd'].includes(activeTab) && (
           <div className="mt-6 bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+            {/* AHREFS UNTAPPED METHODOLOGY BANNER */}
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-orange-50 via-amber-50/50 to-blue-50/50 border-b border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Flame className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-extrabold text-xs uppercase tracking-wider text-orange-950">
+                      Ahrefs Untapped Keyword Discovery Engine
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-orange-200/80 text-orange-900 text-[10px] font-bold">
+                      Algorithm Active
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 max-w-3xl leading-relaxed">
+                    Filters low-competition keywords where <strong>low Domain Rating (DR &le; 20)</strong> sites rank in the top 5, user-generated forums (Reddit/Quora) appear on Page 1, or pages have <strong>0-1 backlinks</strong> despite high <strong>Traffic Potential (TP)</strong>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Summary Pill */}
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="px-3 py-2 rounded-xl bg-white border border-orange-200 text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Untapped Pool
+                  </div>
+                  <div className="text-sm font-black text-orange-600 font-mono">
+                    {filteredKeywords.length} / {planResult.allKeywords.length} targets
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AHREFS 1-CLICK PRESET FILTER CHIPS */}
+            <div className="px-4 py-3 bg-slate-50/90 border-b border-slate-200/70 flex items-center gap-2 overflow-x-auto scrollbar-thin">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 shrink-0 flex items-center gap-1 mr-1">
+                <Filter className="w-3.5 h-3.5 text-blue-600" />
+                <span>Ahrefs Presets:</span>
+              </span>
+
+              {[
+                { id: 'all', label: 'All Keywords' },
+                { id: 'lowest_dr_20', label: '🔥 Lowest DR &le; 20 in Top 5' },
+                { id: 'reddit_forum', label: '💬 Reddit / Forum on Page 1' },
+                { id: 'zero_backlinks', label: '🎯 Zero Backlinks (0-1 RD)' },
+                { id: 'golden_ratio', label: '⚡ Golden Ratio (KD &le; 18, Vol &ge; 500)' },
+                { id: 'high_tp', label: '📈 High Traffic Potential (3k+ TP)' },
+                { id: 'untapped_questions', label: '❓ Untapped Question Queries' },
+              ].map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => setAhrefsPreset(preset.id as any)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                    ahrefsPreset === preset.id
+                      ? 'bg-orange-600 text-white shadow-2xs font-bold'
+                      : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+
             {/* Filter & Search Bar */}
-            <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/60 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="p-4 sm:p-5 border-b border-slate-100 bg-white flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               {/* Search within table */}
               <div className="relative flex-1 max-w-md">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -742,15 +993,24 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                   type="text"
                   value={tableSearch}
                   onChange={(e) => setTableSearch(e.target.value)}
-                  placeholder="Filter keywords by name, cluster, or content type..."
-                  className="w-full pl-10 pr-4 py-2 text-xs font-medium bg-white border border-slate-200 rounded-xl placeholder:text-slate-400/70 focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
+                  placeholder="Search keyword, cluster, competitor, or flaw..."
+                  className="w-full pl-10 pr-10 py-2 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl placeholder:text-slate-400/70 focus:bg-white focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
                 />
+                {tableSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setTableSearch('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
               {/* Filters & Sorters */}
-              <div className="flex items-center gap-2.5 flex-wrap text-xs">
+              <div className="flex items-center gap-2 flex-wrap text-xs">
                 {/* Search Intent Filter */}
-                <div className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">
+                <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
                   <span className="text-[11px] font-bold uppercase text-slate-400">Intent:</span>
                   <select
                     value={intentFilter}
@@ -765,47 +1025,196 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                   </select>
                 </div>
 
-                {/* KD Filter */}
-                <div className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">
-                  <span className="text-[11px] font-bold uppercase text-slate-400">KD:</span>
+                {/* Lowest DR Filter (Ahrefs Signature) */}
+                <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                  <span className="text-[11px] font-bold uppercase text-orange-600">Lowest DR:</span>
                   <select
-                    value={kdFilter}
-                    onChange={(e) => setKdFilter(e.target.value)}
+                    value={lowestDrFilter}
+                    onChange={(e) => setLowestDrFilter(e.target.value)}
                     className="bg-transparent font-bold text-slate-700 outline-hidden cursor-pointer"
                   >
-                    <option value="all">All Difficulties</option>
-                    <option value="easy">Easy (&le; 20)</option>
-                    <option value="low">Low (21-32)</option>
-                    <option value="medium">Medium (33-48)</option>
-                    <option value="hard">Hard (&gt; 48)</option>
+                    <option value="all">Any DR</option>
+                    <option value="15">DR &le; 15 (Ultra Weak)</option>
+                    <option value="20">DR &le; 20 (Easy Target)</option>
+                    <option value="25">DR &le; 25 (Vulnerable)</option>
+                    <option value="35">DR &le; 35 (Moderate)</option>
+                  </select>
+                </div>
+
+                {/* Max KD Filter */}
+                <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                  <span className="text-[11px] font-bold uppercase text-slate-400">Max KD:</span>
+                  <select
+                    value={maxKdFilter}
+                    onChange={(e) => setMaxKdFilter(e.target.value)}
+                    className="bg-transparent font-bold text-slate-700 outline-hidden cursor-pointer"
+                  >
+                    <option value="all">Any KD</option>
+                    <option value="10">KD &le; 10 (Super Easy)</option>
+                    <option value="20">KD &le; 20 (Easy)</option>
+                    <option value="30">KD &le; 30 (Moderate)</option>
+                    <option value="50">KD &le; 50</option>
                   </select>
                 </div>
 
                 {/* Sort Field */}
-                <div className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">
+                <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
                   <span className="text-[11px] font-bold uppercase text-slate-400">Sort:</span>
                   <select
                     value={sortField}
                     onChange={(e) => setSortField(e.target.value as any)}
                     className="bg-transparent font-bold text-slate-700 outline-hidden cursor-pointer"
                   >
-                    <option value="opportunity">Opportunity Score</option>
+                    <option value="untapped">Untapped Score (0-100)</option>
+                    <option value="tp">Traffic Potential (TP)</option>
+                    <option value="lowest_dr">Lowest DR in Top 10</option>
                     <option value="volume">Search Volume</option>
                     <option value="kd">Keyword Difficulty (KD)</option>
                     <option value="ctr">Organic CTR %</option>
                     <option value="cpm">Estimated CPM ($)</option>
+                    <option value="opportunity">Opportunity Score</option>
                   </select>
                   <button
                     type="button"
                     onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-                    className="p-1 hover:bg-slate-100 rounded-md text-slate-600 cursor-pointer"
+                    className="p-1 hover:bg-slate-200 rounded-md text-slate-600 cursor-pointer transition-colors"
                     title={`Toggle sort order (Current: ${sortOrder})`}
                   >
                     <ArrowUpDown className="w-3 h-3" />
                   </button>
                 </div>
+
+                {/* Toggle Advanced Filters Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedFilters((prev) => !prev)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold border transition-colors cursor-pointer ${
+                    showAdvancedFilters || activeFiltersCount > 0
+                      ? 'bg-blue-50 border-blue-300 text-blue-700'
+                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <SlidersHorizontal className="w-3 h-3" />
+                  <span>Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}</span>
+                </button>
+
+                {/* Reset Filters */}
+                {activeFiltersCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={resetAllFilters}
+                    className="text-[11px] font-bold text-rose-600 hover:text-rose-800 hover:underline cursor-pointer px-1"
+                  >
+                    Reset All
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* EXPANDABLE ADVANCED AHREFS FILTERS DRAWER */}
+            {showAdvancedFilters && (
+              <div className="p-4 bg-slate-50 border-b border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
+                {/* Min Volume */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Min Monthly Volume
+                  </label>
+                  <select
+                    value={minVolFilter}
+                    onChange={(e) => setMinVolFilter(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-semibold text-slate-700"
+                  >
+                    <option value="all">Any Volume</option>
+                    <option value="250">250+ /mo</option>
+                    <option value="500">500+ /mo</option>
+                    <option value="1000">1,000+ /mo</option>
+                    <option value="5000">5,000+ /mo</option>
+                  </select>
+                </div>
+
+                {/* Min Traffic Potential */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Min Traffic Potential (TP)
+                  </label>
+                  <select
+                    value={minTpFilter}
+                    onChange={(e) => setMinTpFilter(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-semibold text-slate-700"
+                  >
+                    <option value="all">Any TP</option>
+                    <option value="1000">1,000+ TP</option>
+                    <option value="2500">2,500+ TP</option>
+                    <option value="5000">5,000+ TP</option>
+                    <option value="10000">10,000+ TP</option>
+                  </select>
+                </div>
+
+                {/* Min Word Count */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Word Count (Length)
+                  </label>
+                  <select
+                    value={wordCountFilter}
+                    onChange={(e) => setWordCountFilter(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-semibold text-slate-700"
+                  >
+                    <option value="all">Any Word Count</option>
+                    <option value="3">3+ Words (Long-tail)</option>
+                    <option value="4">4+ Words (Intent-rich)</option>
+                    <option value="5">5+ Words (Specific query)</option>
+                  </select>
+                </div>
+
+                {/* SERP Flaw Type */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    SERP Flaw / Crack Type
+                  </label>
+                  <select
+                    value={serpFlawFilter}
+                    onChange={(e) => setSerpFlawFilter(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-semibold text-slate-700"
+                  >
+                    <option value="all">All SERP Flaws</option>
+                    <option value="low_dr">Low DR Competitor in Top 5</option>
+                    <option value="ugc_forum">Reddit / Forum on Page 1</option>
+                    <option value="zero_backlinks">0 Backlink Ranker</option>
+                    <option value="outdated_serp">Outdated Content on SERP</option>
+                    <option value="snippet_opportunity">Snippet Opportunity</option>
+                  </select>
+                </div>
+
+                {/* Include Term */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Include Keyword Term
+                  </label>
+                  <input
+                    type="text"
+                    value={includeTerm}
+                    onChange={(e) => setIncludeTerm(e.target.value)}
+                    placeholder="e.g. tool, how, best"
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-medium text-slate-700 placeholder:text-slate-400"
+                  />
+                </div>
+
+                {/* Exclude Term */}
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Exclude Keyword Term
+                  </label>
+                  <input
+                    type="text"
+                    value={excludeTerm}
+                    onChange={(e) => setExcludeTerm(e.target.value)}
+                    placeholder="e.g. login, free, download"
+                    className="w-full bg-white border border-slate-200 rounded-lg p-2 font-medium text-slate-700 placeholder:text-slate-400"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* TABULAR RESULTS */}
             <div className="overflow-x-auto">
@@ -820,16 +1229,16 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                         className="rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
-                    <th className="py-3.5 px-2 w-12 text-center">#</th>
-                    <th className="py-3.5 px-4 min-w-[220px]">Keyword Phrase</th>
-                    <th className="py-3.5 px-3">Type</th>
-                    <th className="py-3.5 px-3">Intent</th>
+                    <th className="py-3.5 px-2 w-10 text-center">#</th>
+                    <th className="py-3.5 px-4 min-w-[200px]">Keyword Phrase</th>
+                    <th className="py-3.5 px-2.5">Intent</th>
                     <th className="py-3.5 px-3">Search Volume</th>
+                    <th className="py-3.5 px-3">Traffic Potential (TP)</th>
                     <th className="py-3.5 px-3">KD %</th>
-                    <th className="py-3.5 px-3">Est. CTR</th>
-                    <th className="py-3.5 px-3">Est. CPM / CPC</th>
-                    <th className="py-3.5 px-3">Opportunity</th>
-                    <th className="py-3.5 px-4 min-w-[180px]">Recommended Content Format</th>
+                    <th className="py-3.5 px-3 min-w-[150px]">Lowest DR in Top 10</th>
+                    <th className="py-3.5 px-3 min-w-[150px]">SERP Flaw / Crack</th>
+                    <th className="py-3.5 px-3 min-w-[120px]">Untapped Score</th>
+                    <th className="py-3.5 px-3">CPM / CPC</th>
                     <th className="py-3.5 px-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -857,6 +1266,22 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                         kdColor = 'text-amber-700 bg-amber-50 border-amber-200';
                       }
 
+                      // Lowest DR Color
+                      let drBadge = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                      if (kw.lowestDrTop10 > 30) {
+                        drBadge = 'bg-slate-100 text-slate-700 border-slate-200';
+                      } else if (kw.lowestDrTop10 > 20) {
+                        drBadge = 'bg-blue-50 text-blue-700 border-blue-200';
+                      }
+
+                      // Untapped Score Gradient
+                      let scoreColor = 'from-emerald-500 to-teal-500';
+                      if (kw.untappedScore < 60) {
+                        scoreColor = 'from-amber-500 to-orange-500';
+                      } else if (kw.untappedScore >= 80) {
+                        scoreColor = 'from-orange-500 to-rose-500';
+                      }
+
                       return (
                         <tr
                           key={kw.id}
@@ -879,31 +1304,23 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                             {idx + 1}
                           </td>
 
-                          {/* Keyword */}
+                          {/* Keyword Phrase */}
                           <td className="py-3 px-4">
-                            <div className="font-bold text-slate-900 hover:text-blue-600 transition-colors">
-                              {kw.keyword}
+                            <div className="font-bold text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1.5">
+                              <span>{kw.keyword}</span>
+                              <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-mono font-semibold">
+                                {kw.wordCount}w
+                              </span>
                             </div>
-                            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
-                              Cluster: {kw.clusterName}
+                            <div className="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-2">
+                              <span>Cluster: {kw.clusterName}</span>
+                              <span>•</span>
+                              <span className="text-slate-500">{kw.recommendedFormat}</span>
                             </div>
-                          </td>
-
-                          {/* Type */}
-                          <td className="py-3 px-3">
-                            <span
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                kw.type === 'short_tail'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-indigo-100 text-indigo-800'
-                              }`}
-                            >
-                              {kw.type === 'short_tail' ? '⚡ Short-Tail' : '🎯 Long-Tail'}
-                            </span>
                           </td>
 
                           {/* Intent */}
-                          <td className="py-3 px-3">
+                          <td className="py-3 px-2.5">
                             <span
                               className={`px-2 py-0.5 rounded-md text-[10px] font-bold border capitalize ${intentBg}`}
                             >
@@ -917,12 +1334,22 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                               {kw.searchVolume.toLocaleString()}
                               <span className="text-[10px] font-normal text-slate-500"> /mo</span>
                             </div>
-                            {/* Volume Bar */}
-                            <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
+                            <div className="w-14 h-1 bg-slate-100 rounded-full overflow-hidden mt-1">
                               <div
                                 className="h-full bg-blue-600 rounded-full"
                                 style={{ width: `${Math.min(100, (kw.searchVolume / 48000) * 100)}%` }}
                               />
+                            </div>
+                          </td>
+
+                          {/* Traffic Potential (TP) - Ahrefs Signature */}
+                          <td className="py-3 px-3">
+                            <div className="font-bold text-purple-900 font-mono">
+                              {kw.trafficPotential.toLocaleString()}
+                              <span className="text-[10px] font-normal text-purple-600"> /mo</span>
+                            </div>
+                            <div className="text-[10px] font-semibold text-purple-600">
+                              {(kw.trafficPotential / kw.searchVolume).toFixed(1)}x search volume
                             </div>
                           </td>
 
@@ -931,15 +1358,74 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                             <span
                               className={`px-2 py-0.5 rounded-md text-[10px] font-bold border font-mono ${kdColor}`}
                             >
-                              KD {kw.difficulty}% ({kw.difficultyTier})
+                              KD {kw.difficulty}%
                             </span>
                           </td>
 
-                          {/* CTR */}
+                          {/* Lowest DR in Top 10 (Ahrefs signature) */}
                           <td className="py-3 px-3">
-                            <span className="font-bold text-purple-700 font-mono text-xs">
-                              {kw.estimatedCtr}%
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setInspectingKeyword(kw)}
+                              className="text-left group cursor-pointer"
+                              title="Click to inspect Top 10 SERP competitor breakdown"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-black border ${drBadge}`}>
+                                  DR {kw.lowestDrTop10}
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-600 font-mono">
+                                  #{kw.lowestDrPosition}
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-slate-500 truncate max-w-[140px] group-hover:text-blue-600 group-hover:underline">
+                                {kw.lowestDrCompetitor} ({kw.pageReferringDomains} RD)
+                              </div>
+                            </button>
+                          </td>
+
+                          {/* SERP Flaw / Crack */}
+                          <td className="py-3 px-3">
+                            <button
+                              type="button"
+                              onClick={() => setInspectingKeyword(kw)}
+                              className="text-left group cursor-pointer"
+                              title="Click to inspect this SERP vulnerability"
+                            >
+                              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200 text-[10px] font-bold">
+                                {kw.serpFlaw.type === 'ugc_forum' && <span>💬</span>}
+                                {kw.serpFlaw.type === 'zero_backlinks' && <span>🎯</span>}
+                                {kw.serpFlaw.type === 'low_dr' && <span>🛡️</span>}
+                                {kw.serpFlaw.type === 'outdated_serp' && <span>⚡</span>}
+                                {kw.serpFlaw.type === 'snippet_opportunity' && <span>⭐</span>}
+                                <span className="truncate max-w-[120px]">{kw.serpFlaw.label}</span>
+                              </div>
+                              <div className="text-[9px] text-slate-400 mt-0.5">
+                                {kw.serpFlaw.impact}
+                              </div>
+                            </button>
+                          </td>
+
+                          {/* Untapped Score */}
+                          <td className="py-3 px-3">
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="font-mono font-black text-xs text-slate-900">
+                                  {kw.untappedScore}/100
+                                </span>
+                                {kw.untappedScore >= 80 && (
+                                  <span className="text-[9px] font-bold text-orange-600 uppercase">
+                                    Hot
+                                  </span>
+                                )}
+                              </div>
+                              <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full bg-gradient-to-r ${scoreColor} rounded-full`}
+                                  style={{ width: `${kw.untappedScore}%` }}
+                                />
+                              </div>
+                            </div>
                           </td>
 
                           {/* CPM / CPC */}
@@ -952,31 +1438,21 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                             </div>
                           </td>
 
-                          {/* Opportunity Score */}
-                          <td className="py-3 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-extrabold text-slate-900 text-xs font-mono">
-                                {kw.opportunityScore}
-                              </span>
-                              <div className="w-10 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full"
-                                  style={{ width: `${kw.opportunityScore}%` }}
-                                />
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Recommended Content Format */}
-                          <td className="py-3 px-4">
-                            <span className="text-[11px] font-semibold text-slate-700 bg-slate-100/90 px-2 py-1 rounded-lg inline-block">
-                              {kw.recommendedFormat}
-                            </span>
-                          </td>
-
                           {/* Actions */}
                           <td className="py-3 px-3 text-right">
                             <div className="flex items-center justify-end gap-1">
+                              {/* Inspect SERP Button */}
+                              <button
+                                type="button"
+                                onClick={() => setInspectingKeyword(kw)}
+                                className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer border border-blue-200/70"
+                                title="Inspect SERP Competitors & Vulnerabilities (Ahrefs view)"
+                              >
+                                <Eye className="w-3 h-3 text-blue-600" />
+                                <span>SERP</span>
+                              </button>
+
+                              {/* Copy Keyword */}
                               <button
                                 type="button"
                                 onClick={() => copyKeyword(kw.keyword, kw.id)}
@@ -989,6 +1465,8 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                                   <Copy className="w-3.5 h-3.5" />
                                 )}
                               </button>
+
+                              {/* Open Google Live SERP */}
                               <a
                                 href={`https://www.google.com/search?q=${encodeURIComponent(kw.keyword)}`}
                                 target="_blank"
@@ -1006,7 +1484,20 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                   ) : (
                     <tr>
                       <td colSpan={12} className="py-12 text-center text-slate-500 text-xs">
-                        No keywords match your current filter criteria. Try adjusting your search query or filters.
+                        <div className="max-w-sm mx-auto space-y-2">
+                          <AlertCircle className="w-8 h-8 text-slate-300 mx-auto" />
+                          <div className="font-bold text-slate-800">No untapped keywords match this filter</div>
+                          <p className="text-slate-500 text-[11px]">
+                            Try lowering the Lowest DR threshold or switching to another Ahrefs filter preset.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={resetAllFilters}
+                            className="mt-2 px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold text-xs cursor-pointer"
+                          >
+                            Reset All Filters
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -1018,7 +1509,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
             <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
               <div>
                 Showing <strong className="text-slate-800">{filteredKeywords.length}</strong> of{' '}
-                <strong className="text-slate-800">{planResult.allKeywords.length}</strong> keywords (25 Short-Tail + 25 Long-Tail)
+                <strong className="text-slate-800">{planResult.allKeywords.length}</strong> keywords (Ahrefs Untapped Engine)
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -1034,7 +1525,7 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
                   onClick={exportToCsv}
                   className="font-bold text-blue-600 hover:underline cursor-pointer"
                 >
-                  Download CSV
+                  Download CSV with Ahrefs Metrics
                 </button>
               </div>
             </div>
@@ -1193,6 +1684,42 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
             </div>
 
             <div className="space-y-5">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <h3 className="text-sm font-bold text-slate-900">
+                  What are "Untapped Keywords" and how does the Ahrefs filter work?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed font-semibold">
+                  <strong>Untapped keywords are search queries with high traffic potential where low-authority websites (DR &le; 20) or forums (Reddit/Quora) rank in top spots with minimal backlinks.</strong>
+                </p>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Traditional keyword research relies solely on Keyword Difficulty (KD), which only measures backlink counts to top ranking pages. The Ahrefs untapped methodology examines the actual SERP layout to find "cracks" — such as positions held by low DR domains, user-generated forum threads, or outdated content that a well-crafted guide can easily outrank.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <h3 className="text-sm font-bold text-slate-900">
+                  What is Traffic Potential (TP) and why is it better than Search Volume?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed font-semibold">
+                  <strong>Traffic Potential estimates total monthly organic visits the #1 ranking page receives for ALL keyword variations combined, usually 2x to 5x single keyword search volume.</strong>
+                </p>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  A keyword with only 500 monthly search volume can have a Traffic Potential of 4,000/month because a single comprehensive article will rank for hundreds of related long-tail synonyms simultaneously.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <h3 className="text-sm font-bold text-slate-900">
+                  What does "Lowest DR in Top 10" mean for a new or low-authority website?
+                </h3>
+                <p className="text-xs text-slate-800 leading-relaxed font-semibold">
+                  <strong>It identifies the weakest domain rating currently ranking on Page 1. If a website with DR &le; 20 is ranking, your site can rank too without acquiring dozens of links.</strong>
+                </p>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Even if Wikipedia and Forbes hold positions #1 and #2, if a DR 14 niche site ranks at #3 or #4 with only 1 backlink, Google has proven that topical relevance and search intent match trump raw domain power for that query.
+                </p>
+              </div>
+
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                 <h3 className="text-sm font-bold text-slate-900">
                   What is the difference between short-tail and long-tail keywords?
@@ -1356,8 +1883,274 @@ export const KeywordPlannerView: React.FC<KeywordPlannerViewProps> = ({
               <li><strong>JSON-LD Structured Data:</strong> Inject valid <code>SoftwareApplication</code>, <code>FAQPage</code>, and <code>WebSite</code> schema markup.</li>
             </ul>
           </section>
+
+          <section className="space-y-3 pt-6 border-t border-slate-100">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Flame className="w-4 h-4 text-orange-600" />
+              <span>5. Ahrefs Untapped Keyword Strategy: Finding Cracks in the SERP</span>
+            </h3>
+            <p>
+              Standard keyword research tools mislead site owners by calculating Keyword Difficulty (KD) strictly based on the average number of backlinks pointing to top-10 URLs. In reality, modern search algorithms reward topical nuance and user intent satisfaction over raw PageRank. Ahrefs popularized the <strong>Untapped Keyword Research Workflow</strong>, which uncovers high-value search queries where incumbent competitors exhibit fundamental structural vulnerabilities:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+              <div className="p-3.5 rounded-xl bg-orange-50/60 border border-orange-200/80 space-y-1">
+                <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-orange-500" />
+                  <span>Lowest DR &le; 20 in Top 5</span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-normal">
+                  If a low Domain Rating website ranks on page one, Google has determined that domain authority is secondary to topical accuracy. Any focused domain can compete.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80 space-y-1">
+                <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span>UGC Forums (Reddit / Quora)</span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-normal">
+                  When user discussion boards take top positions, Google lacks dedicated expert editorial content. A definitive guide easily captures Position 1.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80 space-y-1">
+                <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span>0-1 Referring Domain Rankers</span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-normal">
+                  Pages ranking with zero or single backlinks prove that link building is not required. Solid on-page architecture and entity density will win.
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-600 pt-1">
+              By combining <strong>Traffic Potential (TP)</strong> filtering with lowest DR inspection, publishers can bypass ultra-competitive seed terms and build predictable organic search pipelines that convert immediately.
+            </p>
+          </section>
         </div>
       </article>
+
+      {/* SERP INSPECTOR MODAL (AHREFS CRACK ANALYSIS) */}
+      {inspectingKeyword && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div
+            className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden text-xs"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-0.5 rounded-md bg-orange-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                    <Flame className="w-3 h-3" />
+                    <span>Ahrefs SERP Crack Inspector</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-slate-700 text-slate-200 text-[10px] font-mono font-bold">
+                    KD {inspectingKeyword.difficulty}%
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-mono font-bold">
+                    Untapped Score: {inspectingKeyword.untappedScore}/100
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-extrabold text-white">
+                  "{inspectingKeyword.keyword}"
+                </h3>
+                <div className="text-[11px] text-slate-300 flex items-center gap-3">
+                  <span>Vol: <strong className="text-white font-mono">{inspectingKeyword.searchVolume.toLocaleString()}</strong>/mo</span>
+                  <span>•</span>
+                  <span>Traffic Potential: <strong className="text-white font-mono">{inspectingKeyword.trafficPotential.toLocaleString()}</strong>/mo</span>
+                  <span>•</span>
+                  <span>Cluster: <strong className="text-white">{inspectingKeyword.clusterName}</strong></span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setInspectingKeyword(null)}
+                className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                title="Close inspector"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-5">
+              {/* Vulnerability Banner */}
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-amber-950 text-xs">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span>Primary SERP Vulnerability Detected: {inspectingKeyword.serpFlaw.label}</span>
+                </div>
+                <p className="text-slate-700 text-xs leading-relaxed">
+                  {inspectingKeyword.serpFlaw.description}
+                </p>
+                <div className="text-[11px] font-semibold text-amber-800 pt-1">
+                  Tactical Advantage: {inspectingKeyword.serpFlaw.impact}
+                </div>
+              </div>
+
+              {/* SERP Competitor Breakdown */}
+              <div className="space-y-2">
+                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
+                  SERP Top Competitor Landscape
+                </h4>
+                <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-slate-100 text-slate-600 font-bold uppercase text-[9px] tracking-wider">
+                      <tr>
+                        <th className="py-2.5 px-3 w-10 text-center">Pos</th>
+                        <th className="py-2.5 px-3">Ranking Entity</th>
+                        <th className="py-2.5 px-2.5 text-center">DR</th>
+                        <th className="py-2.5 px-2.5 text-center">RD</th>
+                        <th className="py-2.5 px-3">Est. Traffic</th>
+                        <th className="py-2.5 px-3">SERP Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {/* Simulated Positions 1 & 2 */}
+                      <tr className="bg-slate-50/40 text-slate-600">
+                        <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-400">#1</td>
+                        <td className="py-2.5 px-3 font-semibold text-slate-800">
+                          authority-portal.com
+                          <span className="block text-[10px] text-slate-400 font-normal">/guides/overview</span>
+                        </td>
+                        <td className="py-2.5 px-2.5 text-center font-mono font-bold text-slate-600">74</td>
+                        <td className="py-2.5 px-2.5 text-center font-mono text-slate-600">32</td>
+                        <td className="py-2.5 px-3 font-mono text-slate-600">
+                          {Math.round(inspectingKeyword.trafficPotential * 0.38).toLocaleString()}/mo
+                        </td>
+                        <td className="py-2.5 px-3 text-[10px] text-slate-500">Established Pillar</td>
+                      </tr>
+
+                      {/* Targeted Leapfrog Competitor */}
+                      <tr className="bg-orange-50/50 border-l-4 border-l-orange-500 font-medium">
+                        <td className="py-2.5 px-3 text-center font-mono font-black text-orange-600">
+                          #{inspectingKeyword.lowestDrPosition}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="font-bold text-orange-950 flex items-center gap-1.5">
+                            <span>{inspectingKeyword.lowestDrCompetitor}</span>
+                            <span className="px-1.5 py-0.2 rounded bg-orange-200/80 text-orange-900 text-[9px] font-bold">
+                              Leapfrog Target
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            Topical guide with minimal backlink profile
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-2.5 text-center">
+                          <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold text-[10px]">
+                            DR {inspectingKeyword.lowestDrTop10}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-2.5 text-center font-mono font-bold text-slate-800">
+                          {inspectingKeyword.pageReferringDomains}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono font-bold text-orange-900">
+                          {Math.round(inspectingKeyword.trafficPotential * 0.15).toLocaleString()}/mo
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="text-[10px] font-bold text-orange-700">
+                            Vulnerable Target
+                          </span>
+                        </td>
+                      </tr>
+
+                      {/* Position 4/5 */}
+                      <tr className="bg-white text-slate-600">
+                        <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-400">#4</td>
+                        <td className="py-2.5 px-3 font-semibold text-slate-800">
+                          {inspectingKeyword.serpFlaw.type === 'ugc_forum' ? 'reddit.com/r/seo' : 'tech-resource.io'}
+                          <span className="block text-[10px] text-slate-400 font-normal">/discussion/thread</span>
+                        </td>
+                        <td className="py-2.5 px-2.5 text-center font-mono font-bold text-slate-600">
+                          {inspectingKeyword.serpFlaw.type === 'ugc_forum' ? '91' : '38'}
+                        </td>
+                        <td className="py-2.5 px-2.5 text-center font-mono text-slate-600">0</td>
+                        <td className="py-2.5 px-3 font-mono text-slate-600">
+                          {Math.round(inspectingKeyword.trafficPotential * 0.08).toLocaleString()}/mo
+                        </td>
+                        <td className="py-2.5 px-3 text-[10px] text-amber-700">
+                          {inspectingKeyword.serpFlaw.type === 'ugc_forum' ? 'User Discussion' : 'Secondary Resource'}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* 3-Step Tactical Leapfrog Plan */}
+              <div className="space-y-2">
+                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
+                  3-Step Leapfrog Action Blueprint
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div className="font-bold text-slate-900 flex items-center gap-1">
+                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-mono">1</span>
+                      <span>Content Scope</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Publish a 1,600+ word resource formatted as <strong>{inspectingKeyword.recommendedFormat}</strong> targeting "{inspectingKeyword.keyword}".
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div className="font-bold text-slate-900 flex items-center gap-1">
+                      <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px] font-mono">2</span>
+                      <span>Backlink Target</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Target <strong>0-2 internal links</strong> from your pillar page. No external outreach required to displace DR {inspectingKeyword.lowestDrTop10}.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div className="font-bold text-slate-900 flex items-center gap-1">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-mono">3</span>
+                      <span>Snippet Capture</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Format the opening H2 with a bold 22-word direct answer to claim Google's Featured Snippet Position 0.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-[11px] text-slate-500 font-mono">
+                Formula: Untapped Score = (100 - KD) × 0.4 + (100 - DR) × 0.35 + (TP Factor) × 0.25
+              </span>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://www.google.com/search?q=${encodeURIComponent(inspectingKeyword.keyword)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 flex items-center gap-1.5 transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>View Google SERP</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    copyKeyword(inspectingKeyword.keyword, inspectingKeyword.id);
+                  }}
+                  className="px-4 py-1.5 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy Keyword</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

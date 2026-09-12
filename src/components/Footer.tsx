@@ -139,6 +139,46 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </li>
               <li>
                 <button
+                  onClick={() => navigateTo('/tools/indexation-fixer')}
+                  className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>GSC Indexation Fixer (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/robots-txt-validator')}
+                  className="text-sky-400 font-semibold hover:text-sky-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>Robots.txt Validator (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/internal-link-analyzer')}
+                  className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>Internal Link Analyzer (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/aeo-checker')}
+                  className="text-purple-400 font-semibold hover:text-purple-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>AEO Readiness Checker (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/inp-debugger')}
+                  className="text-amber-400 font-semibold hover:text-amber-300 transition-colors text-left flex items-center gap-1"
+                >
+                  <span>Core Web Vitals INP Debugger (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => navigateTo('/tools/color-contrast-checker')}
                   className="hover:text-emerald-400 transition-colors text-left"
                 >

@@ -19,6 +19,11 @@ import { SiteComparisonView } from './components/SiteComparisonView';
 import { KeywordPlannerView } from './components/KeywordPlannerView';
 import { DomainRatingChecker } from './components/DomainRatingChecker';
 import { SitemapAuditorView } from './components/SitemapAuditorView';
+import { GscIndexationFixer } from './components/GscIndexationFixer';
+import { RobotsTxtValidator } from './components/RobotsTxtValidator';
+import { InternalLinkAnalyzer } from './components/InternalLinkAnalyzer';
+import { AeoReadinessChecker } from './components/AeoReadinessChecker';
+import { InpPerformanceDebugger } from './components/InpPerformanceDebugger';
 import { KineticMotionExperience } from './components/KineticMotionExperience';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
@@ -491,6 +496,46 @@ export default function App() {
           <SitemapAuditorView onNavigate={handleNavigate} />
         )}
 
+        {/* ROUTE 10.7: Flagship Google Search Console Indexation Fixer */}
+        {(activeRoute === '/tools/indexation-fixer' ||
+          activeRoute === '/tools/gsc-indexation' ||
+          activeRoute === '/tools/gsc-index-fixer' ||
+          activeRoute === '/tools/discovered-not-indexed-fixer') && (
+          <GscIndexationFixer onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.8: Flagship Robots.txt Validator & AI Crawl Simulator */}
+        {(activeRoute === '/tools/robots-txt-validator' ||
+          activeRoute === '/tools/robots-validator' ||
+          activeRoute === '/tools/robots-txt' ||
+          activeRoute === '/tools/ai-crawl-simulator') && (
+          <RobotsTxtValidator onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.9: Flagship Internal Link Equity & PageRank Silo Analyzer */}
+        {(activeRoute === '/tools/internal-link-analyzer' ||
+          activeRoute === '/tools/internal-links' ||
+          activeRoute === '/tools/internal-link-equity' ||
+          activeRoute === '/tools/pagerank-analyzer') && (
+          <InternalLinkAnalyzer onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.10: Flagship AEO & AI Overviews Readiness Checker */}
+        {(activeRoute === '/tools/aeo-checker' ||
+          activeRoute === '/tools/aeo-readiness' ||
+          activeRoute === '/tools/ai-overviews-optimizer' ||
+          activeRoute === '/tools/answer-engine-optimization') && (
+          <AeoReadinessChecker onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.11: Flagship Core Web Vitals & Real-Time INP Debugger */}
+        {(activeRoute === '/tools/inp-debugger' ||
+          activeRoute === '/tools/inp-checker' ||
+          activeRoute === '/tools/core-web-vitals-inp' ||
+          activeRoute === '/tools/interaction-to-next-paint') && (
+          <InpPerformanceDebugger onNavigate={handleNavigate} />
+        )}
+
         {/* ROUTE 11: Free Tools Suite (Accessibility + SEO + Growth) */}
         {activeRoute.startsWith('/tools') &&
           activeRoute !== '/tools/site-comparison' &&
@@ -504,7 +549,27 @@ export default function App() {
           activeRoute !== '/tools/sitemap-audit' &&
           activeRoute !== '/tools/sitemap-validator' &&
           activeRoute !== '/tools/sitemap-checker' &&
-          activeRoute !== '/tools/sitemap' && (
+          activeRoute !== '/tools/sitemap' &&
+          activeRoute !== '/tools/indexation-fixer' &&
+          activeRoute !== '/tools/gsc-indexation' &&
+          activeRoute !== '/tools/gsc-index-fixer' &&
+          activeRoute !== '/tools/discovered-not-indexed-fixer' &&
+          activeRoute !== '/tools/robots-txt-validator' &&
+          activeRoute !== '/tools/robots-validator' &&
+          activeRoute !== '/tools/robots-txt' &&
+          activeRoute !== '/tools/ai-crawl-simulator' &&
+          activeRoute !== '/tools/internal-link-analyzer' &&
+          activeRoute !== '/tools/internal-links' &&
+          activeRoute !== '/tools/internal-link-equity' &&
+          activeRoute !== '/tools/pagerank-analyzer' &&
+          activeRoute !== '/tools/aeo-checker' &&
+          activeRoute !== '/tools/aeo-readiness' &&
+          activeRoute !== '/tools/ai-overviews-optimizer' &&
+          activeRoute !== '/tools/answer-engine-optimization' &&
+          activeRoute !== '/tools/inp-debugger' &&
+          activeRoute !== '/tools/inp-checker' &&
+          activeRoute !== '/tools/core-web-vitals-inp' &&
+          activeRoute !== '/tools/interaction-to-next-paint' && (
           <FreeToolsView
             initialTool={
               activeRoute === '/tools/alt-text-checker'

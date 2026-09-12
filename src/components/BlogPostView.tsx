@@ -122,8 +122,15 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
         mainEntityOfPage: `https://accessfix.ai/blog/${post.slug}`,
         image: {
           '@type': 'ImageObject',
+          '@id': `${post.featuredImage.url}#primaryimage`,
           url: post.featuredImage.url,
-          caption: post.featuredImage.alt,
+          contentUrl: post.featuredImage.url,
+          caption: post.featuredImage.caption || post.featuredImage.alt,
+          description: post.featuredImage.alt,
+          name: post.title,
+          width: 1200,
+          height: 630,
+          representativeOfPage: true,
         },
         author: {
           '@type': 'Person',
@@ -189,8 +196,43 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
     ],
   };
 
+  // Dynamic SEO, Canonical & JSON-LD Injection
+  useEffect(() => {
+    document.title = `${post.seoTitle || post.title} | AccessFix AI`;
+
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', post.metaDescription);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', `https://accessfix.ai/blog/${post.slug}`);
+
+    let scriptTag = document.getElementById('article-jsonld') as HTMLScriptElement | null;
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = 'article-jsonld';
+      scriptTag.type = 'application/ld+json';
+      document.head.appendChild(scriptTag);
+    }
+    scriptTag.textContent = JSON.stringify(jsonLdSchema);
+  }, [post, jsonLdSchema]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-in fade-in">
+      {/* Inline Schema Markup for crawlers and answer engines */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
+      />
       {/* Sticky Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-slate-100 z-50">
         <div
@@ -228,10 +270,10 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
           <button
             onClick={() => setShowScoreModal(true)}
             className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 px-3 py-1.5 rounded-xl font-bold border border-emerald-200 cursor-pointer transition-colors"
-            title="Inspect 20-point quality audit score"
+            title="Inspect editorial compliance audit"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Score: {post.qualityScore.total}/100</span>
+            <span>Editorial Standards</span>
           </button>
 
           <button
@@ -320,7 +362,11 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
               >
                 <img
                   src={post.author.avatar}
-                  alt={post.author.name}
+                  alt={`${post.author.name} - ${post.author.role}`}
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                  decoding="async"
                   className="w-12 h-12 rounded-2xl object-cover ring-2 ring-emerald-500/20 group-hover:ring-emerald-500 transition-all"
                 />
                 <div className="text-xs">
@@ -404,7 +450,11 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
               >
                 <img
                   src={post.author.avatar}
-                  alt={post.author.name}
+                  alt={`${post.author.name} - ${post.author.role}`}
+                  width={40}
+                  height={40}
+                  loading="eager"
+                  decoding="async"
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/20"
                 />
                 <div className="text-xs">
@@ -461,6 +511,11 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
               <img
                 src={post.featuredImage.url}
                 alt={post.featuredImage.alt}
+                width={1200}
+                height={630}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-auto max-h-[460px] object-cover"
               />
             </div>
@@ -587,7 +642,11 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <img
                 src={post.author.avatar}
-                alt={post.author.name}
+                alt={`${post.author.name} - ${post.author.role}`}
+                width={80}
+                height={80}
+                loading="lazy"
+                decoding="async"
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-emerald-500/20 shrink-0"
               />
               <div className="space-y-2 flex-1">

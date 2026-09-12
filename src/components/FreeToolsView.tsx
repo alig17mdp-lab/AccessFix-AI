@@ -25,6 +25,10 @@ import {
   ChevronRight,
   Info,
   FileCode,
+  Clock,
+  Network,
+  Bot,
+  Gauge,
 } from 'lucide-react';
 import { calculateContrast } from '../utils/contrastCalculator';
 import { KeywordPlannerView } from './KeywordPlannerView';
@@ -139,11 +143,11 @@ const TOOL_DEFINITIONS: Record<string, ToolMeta> = {
   },
   'domain-rating': {
     id: 'domain-rating',
-    label: 'Domain Rating Checker',
+    label: 'Domain Rating & DA PA Checker',
     category: 'Authority & Backlink Intelligence',
-    badge: 'Real-Time DR, DA, Backlinks & Competitor Gaps',
-    title: 'Domain Rating & Backlinks Authority Checker',
-    seoOneLiner: 'Calculate real-time Domain Rating (DR), Domain Authority (DA), referring domains, backlinks, ranking keywords, competitors, and suggested backlink sites.',
+    badge: 'Ahrefs DR, Moz DA/PA & Free Spam Score Analyzer',
+    title: 'Domain Rating Checker & Authority Analyzer (DA, PA, DR, Spam Score)',
+    seoOneLiner: 'Check real-time Domain Rating (DR), Domain Authority (DA), Page Authority (PA), referring domains, backlinks, Spam Score, ranking keywords, and authority gaps.',
     icon: Globe,
   },
   'sitemap-auditor': {
@@ -450,6 +454,46 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
         >
           <FileCode className="w-3.5 h-3.5 text-emerald-300" />
           <span>Sitemap Auditor</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/indexation-fixer')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-indigo-800 via-violet-700 to-indigo-800 text-white hover:from-indigo-900 hover:to-violet-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-indigo-400/40"
+        >
+          <Clock className="w-3.5 h-3.5 text-indigo-300" />
+          <span>GSC Indexation Fixer</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/robots-txt-validator')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-sky-800 via-blue-700 to-sky-800 text-white hover:from-sky-900 hover:to-blue-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-sky-400/40"
+        >
+          <FileCode className="w-3.5 h-3.5 text-sky-300" />
+          <span>Robots.txt Validator</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/internal-link-analyzer')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-800 text-white hover:from-emerald-900 hover:to-teal-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-emerald-400/40"
+        >
+          <Network className="w-3.5 h-3.5 text-emerald-300" />
+          <span>Internal Link Analyzer</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/aeo-checker')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-purple-800 via-fuchsia-700 to-purple-800 text-white hover:from-purple-900 hover:to-fuchsia-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-purple-400/40"
+        >
+          <Bot className="w-3.5 h-3.5 text-purple-300" />
+          <span>AEO Readiness</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/inp-debugger')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-800 via-orange-700 to-amber-800 text-white hover:from-amber-900 hover:to-orange-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-amber-400/40"
+        >
+          <Gauge className="w-3.5 h-3.5 text-amber-300" />
+          <span>INP Debugger</span>
         </button>
 
         <div className="hidden md:block h-5 w-px bg-slate-200 mx-1" />

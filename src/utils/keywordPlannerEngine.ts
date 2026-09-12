@@ -1,16 +1,47 @@
+export interface SerpCompetitorItem {
+  rank: number;
+  title: string;
+  url: string;
+  domain: string;
+  dr: number;
+  referringDomains: number;
+  estTraffic: number;
+  contentType: string;
+  isFlaw: boolean;
+  flawNote?: string;
+}
+
+export interface SerpFlawInfo {
+  type: 'low_dr' | 'ugc_forum' | 'zero_backlinks' | 'outdated_serp' | 'snippet_opportunity';
+  label: string;
+  shortTag: string;
+  description: string;
+  badgeClass: string;
+  targetRank: number;
+}
+
 export interface KeywordPlanItem {
   id: string;
   rank: number;
   keyword: string;
+  wordCount: number;
   type: 'short_tail' | 'long_tail';
   intent: 'transactional' | 'commercial' | 'informational' | 'navigational';
   searchVolume: number;
+  trafficPotential: number; // Ahrefs signature metric: total traffic #1 page gets from all keywords
   difficulty: number; // 0-100 KD
   difficultyTier: 'Easy' | 'Low' | 'Medium' | 'Hard';
   estimatedCtr: number; // e.g. 34.2%
   cpmUsd: number; // e.g. $18.50 CPM
   cpcUsd: number; // e.g. $3.80 CPC
   opportunityScore: number; // 0-100
+  untappedScore: number; // 0-100 Ahrefs-style Untapped Potential Index
+  lowestDrTop10: number; // Ahrefs signature: Lowest DR in Top 10
+  lowestDrCompetitor: string; // Domain of lowest DR site
+  lowestDrPosition: number; // 1-10 position in SERP
+  pageReferringDomains: number; // Backlinks to ranking page (0, 1, 2...)
+  serpFlaw: SerpFlawInfo;
+  serpOverview: SerpCompetitorItem[]; // Top 5 competitors in SERP
   recommendedFormat: string;
   rankingTimeEstimate: string;
   topCompetitorSerp: string;
@@ -168,7 +199,7 @@ export function generateKeywordPlan(
     { pattern: `free online ${cleanSeed} validator with no signup`, intent: 'transactional', vol: 9600, kd: 24, ctr: 46.2, fmt: 'Instant Zero-Friction Web App' },
   ];
 
-  // Helper to build KeywordPlanItem
+  // Helper to build KeywordPlanItem with Ahrefs-Style Untapped Metrics
   const buildItem = (
     tmpl: { pattern: string; intent: string; vol: number; kd: number; ctr: number; fmt: string },
     type: 'short_tail' | 'long_tail',
@@ -177,6 +208,7 @@ export function generateKeywordPlan(
     const kw = tmpl.pattern;
     const adjustedVol = Math.round(tmpl.vol * baseVolumeScale);
     const kd = tmpl.kd;
+    const wordCount = kw.trim().split(/\s+/).length;
 
     let tier: 'Easy' | 'Low' | 'Medium' | 'Hard' = 'Medium';
     if (kd <= 20) tier = 'Easy';
@@ -194,13 +226,168 @@ export function generateKeywordPlan(
     const cpcUsd = Number((baseCpc * cpcMultiplier * (1 + (kw.length % 7) * 0.08)).toFixed(2));
     const cpmUsd = Number((cpcUsd * 4.8 * cpmMultiplier).toFixed(2));
 
-    // Opportunity score: High volume + Low KD + High CTR + High CPC = 100
+    // Ahrefs Signature Metric 1: Traffic Potential (TP)
+    // The cumulative monthly organic traffic the #1 ranking URL gets across all keyword variations
+    const tpMultiplier = 1.8 + ((rank * 7 + kw.length) % 18) * 0.12;
+    const trafficPotential = Math.round(adjustedVol * tpMultiplier);
+
+    // Ahrefs Signature Metric 2: Lowest DR in Top 10 SERP & Competitor
+    // Low DR ranking in Top 10 is the ultimate proof of rankability without massive authority
+    let lowestDr = 14;
+    let pageReferringDomains = 0;
+    let lowestDrPos = (rank % 4) + 2; // Ranks between #2 and #5
+
+    if (kd <= 18) {
+      lowestDr = 8 + ((rank * 3) % 11); // DR 8 - 18
+      pageReferringDomains = (rank % 3 === 0) ? 0 : 1;
+    } else if (kd <= 28) {
+      lowestDr = 16 + ((rank * 3) % 12); // DR 16 - 27
+      pageReferringDomains = (rank % 2 === 0) ? 1 : 2;
+    } else if (kd <= 42) {
+      lowestDr = 26 + ((rank * 4) % 14); // DR 26 - 39
+      pageReferringDomains = 2 + (rank % 4);
+    } else {
+      lowestDr = 42 + ((rank * 5) % 18); // DR 42 - 59
+      pageReferringDomains = 5 + (rank % 8);
+    }
+
+    // Assign realistic domain name for lowest DR competitor
+    const domainSuffixes = ['tools.io', 'guide.co', 'hub.dev', 'expert.app', 'stack.net', 'digest.org'];
+    const chosenSuffix = domainSuffixes[(rank + kw.length) % domainSuffixes.length];
+    const cleanWord = cleanSeed.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().slice(0, 8) || 'niche';
+    
+    let lowestDrCompetitor = `${cleanWord}${chosenSuffix}`;
+    const isForum = rank % 6 === 0 || kw.includes('reddit') || (type === 'long_tail' && rank % 4 === 0);
+    if (isForum) {
+      lowestDrCompetitor = `reddit.com/r/${cleanWord}`;
+    }
+
+    // Ahrefs Signature Metric 3: SERP Flaw / Vulnerability Detection
+    let serpFlaw: SerpFlawInfo;
+    if (isForum) {
+      serpFlaw = {
+        type: 'ugc_forum',
+        label: 'UGC Forum (Reddit / Quora) on Page 1',
+        shortTag: '💬 Reddit on P1',
+        description: 'A community forum thread ranks on page 1 because search engines lack a dedicated, authoritative guide.',
+        badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
+        targetRank: lowestDrPos,
+      };
+    } else if (pageReferringDomains <= 1) {
+      serpFlaw = {
+        type: 'zero_backlinks',
+        label: 'Zero-Backlink Page Ranking Top 5',
+        shortTag: '🎯 0 Backlinks Needed',
+        description: 'The ranking URL has ≤ 1 referring domain. You can outrank it with purely superior on-page content architecture.',
+        badgeClass: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+        targetRank: lowestDrPos,
+      };
+    } else if (lowestDr <= 22) {
+      serpFlaw = {
+        type: 'low_dr',
+        label: `Weak Competitor (DR ${lowestDr}) in Top 5`,
+        shortTag: `🛡️ Low DR (${lowestDr}) #` + lowestDrPos,
+        description: `A young or low-authority domain (DR ${lowestDr}) ranks in the top 5, proving high domain authority is not required.`,
+        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        targetRank: lowestDrPos,
+      };
+    } else if (rank % 5 === 2) {
+      serpFlaw = {
+        type: 'outdated_serp',
+        label: 'Outdated Competitor Content (2022-2023)',
+        shortTag: '⏳ Outdated SERP',
+        description: 'Page 1 competitors have not updated their guides in 2+ years. A fresh 2026 update will rapidly supplant them.',
+        badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        targetRank: lowestDrPos,
+      };
+    } else {
+      serpFlaw = {
+        type: 'snippet_opportunity',
+        label: 'AI Overview & Featured Snippet Gap',
+        shortTag: '🤖 Snippet Gap',
+        description: 'Google AI Overviews and snippet answer boxes lack a definitive <25-word summary, creating an instant capture target.',
+        badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
+        targetRank: 1,
+      };
+    }
+
+    // Untapped Score (0-100): High Volume + Low KD + Low DR + Low Backlinks + High Traffic Potential
+    const kdScorePart = Math.max(5, (100 - kd) * 0.35);
+    const drScorePart = Math.max(5, (100 - lowestDr) * 0.30);
+    const rdScorePart = pageReferringDomains <= 1 ? 18 : pageReferringDomains <= 3 ? 12 : 5;
+    const volScorePart = Math.min(15, (adjustedVol / 20000) * 15);
+    const untappedScore = Math.min(99, Math.max(52, Math.round(kdScorePart + drScorePart + rdScorePart + volScorePart)));
+
+    // Classical Opportunity score
     const volScore = Math.min(40, (adjustedVol / 40000) * 40);
     const kdInvertedScore = Math.max(5, (100 - kd) * 0.4);
     const ctrScore = (tmpl.ctr / 50) * 15;
     const cpcScore = Math.min(10, (cpcUsd / 8) * 10);
     const rawOpp = Math.round(volScore + kdInvertedScore + ctrScore + cpcScore);
     const opportunityScore = Math.min(99, Math.max(45, rawOpp));
+
+    // Synthesize realistic 5-competitor SERP breakdown for interactive inspector
+    const serpOverview: SerpCompetitorItem[] = [
+      {
+        rank: 1,
+        title: `Ultimate Guide to ${kw} (2026 Update)`,
+        url: `https://www.${cleanWord}authority.com/${kw.replace(/\s+/g, '-')}`,
+        domain: `${cleanWord}authority.com`,
+        dr: 68 + (rank % 18),
+        referringDomains: 42 + (rank * 3),
+        estTraffic: Math.round(trafficPotential * 0.38),
+        contentType: 'In-Depth Authority Guide',
+        isFlaw: false,
+      },
+      {
+        rank: 2,
+        title: `How to Use ${kw} for Maximum Results`,
+        url: `https://techinsider.${chosenSuffix}/${kw.replace(/\s+/g, '-')}`,
+        domain: `techinsider.${chosenSuffix}`,
+        dr: 48 + (rank % 15),
+        referringDomains: 14 + (rank % 8),
+        estTraffic: Math.round(trafficPotential * 0.22),
+        contentType: 'Interactive Tutorial & Overview',
+        isFlaw: lowestDrPos === 2,
+        flawNote: lowestDrPos === 2 ? serpFlaw.label : undefined,
+      },
+      {
+        rank: 3,
+        title: isForum ? `[Discussion] What is the best ${kw}?` : `${kw.slice(0, 1).toUpperCase() + kw.slice(1)} - Fast & Free Tool`,
+        url: `https://${lowestDrCompetitor}/${kw.replace(/\s+/g, '-')}`,
+        domain: lowestDrCompetitor,
+        dr: isForum ? 91 : lowestDr,
+        referringDomains: pageReferringDomains,
+        estTraffic: Math.round(trafficPotential * 0.16),
+        contentType: isForum ? 'UGC Discussion Thread' : 'Lightweight Utility Page',
+        isFlaw: true,
+        flawNote: serpFlaw.label,
+      },
+      {
+        rank: 4,
+        title: `Top 10 ${kw} Alternatives and Pricing`,
+        url: `https://www.softwarepulse.co/compare-${kw.replace(/\s+/g, '-')}`,
+        domain: 'softwarepulse.co',
+        dr: 38 + (rank % 12),
+        referringDomains: 6 + (rank % 5),
+        estTraffic: Math.round(trafficPotential * 0.11),
+        contentType: 'Comparison Listicle',
+        isFlaw: lowestDrPos === 4,
+        flawNote: lowestDrPos === 4 ? serpFlaw.label : undefined,
+      },
+      {
+        rank: 5,
+        title: `${kw} Best Practices & Common Mistakes`,
+        url: `https://growthdaily.org/${kw.replace(/\s+/g, '-')}`,
+        domain: 'growthdaily.org',
+        dr: 32 + (rank % 14),
+        referringDomains: 3 + (rank % 4),
+        estTraffic: Math.round(trafficPotential * 0.08),
+        contentType: 'Informational Blog Post',
+        isFlaw: lowestDrPos === 5,
+        flawNote: lowestDrPos === 5 ? serpFlaw.label : undefined,
+      },
+    ];
 
     // Determine cluster
     let clusterName = 'Core Calculators & Utilities';
@@ -224,18 +411,27 @@ export function generateKeywordPlan(
       id: `kw_${type}_${rank}_${Math.random().toString(36).substring(2, 6)}`,
       rank,
       keyword: kw,
+      wordCount,
       type,
       intent: tmpl.intent as any,
       searchVolume: adjustedVol,
+      trafficPotential,
       difficulty: kd,
       difficultyTier: tier,
       estimatedCtr: tmpl.ctr,
       cpmUsd,
       cpcUsd,
       opportunityScore,
+      untappedScore,
+      lowestDrTop10: lowestDr,
+      lowestDrCompetitor,
+      lowestDrPosition: lowestDrPos,
+      pageReferringDomains,
+      serpFlaw,
+      serpOverview,
       recommendedFormat: tmpl.fmt,
       rankingTimeEstimate,
-      topCompetitorSerp: type === 'short_tail' ? 'Major Category Platforms & High-DA Domains' : 'Specific Solution Guides & Interactive Tools',
+      topCompetitorSerp: lowestDrCompetitor,
       seedRelevance: 88 + (kw.length % 12),
       clusterName,
     };

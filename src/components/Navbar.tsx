@@ -27,6 +27,10 @@ import {
   ArrowLeft,
   ExternalLink,
   FileCode,
+  Network,
+  Bot,
+  Gauge,
+  Clock,
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -241,6 +245,93 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                       <ArrowRight className="w-4 h-4 text-teal-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
+
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Technical SEO & Crawl Intelligence
+                    </div>
+
+                    <div className="space-y-1 mb-2">
+                      {/* Tool 1 */}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/tools/indexation-fixer')}
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                          <Clock className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            GSC Indexation Fixer
+                            <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded bg-indigo-600 text-white">AI</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate">Fix Discovered & Crawled not indexed</div>
+                        </div>
+                      </button>
+
+                      {/* Tool 2 */}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/tools/robots-txt-validator')}
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="p-1.5 rounded-lg bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                          <FileCode className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold text-slate-900">Robots.txt & AI Crawler Validator</div>
+                          <div className="text-[11px] text-slate-500 truncate">Prevent CSS/JS blocking & govern AI scrapers</div>
+                        </div>
+                      </button>
+
+                      {/* Tool 3 */}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/tools/internal-link-analyzer')}
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                          <Network className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold text-slate-900">Internal Link & PageRank Analyzer</div>
+                          <div className="text-[11px] text-slate-500 truncate">Detect orphan pages & PageRank leaks</div>
+                        </div>
+                      </button>
+
+                      {/* Tool 4 */}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/tools/aeo-checker')}
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                          <Bot className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            AEO & AI Overviews Checker
+                            <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded bg-purple-600 text-white">HOT</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate">Optimize content for Google AI & Perplexity</div>
+                        </div>
+                      </button>
+
+                      {/* Tool 5 */}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/tools/inp-debugger')}
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                          <Gauge className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold text-slate-900">Core Web Vitals INP Debugger</div>
+                          <div className="text-[11px] text-slate-500 truncate">Debug interaction latency & JS long tasks</div>
+                        </div>
+                      </button>
+                    </div>
 
                     <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Accessibility Audit Utilities
@@ -552,7 +643,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <img
                         src={user.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-                        alt={user.fullName}
+                        alt={user.fullName || 'User profile photo'}
+                        width={32}
+                        height={32}
+                        loading="lazy"
+                        decoding="async"
                         className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/30"
                       />
                     </button>
