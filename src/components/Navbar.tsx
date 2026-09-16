@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   ShieldCheck,
   ChevronDown,
+  ChevronRight,
   Wrench,
   Sparkles,
   Layers,
@@ -33,6 +34,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { FREE_TOOLS_CATEGORIES, SOLUTIONS_CATEGORIES } from '../data/navCategoriesData';
 
 interface NavbarProps {
   user: UserProfile | null;
@@ -53,6 +55,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Category selections for dropdown master-detail navigation
+  const [activeToolsCatId, setActiveToolsCatId] = useState<string>('technical-seo');
+  const [activeSolutionsCatId, setActiveSolutionsCatId] = useState<string>('ai-solutions');
+
+  // Mobile accordion states
+  const [mobileExpandedToolsCat, setMobileExpandedToolsCat] = useState<string | null>('technical-seo');
+  const [mobileExpandedSolutionsCat, setMobileExpandedSolutionsCat] = useState<string | null>('ai-solutions');
+
+  const currentToolsCat =
+    FREE_TOOLS_CATEGORIES.find((c) => c.id === activeToolsCatId) || FREE_TOOLS_CATEGORIES[0];
+  const currentSolutionsCat =
+    SOLUTIONS_CATEGORIES.find((c) => c.id === activeSolutionsCatId) || SOLUTIONS_CATEGORIES[0];
 
   const toolsRef = useRef<HTMLDivElement>(null);
   const solutionsRef = useRef<HTMLDivElement>(null);
@@ -137,19 +152,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-600">
+            <nav className="hidden lg:flex items-center gap-2 xl:gap-3 text-sm font-semibold">
+              {/* 1. Scanner - Switzerland (Swiss Precision Red) */}
               <button
                 onClick={() => navigateTo('/')}
-                className={`transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
                   activeRoute === '/'
-                    ? 'text-blue-600 font-bold'
-                    : 'text-slate-600 hover:text-blue-600'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-500/20 ring-2 ring-red-400'
+                    : 'text-slate-800 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200'
                 }`}
+                title="Switzerland • Swiss Precision Red"
               >
-                Scanner
+                <span className="text-base leading-none" role="img" aria-label="Switzerland">🇨🇭</span>
+                <span className="uppercase tracking-wide font-black">Scanner</span>
               </button>
 
-              {/* Free Tools Dropdown */}
+              {/* 2. Free Tools - Japan (Tokyo Cyber Emerald) */}
               <div className="relative" ref={toolsRef}>
                 <button
                   onClick={() => {
@@ -157,335 +175,176 @@ export const Navbar: React.FC<NavbarProps> = ({
                     setSolutionsOpen(false);
                   }}
                   aria-expanded={toolsOpen}
-                  className={`flex items-center gap-1.5 py-2 transition-colors cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
                     activeRoute.startsWith('/tools')
-                      ? 'text-blue-600 font-bold'
-                      : 'text-slate-600 hover:text-blue-600'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 ring-2 ring-emerald-400'
+                      : 'text-slate-800 hover:text-emerald-700 hover:bg-emerald-50 border border-transparent hover:border-emerald-200'
                   }`}
+                  title="Japan • Tokyo Cyber Emerald"
                 >
-                  <Wrench className="w-4 h-4 text-blue-600" aria-hidden="true" />
-                  <span>Free Tools</span>
-                  <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${toolsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                  <span className="text-base leading-none" role="img" aria-label="Japan">🇯🇵</span>
+                  <span className="uppercase tracking-wide font-black">Free Tools</span>
+                  <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${toolsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
 
                 {toolsOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] overflow-y-auto">
-                    {/* Featured Tool 1 */}
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/tools/site-comparison')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 text-left transition-all cursor-pointer group border border-cyan-200/80 mb-2 shadow-xs"
-                    >
-                      <div className="p-2 rounded-lg bg-cyan-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-                        <BarChart3 className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                          Site Comparison Engine
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-cyan-600 text-white">NEW</span>
-                        </div>
-                        <div className="text-[11px] text-slate-600 truncate">Side-by-side technical & keyword audit</div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-cyan-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-
-                    {/* Featured Tool 2: AI Keyword Planner */}
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/tools/keyword-planner')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-left transition-all cursor-pointer group border border-blue-200/80 mb-2 shadow-xs"
-                    >
-                      <div className="p-2 rounded-lg bg-blue-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                          AI Keyword Planner & Clusters
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-blue-600 text-white">NEW</span>
-                        </div>
-                        <div className="text-[11px] text-slate-600 truncate">25 short + 25 long-tail keywords with volume, CTR & CPM</div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-
-                    {/* Featured Tool 3: Domain Rating & Backlinks Checker */}
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/tools/domain-rating-checker')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 text-left transition-all cursor-pointer group border border-indigo-200/80 mb-2 shadow-xs"
-                    >
-                      <div className="p-2 rounded-lg bg-indigo-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-                        <Globe className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                          Domain Rating & Backlinks
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-indigo-600 text-white">NEW</span>
-                        </div>
-                        <div className="text-[11px] text-slate-600 truncate">DR, DA, referring domains, keywords & competitors</div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-
-                    {/* Featured Tool 4: XML Sitemap Audit & GSC Validator */}
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/tools/sitemap-auditor')}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 hover:from-teal-100 hover:to-emerald-100 text-left transition-all cursor-pointer group border border-teal-200/80 mb-2 shadow-xs"
-                    >
-                      <div className="p-2 rounded-lg bg-teal-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-                        <FileCode className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                          XML Sitemap Auditor
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-teal-600 text-white">NEW</span>
-                        </div>
-                        <div className="text-[11px] text-slate-600 truncate">Audit URL/file, detect mistakes & download clean XML</div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-teal-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Technical SEO & Crawl Intelligence
-                    </div>
-
-                    <div className="space-y-1 mb-2">
-                      {/* Tool 1 */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/indexation-fixer')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                          <Clock className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                            GSC Indexation Fixer
-                            <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded bg-indigo-600 text-white">AI</span>
+                  <div className="absolute top-full left-0 mt-2 w-[700px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex flex-row divide-x divide-slate-100 min-h-[390px]">
+                      {/* Left Column: Categories List */}
+                      <div className="w-64 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0">
+                        <div>
+                          <div className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                            Tool Categories
                           </div>
-                          <div className="text-[11px] text-slate-500 truncate">Fix Discovered & Crawled not indexed</div>
-                        </div>
-                      </button>
-
-                      {/* Tool 2 */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/robots-txt-validator')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
-                          <FileCode className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-slate-900">Robots.txt & AI Crawler Validator</div>
-                          <div className="text-[11px] text-slate-500 truncate">Prevent CSS/JS blocking & govern AI scrapers</div>
-                        </div>
-                      </button>
-
-                      {/* Tool 3 */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/internal-link-analyzer')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          <Network className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-slate-900">Internal Link & PageRank Analyzer</div>
-                          <div className="text-[11px] text-slate-500 truncate">Detect orphan pages & PageRank leaks</div>
-                        </div>
-                      </button>
-
-                      {/* Tool 4 */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/aeo-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                          <Bot className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                            AEO & AI Overviews Checker
-                            <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded bg-purple-600 text-white">HOT</span>
+                          <div className="space-y-1 mt-1">
+                            {FREE_TOOLS_CATEGORIES.map((cat) => {
+                              const Icon = cat.icon;
+                              const isSelected = activeToolsCatId === cat.id;
+                              return (
+                                <button
+                                  key={cat.id}
+                                  type="button"
+                                  onMouseEnter={() => setActiveToolsCatId(cat.id)}
+                                  onClick={() => setActiveToolsCatId(cat.id)}
+                                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                                    isSelected
+                                      ? 'bg-white shadow-xs border border-slate-200 text-blue-700 font-bold'
+                                      : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 border border-transparent'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <div
+                                      className={`p-1.5 rounded-lg transition-colors ${
+                                        isSelected
+                                          ? 'bg-blue-600 text-white shadow-xs'
+                                          : 'bg-slate-200/70 text-slate-600 group-hover:bg-slate-200'
+                                      }`}
+                                    >
+                                      <Icon className="w-4 h-4" />
+                                    </div>
+                                    <div className="truncate">
+                                      <div className="text-xs font-semibold leading-tight">{cat.shortLabel}</div>
+                                    </div>
+                                  </div>
+                                  <ChevronRight
+                                    className={`w-3.5 h-3.5 transition-transform ${
+                                      isSelected
+                                        ? 'text-blue-600 translate-x-0.5'
+                                        : 'text-slate-600 group-hover:text-slate-600'
+                                    }`}
+                                  />
+                                </button>
+                              );
+                            })}
                           </div>
-                          <div className="text-[11px] text-slate-500 truncate">Optimize content for Google AI & Perplexity</div>
                         </div>
-                      </button>
 
-                      {/* Tool 5 */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/inp-debugger')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                          <Gauge className="w-3.5 h-3.5" />
+                        {/* Bottom Tools Hub Link */}
+                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setToolsOpen(false);
+                              navigateTo('/tools');
+                            }}
+                            className="w-full text-left text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center justify-between p-1.5 rounded-lg hover:bg-blue-50/60 cursor-pointer transition-colors"
+                          >
+                            <span>Explore All 19+ Tools Hub</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-slate-900">Core Web Vitals INP Debugger</div>
-                          <div className="text-[11px] text-slate-500 truncate">Debug interaction latency & JS long tasks</div>
-                        </div>
-                      </button>
-                    </div>
+                      </div>
 
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Accessibility Audit Utilities
-                    </div>
-
-                    <div className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/color-contrast-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                          <Palette className="w-3.5 h-3.5" />
-                        </div>
+                      {/* Right Column: Tools inside the selected category */}
+                      <div className="flex-1 p-3.5 bg-white flex flex-col justify-between">
                         <div>
-                          <div className="text-xs font-bold text-slate-900">Color Contrast Checker</div>
-                          <div className="text-[11px] text-slate-500">Test WCAG 2.1 AA 4.5:1 ratio</div>
-                        </div>
-                      </button>
+                          {/* Category Header Banner */}
+                          <div className="pb-2 mb-2 border-b border-slate-100 flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="text-xs font-black text-slate-900">
+                                {currentToolsCat.title}
+                              </h4>
+                              <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
+                                {currentToolsCat.description}
+                              </p>
+                            </div>
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                              Instant Run
+                            </span>
+                          </div>
 
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/alt-text-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
-                          <Image className="w-3.5 h-3.5" />
+                          {/* Tool list items for active category */}
+                          <div className="space-y-1">
+                            {currentToolsCat.tools.map((tool) => {
+                              const ToolIcon = tool.icon;
+                              return (
+                                <button
+                                  key={tool.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setToolsOpen(false);
+                                    navigateTo(tool.route);
+                                  }}
+                                  className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                                >
+                                  <div
+                                    className={`p-2 rounded-lg ${tool.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
+                                  >
+                                    <ToolIcon className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
+                                      {tool.name}
+                                    </span>
+                                    {tool.badge && (
+                                      <span
+                                        className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                          tool.badgeType === 'ai'
+                                            ? 'bg-purple-600 text-white'
+                                            : tool.badgeType === 'new'
+                                            ? 'bg-emerald-600 text-white'
+                                            : tool.badgeType === 'critical'
+                                            ? 'bg-rose-600 text-white'
+                                            : tool.badgeType === 'popular'
+                                            ? 'bg-blue-600 text-white'
+                                            : tool.badgeType === 'wcag'
+                                            ? 'bg-indigo-600 text-white'
+                                            : 'bg-slate-200 text-slate-700'
+                                        }`}
+                                      >
+                                        {tool.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">AI Alt Text Generator</div>
-                          <div className="text-[11px] text-slate-500">Descriptive image alt tags</div>
-                        </div>
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/heading-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                          <Heading className="w-3.5 h-3.5" />
+                        {/* Bottom Status strip */}
+                        <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600">
+                          <span>100% Client-Side Engine &bull; Zero Login Required</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setToolsOpen(false);
+                              navigateTo('/tools');
+                            }}
+                            className="font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Open Category Hub</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Heading Hierarchy Tree</div>
-                          <div className="text-[11px] text-slate-500">Audit H1-H6 sequential levels</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/form-accessibility-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          <FormInput className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Form Accessibility Validator</div>
-                          <div className="text-[11px] text-slate-500">Check labels, inputs & ARIA tags</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/keyboard-accessibility-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                          <Keyboard className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Keyboard Nav Simulator</div>
-                          <div className="text-[11px] text-slate-500">Inspect focus rings & tab order</div>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-2">
-                      SEO & Growth Utilities
-                    </div>
-
-                    <div className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/meta-tag-optimizer')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          <Search className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Meta Tag Optimizer</div>
-                          <div className="text-[11px] text-slate-500">High-CTR titles & descriptions</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/schema-generator')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                          <Code2 className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">JSON-LD Schema Builder</div>
-                          <div className="text-[11px] text-slate-500">WebSite & FAQ structured data</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/keyword-explorer')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                          <Target className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Keyword Opportunity Finder</div>
-                          <div className="text-[11px] text-slate-500">Low-competition search queries</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools/content-brief')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                          <FileText className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">AI Content Brief Builder</div>
-                          <div className="text-[11px] text-slate-500">Semantic outlines & target intent</div>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center px-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/tools')}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>View All Free Tools Hub</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Solutions Dropdown */}
+              {/* 3. Solutions - United Kingdom (Sovereign Royal Azure) */}
               <div className="relative" ref={solutionsRef}>
                 <button
                   onClick={() => {
@@ -493,133 +352,197 @@ export const Navbar: React.FC<NavbarProps> = ({
                     setToolsOpen(false);
                   }}
                   aria-expanded={solutionsOpen}
-                  className={`flex items-center gap-1.5 py-2 transition-colors cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
                     activeRoute === '/solutions' || activeRoute.startsWith('/for-') || activeRoute.includes('-checker')
-                      ? 'text-blue-600 font-bold'
-                      : 'text-slate-600 hover:text-blue-600'
+                      ? 'bg-blue-700 text-white shadow-md shadow-blue-500/20 ring-2 ring-blue-400'
+                      : 'text-slate-800 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200'
                   }`}
+                  title="United Kingdom • Sovereign Royal Azure"
                 >
-                  <Layers className="w-4 h-4 text-blue-600" aria-hidden="true" />
-                  <span>Solutions</span>
-                  <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${solutionsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                  <span className="text-base leading-none" role="img" aria-label="United Kingdom">🇬🇧</span>
+                  <span className="uppercase tracking-wide font-black">Solutions</span>
+                  <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${solutionsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
 
                 {solutionsOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      By Platform & CMS
-                    </div>
-                    <div className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/shopify-accessibility-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                        </div>
+                  <div className="absolute top-full -left-16 sm:-left-20 lg:-left-24 mt-2 w-[660px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex flex-row divide-x divide-slate-100 min-h-[340px]">
+                      {/* Left Column: Solutions Categories List */}
+                      <div className="w-56 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0">
                         <div>
-                          <div className="text-xs font-bold text-slate-900">Shopify Store Checker</div>
-                          <div className="text-[11px] text-slate-500">Liquid templates, variants & checkout audits</div>
+                          <div className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                            Solution Suites
+                          </div>
+                          <div className="space-y-1 mt-1">
+                            {SOLUTIONS_CATEGORIES.map((cat) => {
+                              const Icon = cat.icon;
+                              const isSelected = activeSolutionsCatId === cat.id;
+                              return (
+                                <button
+                                  key={cat.id}
+                                  type="button"
+                                  onMouseEnter={() => setActiveSolutionsCatId(cat.id)}
+                                  onClick={() => setActiveSolutionsCatId(cat.id)}
+                                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                                    isSelected
+                                      ? 'bg-white shadow-xs border border-slate-200 text-blue-700 font-bold'
+                                      : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 border border-transparent'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <div
+                                      className={`p-1.5 rounded-lg transition-colors ${
+                                        isSelected
+                                          ? 'bg-blue-600 text-white shadow-xs'
+                                          : 'bg-slate-200/70 text-slate-600 group-hover:bg-slate-200'
+                                      }`}
+                                    >
+                                      <Icon className="w-4 h-4" />
+                                    </div>
+                                    <div className="truncate">
+                                      <div className="text-xs font-semibold leading-tight">{cat.shortLabel}</div>
+                                    </div>
+                                  </div>
+                                  <ChevronRight
+                                    className={`w-3.5 h-3.5 transition-transform ${
+                                      isSelected
+                                        ? 'text-blue-600 translate-x-0.5'
+                                        : 'text-slate-600 group-hover:text-slate-600'
+                                    }`}
+                                  />
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/wordpress-accessibility-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                          <Globe className="w-3.5 h-3.5" />
+                        {/* Bottom Solutions Hub Link */}
+                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSolutionsOpen(false);
+                              navigateTo('/solutions');
+                            }}
+                            className="w-full text-left text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center justify-between p-1.5 rounded-lg hover:bg-blue-50/60 cursor-pointer transition-colors"
+                          >
+                            <span>Explore All Solutions Hub</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
                         </div>
+                      </div>
+
+                      {/* Right Column: Solutions inside the selected category */}
+                      <div className="flex-1 p-3.5 bg-white flex flex-col justify-between">
                         <div>
-                          <div className="text-xs font-bold text-slate-900">WordPress & WooCommerce</div>
-                          <div className="text-[11px] text-slate-500">Elementor, Divi & block theme remediation</div>
-                        </div>
-                      </button>
+                          {/* Solutions Category Header Banner */}
+                          <div className="pb-2 mb-2 border-b border-slate-100 flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="text-xs font-black text-slate-900">
+                                {currentSolutionsCat.title}
+                              </h4>
+                              <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
+                                {currentSolutionsCat.description}
+                              </p>
+                            </div>
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                              Enterprise Ready
+                            </span>
+                          </div>
 
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/webflow-accessibility-checker')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                          <Code2 className="w-3.5 h-3.5" />
+                          {/* Solution items list */}
+                          <div className="space-y-1">
+                            {currentSolutionsCat.tools.map((item) => {
+                              const ItemIcon = item.icon;
+                              return (
+                                <button
+                                  key={item.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setSolutionsOpen(false);
+                                    navigateTo(item.route);
+                                  }}
+                                  className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                                >
+                                  <div
+                                    className={`p-2 rounded-lg ${item.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
+                                  >
+                                    <ItemIcon className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
+                                      {item.name}
+                                    </span>
+                                    {item.badge && (
+                                      <span
+                                        className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                          item.badgeType === 'ai'
+                                            ? 'bg-purple-600 text-white'
+                                            : item.badgeType === 'new'
+                                            ? 'bg-emerald-600 text-white'
+                                            : item.badgeType === 'popular'
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-slate-200 text-slate-700'
+                                        }`}
+                                      >
+                                        {item.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">Webflow Accessibility Test</div>
-                          <div className="text-[11px] text-slate-500">Custom interactions & responsive layouts</div>
-                        </div>
-                      </button>
-                    </div>
 
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-2">
-                      By Target Audience
-                    </div>
-                    <div className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/for-agencies')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                          <Briefcase className="w-3.5 h-3.5" />
+                        {/* Bottom Status strip */}
+                        <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600">
+                          <span>Framework Specific Audits &bull; Automated Remediations</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSolutionsOpen(false);
+                              navigateTo('/solutions');
+                            }}
+                            className="font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>View All Solutions</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">For Digital Agencies</div>
-                          <div className="text-[11px] text-slate-500">White-label reports & multi-client retainers</div>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/for-developers')}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                          <Code2 className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">For Web Developers</div>
-                          <div className="text-[11px] text-slate-500">Exact CSS selectors & React/JSX snippets</div>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center px-1">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/solutions')}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Explore All Solutions</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
 
+              {/* 4. Pricing - United States (Silicon Valley Electric Gold) */}
               <button
                 onClick={() => navigateTo('/pricing')}
-                className={`transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
                   activeRoute === '/pricing'
-                    ? 'text-blue-600 font-bold'
-                    : 'text-slate-600 hover:text-blue-600'
+                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 ring-2 ring-amber-300'
+                    : 'text-slate-800 hover:text-amber-800 hover:bg-amber-50 border border-transparent hover:border-amber-200'
                 }`}
+                title="United States • Silicon Valley Electric Gold"
               >
-                Pricing
+                <span className="text-base leading-none" role="img" aria-label="United States">🇺🇸</span>
+                <span className="uppercase tracking-wide font-black">Pricing</span>
               </button>
 
+              {/* 5. Guides - France (French Riviera Luxe Violet) */}
               <button
                 onClick={() => navigateTo('/blog')}
-                className={`transition-colors cursor-pointer ${
-                  activeRoute.startsWith('/blog')
-                    ? 'text-blue-600 font-bold'
-                    : 'text-slate-600 hover:text-blue-600'
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
+                  activeRoute.startsWith('/blog') || activeRoute.startsWith('/category/')
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20 ring-2 ring-purple-400'
+                    : 'text-slate-800 hover:text-purple-700 hover:bg-purple-50 border border-transparent hover:border-purple-200'
                 }`}
+                title="France • French Riviera Luxe"
               >
-                Guides & Resources
+                <span className="text-base leading-none" role="img" aria-label="France">🇫🇷</span>
+                <span className="uppercase tracking-wide font-black">Guides</span>
               </button>
             </nav>
 
@@ -730,147 +653,304 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 animate-in slide-in-from-top-2 duration-150 max-h-[85vh] overflow-y-auto">
-            <button
-              onClick={() => navigateTo('/')}
-              className="w-full text-left font-bold text-slate-800 p-2 rounded-lg hover:bg-slate-50 text-sm cursor-pointer"
-            >
-              Website Scanner
-            </button>
+          <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-4 animate-in slide-in-from-top-2 duration-150 max-h-[85vh] overflow-y-auto">
+            {/* Quick 5-Country Command Strip for Mobile */}
+            <div className="p-2 rounded-2xl bg-slate-100/80 border border-slate-200/80 space-y-1.5">
+              <div className="px-1 text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center justify-between">
+                <span>5 Global Gateways</span>
+                <span>🇨🇭 🇯🇵 🇬🇧 🇺🇸 🇫🇷</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/')}
+                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
+                    activeRoute === '/'
+                      ? 'bg-red-600 text-white border-red-600 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-red-300'
+                  }`}
+                >
+                  <span className="text-base">🇨🇭</span>
+                  <div className="truncate">
+                    <div className="text-xs font-black leading-tight uppercase">Scanner</div>
+                    <div className={`text-[9px] truncate ${activeRoute === '/' ? 'text-red-100' : 'text-slate-600'}`}>Swiss Precision</div>
+                  </div>
+                </button>
 
-            <div className="pl-2 space-y-1 border-l-2 border-blue-200">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-1">Free Tools Suite</div>
-              <button
-                onClick={() => navigateTo('/tools/site-comparison')}
-                className="block w-full text-left text-sm font-bold text-cyan-700 bg-cyan-50 p-2 rounded-lg hover:text-cyan-900 cursor-pointer"
-              >
-                📊 Site Comparison (NEW)
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/keyword-planner')}
-                className="block w-full text-left text-sm font-bold text-blue-700 bg-blue-50 p-2 rounded-lg hover:text-blue-900 cursor-pointer"
-              >
-                ✨ AI Keyword Planner (NEW)
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/domain-rating-checker')}
-                className="block w-full text-left text-sm font-bold text-indigo-700 bg-indigo-50 p-2 rounded-lg hover:text-indigo-900 cursor-pointer"
-              >
-                🌐 Domain Rating Checker (NEW)
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/sitemap-auditor')}
-                className="block w-full text-left text-sm font-bold text-teal-700 bg-teal-50 p-2 rounded-lg hover:text-teal-900 cursor-pointer"
-              >
-                📑 XML Sitemap Auditor (NEW)
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/color-contrast-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Color Contrast Checker
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/alt-text-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                AI Alt Text Generator
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/heading-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Heading Hierarchy Tree
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/form-accessibility-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Form Accessibility Validator
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/keyboard-accessibility-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Keyboard Nav Simulator
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/meta-tag-optimizer')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Meta Tag Optimizer
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/schema-generator')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                JSON-LD Schema Builder
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/keyword-explorer')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Keyword Opportunity Finder
-              </button>
-              <button
-                onClick={() => navigateTo('/tools/content-brief')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                AI Content Brief Builder
-              </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/tools')}
+                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
+                    activeRoute.startsWith('/tools')
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-emerald-300'
+                  }`}
+                >
+                  <span className="text-base">🇯🇵</span>
+                  <div className="truncate">
+                    <div className="text-xs font-black leading-tight uppercase">Free Tools</div>
+                    <div className={`text-[9px] truncate ${activeRoute.startsWith('/tools') ? 'text-emerald-100' : 'text-slate-600'}`}>Tokyo Emerald</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/solutions')}
+                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
+                    activeRoute === '/solutions'
+                      ? 'bg-blue-700 text-white border-blue-700 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-blue-300'
+                  }`}
+                >
+                  <span className="text-base">🇬🇧</span>
+                  <div className="truncate">
+                    <div className="text-xs font-black leading-tight uppercase">Solutions</div>
+                    <div className={`text-[9px] truncate ${activeRoute === '/solutions' ? 'text-blue-100' : 'text-slate-600'}`}>Royal Azure</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/pricing')}
+                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
+                    activeRoute === '/pricing'
+                      ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-300'
+                  }`}
+                >
+                  <span className="text-base">🇺🇸</span>
+                  <div className="truncate">
+                    <div className="text-xs font-black leading-tight uppercase">Pricing</div>
+                    <div className={`text-[9px] truncate ${activeRoute === '/pricing' ? 'text-amber-950 font-bold' : 'text-slate-600'}`}>Silicon Gold</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/blog')}
+                  className={`col-span-2 p-2 rounded-xl text-left border flex items-center justify-between gap-2 cursor-pointer transition-all ${
+                    activeRoute.startsWith('/blog')
+                      ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="text-base">🇫🇷</span>
+                    <div className="truncate">
+                      <div className="text-xs font-black leading-tight uppercase">Guides &amp; Resources Hub</div>
+                      <div className={`text-[9px] truncate ${activeRoute.startsWith('/blog') ? 'text-purple-100' : 'text-slate-600'}`}>French Riviera Luxe Violet</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-purple-400 shrink-0" />
+                </button>
+              </div>
             </div>
 
-            <div className="pl-2 space-y-1 border-l-2 border-emerald-200">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-1">Solutions & Platforms</div>
-              <button
-                onClick={() => navigateTo('/solutions')}
-                className="block w-full text-left text-sm font-bold text-blue-700 bg-blue-50 p-2 rounded-lg hover:text-blue-900 cursor-pointer"
-              >
-                ⚡ All Solutions Hub
-              </button>
-              <button
-                onClick={() => navigateTo('/shopify-accessibility-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Shopify Accessibility
-              </button>
-              <button
-                onClick={() => navigateTo('/wordpress-accessibility-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                WordPress Accessibility
-              </button>
-              <button
-                onClick={() => navigateTo('/webflow-accessibility-checker')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                Webflow Accessibility
-              </button>
-              <button
-                onClick={() => navigateTo('/for-agencies')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                For Digital Agencies
-              </button>
-              <button
-                onClick={() => navigateTo('/for-developers')}
-                className="block w-full text-left text-sm text-slate-600 p-1.5 hover:text-blue-600 cursor-pointer"
-              >
-                For Web Developers
-              </button>
+            {/* Free Tools Suite - Categorized Accordions */}
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/20 p-2.5 space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+                  <Wrench className="w-3.5 h-3.5" /> Free Tools by Category
+                </span>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/tools')}
+                  className="text-[10px] font-bold text-blue-600 hover:underline"
+                >
+                  All Hub →
+                </button>
+              </div>
+
+              <div className="space-y-1.5">
+                {FREE_TOOLS_CATEGORIES.map((cat) => {
+                  const CatIcon = cat.icon;
+                  const isExpanded = mobileExpandedToolsCat === cat.id;
+                  return (
+                    <div key={cat.id} className="rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMobileExpandedToolsCat(isExpanded ? null : cat.id)
+                        }
+                        className="w-full flex items-center justify-between p-2.5 text-left cursor-pointer hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1 rounded-md bg-blue-50 text-blue-600 shrink-0">
+                            <CatIcon className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="truncate">
+                            <div className="text-xs font-bold text-slate-900 leading-tight">
+                              {cat.shortLabel}
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronDown
+                          className={`w-4 h-4 text-slate-600 transition-transform duration-200 shrink-0 ${
+                            isExpanded ? 'rotate-180 text-blue-600' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isExpanded && (
+                        <div className="p-2 pt-0 space-y-1 bg-slate-50/50 border-t border-slate-100">
+                          {cat.tools.map((tool) => {
+                            const ToolIcon = tool.icon;
+                            return (
+                              <button
+                                key={tool.id}
+                                type="button"
+                                onClick={() => navigateTo(tool.route)}
+                                className="w-full flex items-center gap-2.5 p-2 rounded-lg hover:bg-white text-left transition-colors cursor-pointer border border-transparent hover:border-slate-200"
+                              >
+                                <div className={`p-1.5 rounded-md ${tool.iconBg} shrink-0`}>
+                                  <ToolIcon className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                  <span className="text-xs font-semibold text-slate-800 truncate">
+                                    {tool.name}
+                                  </span>
+                                  {tool.badge && (
+                                    <span
+                                      className={`text-[8px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
+                                        tool.badgeType === 'ai'
+                                          ? 'bg-purple-600 text-white'
+                                          : tool.badgeType === 'new'
+                                          ? 'bg-emerald-600 text-white'
+                                          : tool.badgeType === 'critical'
+                                          ? 'bg-rose-600 text-white'
+                                          : 'bg-blue-600 text-white'
+                                      }`}
+                                    >
+                                      {tool.badge}
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Solutions & Suites - Categorized Accordions */}
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/20 p-2.5 space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5" /> Solutions & Suites
+                </span>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/solutions')}
+                  className="text-[10px] font-bold text-emerald-700 hover:underline"
+                >
+                  All Hub →
+                </button>
+              </div>
+
+              <div className="space-y-1.5">
+                {SOLUTIONS_CATEGORIES.map((cat) => {
+                  const CatIcon = cat.icon;
+                  const isExpanded = mobileExpandedSolutionsCat === cat.id;
+                  return (
+                    <div key={cat.id} className="rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMobileExpandedSolutionsCat(isExpanded ? null : cat.id)
+                        }
+                        className="w-full flex items-center justify-between p-2.5 text-left cursor-pointer hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1 rounded-md bg-emerald-50 text-emerald-600 shrink-0">
+                            <CatIcon className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="truncate">
+                            <div className="text-xs font-bold text-slate-900 leading-tight">
+                              {cat.shortLabel}
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronDown
+                          className={`w-4 h-4 text-slate-600 transition-transform duration-200 shrink-0 ${
+                            isExpanded ? 'rotate-180 text-emerald-600' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isExpanded && (
+                        <div className="p-2 pt-0 space-y-1 bg-slate-50/50 border-t border-slate-100">
+                          {cat.tools.map((item) => {
+                            const ItemIcon = item.icon;
+                            return (
+                              <button
+                                key={item.id}
+                                type="button"
+                                onClick={() => navigateTo(item.route)}
+                                className="w-full flex items-center gap-2.5 p-2 rounded-lg hover:bg-white text-left transition-colors cursor-pointer border border-transparent hover:border-slate-200"
+                              >
+                                <div className={`p-1.5 rounded-md ${item.iconBg} shrink-0`}>
+                                  <ItemIcon className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                  <span className="text-xs font-semibold text-slate-800 truncate">
+                                    {item.name}
+                                  </span>
+                                  {item.badge && (
+                                    <span
+                                      className={`text-[8px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
+                                        item.badgeType === 'ai'
+                                          ? 'bg-purple-600 text-white'
+                                          : item.badgeType === 'new'
+                                          ? 'bg-emerald-600 text-white'
+                                          : 'bg-slate-200 text-slate-700'
+                                      }`}
+                                    >
+                                      {item.badge}
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <button
               onClick={() => navigateTo('/pricing')}
-              className="w-full text-left font-bold text-slate-800 p-2 rounded-lg hover:bg-slate-50 text-sm cursor-pointer"
+              className={`w-full text-left font-black p-3 rounded-xl text-sm cursor-pointer border flex items-center justify-between transition-colors ${
+                activeRoute === '/pricing'
+                  ? 'bg-amber-500 text-slate-950 border-amber-500'
+                  : 'text-slate-800 bg-amber-50/40 border-amber-200/80 hover:bg-amber-50'
+              }`}
             >
-              Pricing & Plans
+              <span className="flex items-center gap-2">
+                <span>🇺🇸</span>
+                <span>Pricing &amp; Plans (US Silicon Gold)</span>
+              </span>
+              <span className="text-xs font-bold text-amber-700">From $0 →</span>
             </button>
             <button
               onClick={() => navigateTo('/blog')}
-              className="w-full text-left font-bold text-slate-800 p-2 rounded-lg hover:bg-slate-50 text-sm cursor-pointer"
+              className={`w-full text-left font-black p-3 rounded-xl text-sm cursor-pointer border flex items-center justify-between transition-colors ${
+                activeRoute.startsWith('/blog') || activeRoute.startsWith('/category/')
+                  ? 'bg-purple-600 text-white border-purple-600'
+                  : 'text-slate-800 bg-purple-50/40 border-purple-200/80 hover:bg-purple-50'
+              }`}
             >
-              Guides & Resource Hub
+              <span className="flex items-center gap-2">
+                <span>🇫🇷</span>
+                <span>Guides &amp; Resource Hub (French Riviera Luxe)</span>
+              </span>
+              <span className="text-xs font-bold text-purple-700">18+ Guides →</span>
             </button>
 
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">

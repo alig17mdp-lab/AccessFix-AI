@@ -7,6 +7,9 @@ import { ARTICLES_CLUSTER_D } from './articlesClusterD';
 import { ARTICLES_CLUSTER_E } from './articlesClusterE';
 import { ARTICLES_FLAGSHIP_TOOLS } from './articlesFlagshipTools';
 import { ARTICLES_CRAWL_INTELLIGENCE } from './articlesCrawlIntelligence';
+import { ARTICLES_AEO_GEO } from './articlesAeoGeo';
+import { ARTICLES_NEXT_GEN_TOOLS } from './articlesNextGenTools';
+import { ARTICLES_FUTURE_WEB } from './articlesFutureWeb';
 
 const BASE_BLOG_POSTS: BlogPost[] = [
   // --------------------------------------------------------------------------
@@ -3490,5 +3493,8 @@ export const BLOG_POSTS: BlogPost[] = [
   ...ARTICLES_CLUSTER_E,
   ...ARTICLES_FLAGSHIP_TOOLS,
   ...ARTICLES_CRAWL_INTELLIGENCE,
+  ...ARTICLES_AEO_GEO,
+  ...ARTICLES_NEXT_GEN_TOOLS,
+  ...ARTICLES_FUTURE_WEB,
 ];
 

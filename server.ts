@@ -11,8 +11,14 @@ import {
   generateJsonLdSchema,
   generateContentBrief,
 } from './server/geminiService.ts';
+import {
+  humanizeContentWithAi,
+  humanizeKeywordsEngine,
+} from './server/contentHumanizerEngine.ts';
 import { DefaultKeywordProvider, DefaultSerpProvider } from './server/providers.ts';
 import { storage } from './server/storage.ts';
+import { executeLiveGeoAudit } from './server/geoAuditorServerEngine.ts';
+import { executeLiveAeoAudit } from './server/aeoAuditorServerEngine.ts';
 
 const keywordProvider = new DefaultKeywordProvider();
 const serpProvider = new DefaultSerpProvider();
@@ -66,6 +72,57 @@ async function startServer() {
       console.error('Unified health scan error:', err);
       return res.status(500).json({
         error: err.message || 'An unexpected error occurred during the multi-pillar health scan.',
+      });
+    }
+  });
+
+  // Content Humanization API (Strict 2,000 words maximum capacity)
+  app.post('/api/humanize-content', async (req: Request, res: Response) => {
+    try {
+      const { text, tone, lockedKeywords, eeatStrictness, readingLevel } = req.body;
+      if (!text || typeof text !== 'string' || !text.trim()) {
+        return res.status(400).json({ error: 'Text content is required for humanization.' });
+      }
+
+      const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 2000) {
+        return res.status(400).json({
+          error: `Word limit exceeded. Content Humanizer allows a maximum of 2,000 words per scan. You submitted ${wordCount.toLocaleString()} words.`,
+          wordCount,
+          maxWords: 2000,
+        });
+      }
+
+      const result = await humanizeContentWithAi(text, {
+        tone: tone || 'natural',
+        lockedKeywords: Array.isArray(lockedKeywords) ? lockedKeywords : [],
+        eeatStrictness: eeatStrictness || 'maximum',
+        readingLevel: readingLevel || 'standard',
+      });
+
+      return res.json(result);
+    } catch (err: any) {
+      console.error('Content humanization error:', err);
+      return res.status(500).json({
+        error: err.message || 'An unexpected error occurred while humanizing content.',
+      });
+    }
+  });
+
+  // Keywords Humanization API (10/10 Dynamic & Natural Conversational Queries)
+  app.post('/api/humanize-keywords', async (req: Request, res: Response) => {
+    try {
+      const { keywords } = req.body;
+      if (!keywords || (Array.isArray(keywords) && keywords.length === 0)) {
+        return res.status(400).json({ error: 'Keywords input is required.' });
+      }
+
+      const result = await humanizeKeywordsEngine(keywords);
+      return res.json(result);
+    } catch (err: any) {
+      console.error('Keyword humanization error:', err);
+      return res.status(500).json({
+        error: err.message || 'An unexpected error occurred while humanizing keywords.',
       });
     }
   });
@@ -206,6 +263,38 @@ async function startServer() {
       return res.status(404).json({ error: 'Comparison report not found.' });
     }
     return res.json(comparison);
+  });
+
+  // REAL-TIME GEO (Generative Engine Optimization) LIVE AUDIT API
+  app.post('/api/tools/geo-audit', async (req: Request, res: Response) => {
+    try {
+      const { url, rawContent } = req.body;
+      const target = (url || rawContent || '').trim();
+      if (!target) {
+        return res.status(400).json({ error: 'Target URL or domain is required.' });
+      }
+      const report = await executeLiveGeoAudit(target);
+      return res.json(report);
+    } catch (err: any) {
+      console.error('GEO audit error:', err);
+      return res.status(500).json({ error: err.message || 'Failed to complete real-time GEO audit.' });
+    }
+  });
+
+  // REAL-TIME AEO (Answer Engine Optimization) LIVE AUDIT API
+  app.post('/api/tools/aeo-audit', async (req: Request, res: Response) => {
+    try {
+      const { url, content } = req.body;
+      const target = (url || content || '').trim();
+      if (!target) {
+        return res.status(400).json({ error: 'Target URL or content is required.' });
+      }
+      const report = await executeLiveAeoAudit({ url, content });
+      return res.json(report);
+    } catch (err: any) {
+      console.error('AEO audit error:', err);
+      return res.status(500).json({ error: err.message || 'Failed to complete real-time AEO audit.' });
+    }
   });
 
   // DOMAIN RATING & AUTHORITY CHECKER API

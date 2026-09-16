@@ -419,6 +419,14 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
       <div className="flex flex-wrap items-center justify-center gap-2 pt-1 pb-2">
         {/* Quick link to Flagship tools */}
         <button
+          onClick={() => onNavigate('/solutions/content-humanizer')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-800 text-white hover:from-emerald-900 hover:to-teal-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-emerald-400/40"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+          <span>Content Humanizer (EEAT)</span>
+        </button>
+
+        <button
           onClick={() => onNavigate('/tools/site-comparison')}
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-[#0a0f1d] text-white hover:bg-slate-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-slate-800"
         >
@@ -481,11 +489,19 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
         </button>
 
         <button
-          onClick={() => onNavigate('/tools/aeo-checker')}
+          onClick={() => onNavigate('/tools/aeo-auditor')}
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-purple-800 via-fuchsia-700 to-purple-800 text-white hover:from-purple-900 hover:to-fuchsia-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-purple-400/40"
         >
           <Bot className="w-3.5 h-3.5 text-purple-300" />
-          <span>AEO Readiness</span>
+          <span>AEO Auditor</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/geo-auditor')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-800 text-white hover:from-emerald-900 hover:to-teal-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-emerald-400/40"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+          <span>GEO Auditor</span>
         </button>
 
         <button

@@ -1133,5 +1133,65 @@ export interface SiteComparisonResult {
   };
 }
 
+// -------------------------------------------------------------
+// CONTENT HUMANIZER & KEYWORD HUMANIZER TYPES
+// -------------------------------------------------------------
+export type HumanizerTone = 
+  | 'natural_conversational' 
+  | 'authoritative_eeat' 
+  | 'technical_engineering' 
+  | 'creative_storyteller';
+
+export interface ContentHumanizationRequest {
+  rawText: string;
+  tone: HumanizerTone;
+  targetKeywords?: string[];
+  preserveHeadings?: boolean;
+  eeatExperienceInjection?: boolean;
+  activeVoiceOptimization?: boolean;
+  purgeAiCliches?: boolean;
+}
+
+export interface ContentHumanizationResult {
+  humanizedText: string;
+  originalWordCount: number;
+  humanizedWordCount: number;
+  readingTimeMinutes: number;
+  readingLevel: string;
+  aiDetectionScore: number; // 0% AI detected = 100% human
+  humanConfidenceScore: number;
+  perplexityScore: number;
+  burstinessScore: number;
+  eeatScore: number;
+  clichesPurged: string[];
+  preservedKeywords: string[];
+  toneApplied: HumanizerTone;
+  processedAt: string;
+}
+
+export interface KeywordHumanizationItem {
+  id: string;
+  originalInput: string;
+  humanizedKeyword: string;
+  searchIntent: 'informational' | 'commercial' | 'transactional' | 'navigational';
+  humanQueryType: 'Conversational Long-Tail' | 'Question / PAA' | 'Evaluation & Comparison' | 'Action-Oriented Intent';
+  estimatedVolume: number;
+  difficultyScore: number;
+  eeatFocus: string;
+  serpFeatures: string[];
+}
+
+export interface KeywordHumanizationResult {
+  totalKeywords: number;
+  humanizedKeywords: KeywordHumanizationItem[];
+  intentDistribution: {
+    informational: number;
+    commercial: number;
+    transactional: number;
+    navigational: number;
+  };
+  processedAt: string;
+}
+
 
 

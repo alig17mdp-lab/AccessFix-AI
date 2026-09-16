@@ -20,10 +20,12 @@ import {
 import { ScanResult, UnifiedHealthScan } from '../types';
 import { executeUniversalHealthScan } from '../utils/clientHealthScanner';
 import { SiteIntroVideoPlayer } from './SiteIntroVideoPlayer';
+import { CountryThemedNavDeck } from './CountryThemedNavDeck';
 
 interface HeroScannerProps {
   onScanComplete: (result: ScanResult, unifiedResult?: UnifiedHealthScan) => void;
   onViewSample: () => void;
+  onNavigate?: (route: string) => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -31,6 +33,7 @@ interface HeroScannerProps {
 export const HeroScanner: React.FC<HeroScannerProps> = ({
   onScanComplete,
   onViewSample,
+  onNavigate,
   isLoading,
   setIsLoading,
 }) => {
@@ -129,21 +132,21 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
             Run an instant 172-point site audit report. Detect WCAG 2.1 AA barriers, on-page SEO gaps, Core Web Vitals, and generate a free downloadable SEO audit report PDF in seconds.
           </p>
 
-          {/* Targeted SERP Intent Badges (Find Related Products & People Also Search For) */}
+          {/* Targeted SERP Intent Badges (Multi-Country & Ahrefs/Semrush Inspired Colors) */}
           <div className="flex flex-wrap items-center justify-center gap-2 pt-0.5">
             {[
-              'Website Analyzer Free',
-              'SEO Report Generator',
-              'Free SEO Audit Report PDF',
-              'Site Audit Report',
-              'Best Free Website Audit Tool',
+              { text: 'Website Analyzer Free', flag: '🇨🇭', color: 'bg-red-50/90 text-red-800 border-red-200 hover:bg-red-100' },
+              { text: 'SEO Report Generator', flag: '🇯🇵', color: 'bg-emerald-50/90 text-emerald-800 border-emerald-200 hover:bg-emerald-100' },
+              { text: 'Free SEO Audit Report PDF', flag: '🇬🇧', color: 'bg-blue-50/90 text-blue-800 border-blue-200 hover:bg-blue-100' },
+              { text: 'Site Audit Report', flag: '🇺🇸', color: 'bg-amber-50/90 text-amber-900 border-amber-200 hover:bg-amber-100' },
+              { text: 'Best Free Website Audit Tool', flag: '🇫🇷', color: 'bg-purple-50/90 text-purple-800 border-purple-200 hover:bg-purple-100' },
             ].map((badge) => (
               <span
-                key={badge}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 border border-slate-200/80 text-slate-700 text-[11px] font-medium shadow-2xs"
+                key={badge.text}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-bold shadow-2xs transition-colors cursor-default ${badge.color}`}
               >
-                <CheckCircle2 className="w-3 h-3 text-blue-600" />
-                <span>{badge}</span>
+                <span className="text-xs leading-none" role="img" aria-hidden="true">{badge.flag}</span>
+                <span>{badge.text}</span>
               </span>
             ))}
           </div>
@@ -152,11 +155,12 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
           <div className="max-w-2xl mx-auto pt-2">
             <form
               onSubmit={handleScanSubmit}
-              className="p-2 sm:p-2.5 rounded-2xl bg-white border-2 border-slate-200 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100/70 shadow-xl transition-all duration-200 flex flex-col sm:flex-row gap-2"
+              className="p-2 sm:p-2.5 rounded-2xl bg-white border-2 border-slate-200 focus-within:border-orange-500 focus-within:ring-4 focus-within:ring-orange-100/70 shadow-xl transition-all duration-200 flex flex-col sm:flex-row gap-2"
             >
               <div className="flex-1 flex items-center px-3.5 gap-2.5">
                 <Globe className="w-5 h-5 text-slate-400 shrink-0" />
                 <input
+                  id="live-url-input"
                   type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
@@ -170,7 +174,7 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 hover:from-blue-800 hover:to-blue-700 text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg disabled:opacity-75 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#ff5a1f] via-orange-500 to-[#ff5a1f] hover:from-[#e04f1a] hover:to-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 disabled:opacity-75 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
               >
                 {isLoading ? (
                   <>
@@ -249,6 +253,24 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
                 Healthcare Clinic
               </button>
             </div>
+          </div>
+
+          {/* 5 Massive Navigation Buttons (48px font size display scale & Tier-1 Country Palettes) */}
+          <div className="pt-6 pb-2 w-full">
+            <CountryThemedNavDeck
+              activeRoute="/"
+              onNavigate={(route) => {
+                if (route === '/') {
+                  const el = document.getElementById('live-url-input');
+                  if (el) {
+                    el.focus();
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                } else if (onNavigate) {
+                  onNavigate(route);
+                }
+              }}
+            />
           </div>
 
           {/* 10-Second High-Impact Site Intro Video Showcase (Rendered under Run Free Audit) */}
