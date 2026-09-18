@@ -419,6 +419,23 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
       <div className="flex flex-wrap items-center justify-center gap-2 pt-1 pb-2">
         {/* Quick link to Flagship tools */}
         <button
+          onClick={() => onNavigate('/tools/single-answer-precision-optimizer')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer shadow-md hover:scale-102 border border-emerald-300/50"
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
+          <Target className="w-3.5 h-3.5 text-emerald-200" />
+          <span>Single-Answer Precision (AEO)</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-indigo-700 via-blue-700 to-indigo-800 text-white hover:from-indigo-600 hover:to-blue-600 transition-all cursor-pointer shadow-md hover:scale-102 border border-indigo-300/40"
+        >
+          <Target className="w-3.5 h-3.5 text-cyan-300" />
+          <span>WCAG 2.2 Touch Target Calc</span>
+        </button>
+
+        <button
           onClick={() => onNavigate('/solutions/content-humanizer')}
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-800 text-white hover:from-emerald-900 hover:to-teal-800 transition-all cursor-pointer shadow-xs hover:scale-102 border border-emerald-400/40"
         >

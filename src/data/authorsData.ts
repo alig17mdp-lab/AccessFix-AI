@@ -71,6 +71,21 @@ export const AUTHORS: Record<string, AuthorProfile> = {
       linkedin: 'https://linkedin.com/in/marcus-chen-ecom',
     },
   },
+  'marcus-vance': {
+    id: 'author_marcus_vance',
+    slug: 'marcus-vance',
+    name: 'Marcus Vance',
+    role: 'Autonomous AI Protocols & Agentic SEO Architect',
+    bio: 'Marcus is a forward-deployed AI systems architect and protocol researcher specializing in Model Context Protocol (MCP), agentic search indexing, x402 micropayments, and autonomous web agent governance.',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80',
+    credentials: ['AI Agent Protocol Contributor', 'WebXR Spatial Semantic Architect', '12+ Years Enterprise Systems'],
+    articlesCount: 5,
+    socialLinks: {
+      twitter: 'https://twitter.com/marcusvance_ai',
+      github: 'https://github.com/marcusvance-ai',
+      linkedin: 'https://linkedin.com/in/marcusvance-ai',
+    },
+  },
   'alex-morgan': {
     id: 'author_alex',
     slug: 'alex-morgan',

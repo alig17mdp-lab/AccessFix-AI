@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BlogPost, ArticleSource } from '../types';
 import { BLOG_POSTS } from '../data/blogData';
 import { CATEGORIES_CONFIG } from '../data/categoriesData';
+import {
+  getSisterClusterArticles,
+  generateMarkdownPlaybook,
+  generateTripleEngineJsonLd,
+  SisterClusterLink,
+} from '../utils/topicalAuthorityGraph';
 import {
   ArrowLeft,
   Clock,
@@ -28,6 +34,12 @@ import {
   Calendar,
   Eye,
   Search,
+  Download,
+  Network,
+  ListChecks,
+  CheckSquare,
+  Square,
+  Workflow,
 } from 'lucide-react';
 
 interface BlogPostViewProps {
@@ -46,12 +58,28 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
   onNavigate,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [copiedPlaybook, setCopiedPlaybook] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [activeTocId, setActiveTocId] = useState<string>('');
   const [readingProgress, setReadingProgress] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<Record<number, boolean>>({});
+
+  // Reset checklist steps when switching articles
+  useEffect(() => {
+    setCompletedSteps({});
+  }, [post.slug]);
+
+  // Derive sister-cluster topological cross-links using semantic entities & intent
+  const sisterClusterLinks = useMemo(
+    () => getSisterClusterArticles(post, BLOG_POSTS, 4),
+    [post]
+  );
+
+  // Derive triple-engine JSON-LD schema (TechArticle + Speakable + Entity Mentions)
+  const jsonLdSchema = useMemo(() => generateTripleEngineJsonLd(post), [post]);
 
   // Calculate Reading Progress & Active TOC Section
   useEffect(() => {
@@ -94,107 +122,39 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
     window.print();
   };
 
+  const handleCopyPlaybook = () => {
+    const markdown = generateMarkdownPlaybook(post);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(markdown);
+      setCopiedPlaybook(true);
+      setTimeout(() => setCopiedPlaybook(false), 2500);
+    }
+  };
+
+  const handleDownloadPlaybook = () => {
+    const markdown = generateMarkdownPlaybook(post);
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${post.slug}-implementation-playbook.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const toggleChecklistStep = (index: number) => {
+    setCompletedSteps((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
   // Find related full articles from slugs
   const relatedArticlePosts = (post.relatedArticles || [])
     .map((slug) => BLOG_POSTS.find((p) => p.slug === slug))
     .filter((p): p is BlogPost => Boolean(p))
     .slice(0, 3);
-
-  // Generate JSON-LD Schema
-  const jsonLdSchema = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'BlogPosting',
-        '@id': `https://accessfix.ai/blog/${post.slug}#article`,
-        isPartOf: {
-          '@type': 'WebSite',
-          '@id': 'https://accessfix.ai/#website',
-          name: 'AccessFix AI',
-          url: 'https://accessfix.ai',
-        },
-        headline: post.title,
-        description: post.metaDescription,
-        url: `https://accessfix.ai/blog/${post.slug}`,
-        datePublished: post.publishedAt,
-        dateModified: post.updatedAt,
-        inLanguage: 'en-US',
-        mainEntityOfPage: `https://accessfix.ai/blog/${post.slug}`,
-        image: {
-          '@type': 'ImageObject',
-          '@id': `${post.featuredImage.url}#primaryimage`,
-          url: post.featuredImage.url,
-          contentUrl: post.featuredImage.url,
-          caption: post.featuredImage.caption || post.featuredImage.alt,
-          description: post.featuredImage.alt,
-          name: post.title,
-          width: 1200,
-          height: 630,
-          representativeOfPage: true,
-        },
-        author: {
-          '@type': 'Person',
-          name: post.author.name,
-          jobTitle: post.author.role,
-          url: `https://accessfix.ai/authors/${post.author.slug}`,
-        },
-        publisher: {
-          '@type': 'Organization',
-          name: 'AccessFix AI',
-          url: 'https://accessfix.ai',
-          logo: {
-            '@type': 'ImageObject',
-            url: 'https://accessfix.ai/logo.png',
-          },
-        },
-        keywords: [post.primaryKeyword, ...post.secondaryKeywords].join(', '),
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: 'https://accessfix.ai',
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Knowledge Base',
-            item: 'https://accessfix.ai/blog',
-          },
-          {
-            '@type': 'ListItem',
-            position: 3,
-            name: CATEGORIES_CONFIG[post.category]?.name || post.category,
-            item: `https://accessfix.ai/category/${post.category}`,
-          },
-          {
-            '@type': 'ListItem',
-            position: 4,
-            name: post.title,
-            item: `https://accessfix.ai/blog/${post.slug}`,
-          },
-        ],
-      },
-      ...(post.faqs && post.faqs.length > 0
-        ? [
-            {
-              '@type': 'FAQPage',
-              mainEntity: post.faqs.map((faq) => ({
-                '@type': 'Question',
-                name: faq.question,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: faq.answer,
-                },
-              })),
-            },
-          ]
-        : []),
-    ],
-  };
 
   // Dynamic SEO, Canonical & JSON-LD Injection
   useEffect(() => {
@@ -407,6 +367,123 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
                 </button>
               </div>
             )}
+
+            {/* Sister-Cluster Knowledge Graph Inlinks (Golden Law 12 & 16) */}
+            {sisterClusterLinks.length > 0 && (
+              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-3">
+                <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
+                  <Network className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Sister-Cluster Inlinks</span>
+                </div>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  Cross-category knowledge graph nodes linked by shared technical entities:
+                </p>
+                <div className="space-y-2 pt-1">
+                  {sisterClusterLinks.slice(0, 3).map((link) => (
+                    <button
+                      key={link.post.slug}
+                      onClick={() => {
+                        onSelectPost(link.post);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-100 hover:border-emerald-200 transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="font-bold text-emerald-800 uppercase">{link.categoryName}</span>
+                        <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                      <div className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 line-clamp-2 leading-tight mt-0.5">
+                        {link.post.title}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Flagship Interactive Tools Widget */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 text-white shadow-md">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-400">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Flagship Free Tools</span>
+                </div>
+                <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
+                  NEW
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                Accelerate your rankings &amp; WCAG compliance with our live client-side optimization engines:
+              </p>
+              <div className="space-y-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onNavigate('/tools/single-answer-precision-optimizer');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-emerald-500/40 hover:border-emerald-400 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="font-bold text-emerald-400">AEO Snippet Sniper</span>
+                    <ArrowRight className="w-3 h-3 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-emerald-300 line-clamp-1 mt-0.5">
+                    Single-Answer Precision Optimizer
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">
+                    &lt;25 Words • Bold Tables • First-50-Words
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    onNavigate('/tools/touch-target-size-calculator');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-indigo-500/40 hover:border-indigo-400 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="font-bold text-cyan-400">WCAG 2.2 SC 2.5.8</span>
+                    <ArrowRight className="w-3 h-3 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-cyan-300 line-clamp-1 mt-0.5">
+                    Touch Target Size Calculator
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">
+                    24×24px Minimum • CSS Offset Fixes
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Export Playbook Card */}
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200/80 rounded-3xl p-5 space-y-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-900">
+                <ListChecks className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Audit & Playbook</span>
+              </div>
+              <p className="text-[11px] text-slate-600 leading-snug">
+                Export this guide as a structured Markdown playbook for dev and compliance teams.
+              </p>
+              <div className="flex flex-col gap-2 pt-1">
+                <button
+                  onClick={handleCopyPlaybook}
+                  className="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>{copiedPlaybook ? 'Copied Playbook!' : 'Copy Markdown'}</span>
+                </button>
+                <button
+                  onClick={handleDownloadPlaybook}
+                  className="w-full py-2 px-3 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-slate-600" />
+                  <span>Download .md</span>
+                </button>
+              </div>
+            </div>
           </div>
         </aside>
 
@@ -556,6 +633,195 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
                 </button>
               </div>
             </div>
+          )}
+
+          {/* Section: Interactive Implementation & Compliance Checklist (AEO / GEO Verified) */}
+          <section id="implementation-checklist" className="bg-slate-50 border-2 border-emerald-500/20 rounded-3xl p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-800">
+                  <ListChecks className="w-4 h-4 text-emerald-600" />
+                  <span>Production Implementation & Compliance Checklist</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
+                  Verification Roadmap & Technical Action Items
+                </h3>
+                <p className="text-xs text-slate-600 max-w-xl">
+                  Track direct progress through the core technical requirements of this guide. Export a verified Markdown playbook for engineering & audit handoffs.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={handleCopyPlaybook}
+                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Copy full implementation playbook in clean Markdown format"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>{copiedPlaybook ? 'Copied Playbook!' : 'Copy Playbook'}</span>
+                </button>
+                <button
+                  onClick={handleDownloadPlaybook}
+                  className="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Download .md file"
+                >
+                  <Download className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Download .md</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Checklist Progress Bar */}
+            {post.keyTakeaways && post.keyTakeaways.length > 0 && (() => {
+              const total = post.keyTakeaways.length;
+              const completed = Object.values(completedSteps).filter(Boolean).length;
+              const pct = Math.round((completed / total) * 100);
+              return (
+                <div className="space-y-2 bg-white p-4 rounded-2xl border border-slate-200">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="text-slate-700 flex items-center gap-1.5">
+                      <Workflow className="w-4 h-4 text-emerald-600" />
+                      Verification Progress
+                    </span>
+                    <span className="text-emerald-700 font-black">
+                      {completed} of {total} Tasks Completed ({pct}%)
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Interactive Step Items */}
+            {post.keyTakeaways && post.keyTakeaways.length > 0 && (
+              <div className="space-y-3">
+                {post.keyTakeaways.map((takeaway, idx) => {
+                  const isDone = Boolean(completedSteps[idx]);
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => toggleChecklistStep(idx)}
+                      className={`flex items-start gap-3.5 p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+                        isDone
+                          ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs'
+                          : 'bg-white border-slate-200 hover:border-emerald-300 hover:bg-slate-50/50'
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        className={`w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                          isDone
+                            ? 'bg-emerald-600 border-emerald-600 text-white'
+                            : 'border-slate-300 bg-slate-50 text-transparent hover:border-emerald-500'
+                        }`}
+                      >
+                        <Check className="w-4 h-4 stroke-[3]" />
+                      </button>
+                      <div className="space-y-1 flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-black uppercase tracking-wider ${
+                            isDone ? 'text-emerald-800 line-through opacity-75' : 'text-slate-900'
+                          }`}>
+                            Step {idx + 1}: Actionable Requirement
+                          </span>
+                          <span className="text-[10px] font-semibold text-slate-400">
+                            {isDone ? 'Verified' : 'Pending'}
+                          </span>
+                        </div>
+                        <p className={`text-xs sm:text-sm leading-relaxed ${
+                          isDone ? 'text-slate-500 line-through' : 'text-slate-700 font-medium'
+                        }`}>
+                          {takeaway}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Grounded Semantic Entities Chips */}
+            {post.semanticEntities && post.semanticEntities.length > 0 && (
+              <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center gap-1.5 text-xs">
+                <span className="text-slate-500 font-bold text-[11px] uppercase tracking-wider mr-1">
+                  Verified Entities Grounded:
+                </span>
+                {post.semanticEntities.map((ent, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 font-mono text-[11px] font-medium"
+                  >
+                    {ent}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Section: Bi-Directional Sister-Cluster Knowledge Graph & Cross-Category Topical Web */}
+          {sisterClusterLinks.length > 0 && (
+            <section id="sister-clusters" className="space-y-4 pt-2">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-800">
+                  <Network className="w-4 h-4 text-emerald-600" />
+                  <span>Topical Authority Knowledge Graph</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+                  Sister-Cluster Interlinking Web
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+                  Deep topical authority requires connecting specialized technical concepts across complementary disciplines. Explore interrelated guides mapped by shared technical entities:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                {sisterClusterLinks.map((link) => (
+                  <div
+                    key={link.post.slug}
+                    onClick={() => {
+                      onSelectPost(link.post);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-3xl p-5 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                          {link.categoryName}
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          {link.post.readTime}
+                        </span>
+                      </div>
+
+                      <h4 className="text-sm font-black text-slate-900 group-hover:text-emerald-700 transition-colors leading-snug">
+                        {link.contextualAnchorText}
+                      </h4>
+
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                        {link.post.metaDescription}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-[11px] font-bold text-emerald-800 flex items-center gap-1">
+                        <Workflow className="w-3 h-3 text-emerald-600" />
+                        {link.synergyNote}
+                      </span>
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-700 inline-flex items-center gap-1">
+                        Explore <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           )}
 
           {/* Interactive FAQ Section with Golden Law 17 Compliance */}
@@ -725,7 +991,7 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
               </button>
             </div>
             <p className="text-xs text-slate-600">
-              Valid JSON-LD schema dynamically generated for BlogPosting, BreadcrumbList, and FAQPage nodes according to Schema.org and Google Search specifications.
+              Valid Triple-Engine JSON-LD schema dynamically generated with TechArticle, SpeakableSpecification, BreadcrumbList, FAQPage, and Wikidata Entity Grounding according to Schema.org and Google Search / Perplexity / Gemini AEO specifications.
             </p>
             <div className="flex-1 overflow-y-auto bg-slate-950 text-emerald-400 p-4 rounded-2xl text-[11px] font-mono leading-relaxed">
               <pre>{JSON.stringify(jsonLdSchema, null, 2)}</pre>

@@ -10,6 +10,8 @@ import { ARTICLES_CRAWL_INTELLIGENCE } from './articlesCrawlIntelligence';
 import { ARTICLES_AEO_GEO } from './articlesAeoGeo';
 import { ARTICLES_NEXT_GEN_TOOLS } from './articlesNextGenTools';
 import { ARTICLES_FUTURE_WEB } from './articlesFutureWeb';
+import { ARTICLES_VOICE_AEO_GEO } from './articlesVoiceAeoGeo';
+import { ARTICLES_SNIPER_TOOLS } from './articlesSniperTools';
 
 const BASE_BLOG_POSTS: BlogPost[] = [
   // --------------------------------------------------------------------------
@@ -3496,5 +3498,7 @@ export const BLOG_POSTS: BlogPost[] = [
   ...ARTICLES_AEO_GEO,
   ...ARTICLES_NEXT_GEN_TOOLS,
   ...ARTICLES_FUTURE_WEB,
+  ...ARTICLES_VOICE_AEO_GEO,
+  ...ARTICLES_SNIPER_TOOLS,
 ];
 

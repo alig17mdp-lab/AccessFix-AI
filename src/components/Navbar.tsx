@@ -188,10 +188,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
 
                 {toolsOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-[700px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
-                    <div className="flex flex-row divide-x divide-slate-100 min-h-[390px]">
+                  <div className="absolute top-full left-0 mt-2 w-[720px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col h-[530px] max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex flex-row divide-x divide-slate-100 h-full min-h-0 overflow-hidden">
                       {/* Left Column: Categories List */}
-                      <div className="w-64 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0">
+                      <div className="w-64 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0 overflow-y-auto h-full min-h-0">
                         <div>
                           <div className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                             Tool Categories
@@ -240,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </div>
 
                         {/* Bottom Tools Hub Link */}
-                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2">
+                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2 shrink-0">
                           <button
                             type="button"
                             onClick={() => {
@@ -249,82 +249,85 @@ export const Navbar: React.FC<NavbarProps> = ({
                             }}
                             className="w-full text-left text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center justify-between p-1.5 rounded-lg hover:bg-blue-50/60 cursor-pointer transition-colors"
                           >
-                            <span>Explore All 19+ Tools Hub</span>
+                            <span>Explore All 21+ Tools Hub</span>
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
 
                       {/* Right Column: Tools inside the selected category */}
-                      <div className="flex-1 p-3.5 bg-white flex flex-col justify-between">
-                        <div>
-                          {/* Category Header Banner */}
-                          <div className="pb-2 mb-2 border-b border-slate-100 flex items-start justify-between gap-2">
-                            <div>
+                      <div className="flex-1 p-3.5 bg-white flex flex-col min-h-0 h-full overflow-hidden">
+                        {/* Category Header Banner */}
+                        <div className="pb-2.5 mb-2 border-b border-slate-100 flex items-start justify-between gap-2 shrink-0">
+                          <div>
+                            <div className="flex items-center gap-2">
                               <h4 className="text-xs font-black text-slate-900">
                                 {currentToolsCat.title}
                               </h4>
-                              <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
-                                {currentToolsCat.description}
-                              </p>
+                              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
+                                {currentToolsCat.tools.length} Tools
+                              </span>
                             </div>
-                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
-                              Instant Run
-                            </span>
+                            <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
+                              {currentToolsCat.description}
+                            </p>
                           </div>
+                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                            Instant Run
+                          </span>
+                        </div>
 
-                          {/* Tool list items for active category */}
-                          <div className="space-y-1">
-                            {currentToolsCat.tools.map((tool) => {
-                              const ToolIcon = tool.icon;
-                              return (
-                                <button
-                                  key={tool.id}
-                                  type="button"
-                                  onClick={() => {
-                                    setToolsOpen(false);
-                                    navigateTo(tool.route);
-                                  }}
-                                  className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                        {/* Tool list items with dedicated vertical scrolling */}
+                        <div className="flex-1 overflow-y-auto pr-1.5 space-y-1 overscroll-contain min-h-0 divide-y divide-transparent">
+                          {currentToolsCat.tools.map((tool) => {
+                            const ToolIcon = tool.icon;
+                            return (
+                              <button
+                                key={tool.id}
+                                type="button"
+                                onClick={() => {
+                                  setToolsOpen(false);
+                                  navigateTo(tool.route);
+                                }}
+                                className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                              >
+                                <div
+                                  className={`p-2 rounded-lg ${tool.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
                                 >
-                                  <div
-                                    className={`p-2 rounded-lg ${tool.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
-                                  >
-                                    <ToolIcon className="w-4 h-4" />
-                                  </div>
-                                  <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-                                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
-                                      {tool.name}
+                                  <ToolIcon className="w-4 h-4" />
+                                </div>
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                  <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
+                                    {tool.name}
+                                  </span>
+                                  {tool.badge && (
+                                    <span
+                                      className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                        tool.badgeType === 'ai'
+                                          ? 'bg-purple-600 text-white'
+                                          : tool.badgeType === 'new'
+                                          ? 'bg-emerald-600 text-white'
+                                          : tool.badgeType === 'critical'
+                                          ? 'bg-rose-600 text-white'
+                                          : tool.badgeType === 'popular'
+                                          ? 'bg-blue-600 text-white'
+                                          : tool.badgeType === 'wcag'
+                                          ? 'bg-indigo-600 text-white'
+                                          : 'bg-slate-200 text-slate-700'
+                                      }`}
+                                    >
+                                      {tool.badge}
                                     </span>
-                                    {tool.badge && (
-                                      <span
-                                        className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
-                                          tool.badgeType === 'ai'
-                                            ? 'bg-purple-600 text-white'
-                                            : tool.badgeType === 'new'
-                                            ? 'bg-emerald-600 text-white'
-                                            : tool.badgeType === 'critical'
-                                            ? 'bg-rose-600 text-white'
-                                            : tool.badgeType === 'popular'
-                                            ? 'bg-blue-600 text-white'
-                                            : tool.badgeType === 'wcag'
-                                            ? 'bg-indigo-600 text-white'
-                                            : 'bg-slate-200 text-slate-700'
-                                        }`}
-                                      >
-                                        {tool.badge}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
-                                </button>
-                              );
-                            })}
-                          </div>
+                                  )}
+                                </div>
+                                <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
+                              </button>
+                            );
+                          })}
                         </div>
 
                         {/* Bottom Status strip */}
-                        <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600">
+                        <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600 shrink-0">
                           <span>100% Client-Side Engine &bull; Zero Login Required</span>
                           <button
                             type="button"
@@ -365,10 +368,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
 
                 {solutionsOpen && (
-                  <div className="absolute top-full -left-16 sm:-left-20 lg:-left-24 mt-2 w-[660px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
-                    <div className="flex flex-row divide-x divide-slate-100 min-h-[340px]">
+                  <div className="absolute top-full -left-16 sm:-left-20 lg:-left-24 mt-2 w-[660px] max-w-[94vw] bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 overflow-hidden flex flex-col max-h-[min(620px,82vh)] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex flex-row divide-x divide-slate-100 h-full min-h-0 overflow-hidden">
                       {/* Left Column: Solutions Categories List */}
-                      <div className="w-56 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0">
+                      <div className="w-56 bg-slate-50/75 p-2.5 flex flex-col justify-between shrink-0 overflow-y-auto">
                         <div>
                           <div className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                             Solution Suites
@@ -417,7 +420,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </div>
 
                         {/* Bottom Solutions Hub Link */}
-                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2">
+                        <div className="p-1 pt-2.5 border-t border-slate-200/60 mt-2 shrink-0">
                           <button
                             type="button"
                             onClick={() => {
@@ -433,71 +436,74 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
 
                       {/* Right Column: Solutions inside the selected category */}
-                      <div className="flex-1 p-3.5 bg-white flex flex-col justify-between">
-                        <div>
-                          {/* Solutions Category Header Banner */}
-                          <div className="pb-2 mb-2 border-b border-slate-100 flex items-start justify-between gap-2">
-                            <div>
+                      <div className="flex-1 p-3.5 bg-white flex flex-col justify-between min-h-0 overflow-hidden">
+                        {/* Solutions Category Header Banner */}
+                        <div className="pb-2.5 mb-2 border-b border-slate-100 flex items-start justify-between gap-2 shrink-0">
+                          <div>
+                            <div className="flex items-center gap-2">
                               <h4 className="text-xs font-black text-slate-900">
                                 {currentSolutionsCat.title}
                               </h4>
-                              <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
-                                {currentSolutionsCat.description}
-                              </p>
+                              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
+                                {currentSolutionsCat.tools.length} Suites
+                              </span>
                             </div>
-                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                              Enterprise Ready
-                            </span>
+                            <p className="text-[11px] text-slate-600 leading-snug mt-0.5">
+                              {currentSolutionsCat.description}
+                            </p>
                           </div>
+                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                            Enterprise Ready
+                          </span>
+                        </div>
 
-                          {/* Solution items list */}
-                          <div className="space-y-1">
-                            {currentSolutionsCat.tools.map((item) => {
-                              const ItemIcon = item.icon;
-                              return (
-                                <button
-                                  key={item.id}
-                                  type="button"
-                                  onClick={() => {
-                                    setSolutionsOpen(false);
-                                    navigateTo(item.route);
-                                  }}
-                                  className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                        {/* Solution items list with dedicated vertical scrolling */}
+                        <div className="flex-1 overflow-y-auto pr-1.5 space-y-1 overscroll-contain divide-y divide-transparent">
+                          {currentSolutionsCat.tools.map((item) => {
+                            const ItemIcon = item.icon;
+                            return (
+                              <button
+                                key={item.id}
+                                type="button"
+                                onClick={() => {
+                                  setSolutionsOpen(false);
+                                  navigateTo(item.route);
+                                }}
+                                className="w-full flex items-center gap-2.5 py-2 px-2.5 rounded-xl hover:bg-slate-50 text-left transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                              >
+                                <div
+                                  className={`p-2 rounded-lg ${item.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
                                 >
-                                  <div
-                                    className={`p-2 rounded-lg ${item.iconBg} shrink-0 transition-transform group-hover:scale-105 shadow-2xs`}
-                                  >
-                                    <ItemIcon className="w-4 h-4" />
-                                  </div>
-                                  <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-                                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
-                                      {item.name}
+                                  <ItemIcon className="w-4 h-4" />
+                                </div>
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                  <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
+                                    {item.name}
+                                  </span>
+                                  {item.badge && (
+                                    <span
+                                      className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                        item.badgeType === 'ai'
+                                          ? 'bg-purple-600 text-white'
+                                          : item.badgeType === 'new'
+                                          ? 'bg-emerald-600 text-white'
+                                          : item.badgeType === 'popular'
+                                          ? 'bg-blue-600 text-white'
+                                          : 'bg-slate-200 text-slate-700'
+                                      }`}
+                                    >
+                                      {item.badge}
                                     </span>
-                                    {item.badge && (
-                                      <span
-                                        className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
-                                          item.badgeType === 'ai'
-                                            ? 'bg-purple-600 text-white'
-                                            : item.badgeType === 'new'
-                                            ? 'bg-emerald-600 text-white'
-                                            : item.badgeType === 'popular'
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-slate-200 text-slate-700'
-                                        }`}
-                                      >
-                                        {item.badge}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
-                                </button>
-                              );
-                            })}
-                          </div>
+                                  )}
+                                </div>
+                                <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-blue-600 shrink-0" />
+                              </button>
+                            );
+                          })}
                         </div>
 
                         {/* Bottom Status strip */}
-                        <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600">
+                        <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-600 shrink-0">
                           <span>Framework Specific Audits &bull; Automated Remediations</span>
                           <button
                             type="button"

@@ -19,6 +19,7 @@ import { DefaultKeywordProvider, DefaultSerpProvider } from './server/providers.
 import { storage } from './server/storage.ts';
 import { executeLiveGeoAudit } from './server/geoAuditorServerEngine.ts';
 import { executeLiveAeoAudit } from './server/aeoAuditorServerEngine.ts';
+import { executeSingleAnswerUrlAudit } from './server/singleAnswerAuditorEngine.ts';
 
 const keywordProvider = new DefaultKeywordProvider();
 const serpProvider = new DefaultSerpProvider();
@@ -294,6 +295,22 @@ async function startServer() {
     } catch (err: any) {
       console.error('AEO audit error:', err);
       return res.status(500).json({ error: err.message || 'Failed to complete real-time AEO audit.' });
+    }
+  });
+
+  // REAL-TIME SINGLE-ANSWER PRECISION & FIRST-50-WORDS URL AUDIT API
+  app.post('/api/tools/single-answer-audit', async (req: Request, res: Response) => {
+    try {
+      const { url } = req.body;
+      const targetUrl = (url || '').trim();
+      if (!targetUrl) {
+        return res.status(400).json({ error: 'Target URL is required for single-answer precision audit.' });
+      }
+      const result = await executeSingleAnswerUrlAudit(targetUrl);
+      return res.json(result);
+    } catch (err: any) {
+      console.error('Single-answer URL audit error:', err);
+      return res.status(500).json({ error: err.message || 'Failed to complete single-answer URL audit.' });
     }
   });
 

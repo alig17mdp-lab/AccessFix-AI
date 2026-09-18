@@ -350,6 +350,14 @@ export interface BlogPost {
   qualityScore: ArticleQualityScore;
   freshnessStatus: 'fresh' | 'review' | 'update';
   searchConsoleData?: SearchConsoleMetric;
+  auditChecklist?: { id: string; task: string; completed?: boolean }[];
+  sisterArticles?: { slug: string; title: string; category?: string; relationship?: string }[];
+  schemaData?: {
+    type: string;
+    headline: string;
+    description: string;
+    speakableSelectors?: string[];
+  };
 }
 
 export interface SeoValidationCheck {

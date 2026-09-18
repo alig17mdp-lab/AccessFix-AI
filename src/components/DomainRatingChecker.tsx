@@ -27,6 +27,7 @@ import {
   Zap,
   RefreshCw,
   FileSpreadsheet,
+  ShieldAlert,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
@@ -519,8 +520,16 @@ Generated via AccessFix AI Domain Rating Checker`;
             }`}>
               {report.spamScore}%
             </div>
-            <div className="text-[11px] text-slate-400 font-medium truncate">
-              {report.spamScore <= 5 ? 'Clean Link Profile' : 'Disavow Audit Suggested'}
+            <div className="text-[11px] text-slate-400 font-medium truncate flex items-center justify-between">
+              <span>{report.spamScore <= 5 ? 'Clean Profile' : 'Spam Detected'}</span>
+              <button
+                type="button"
+                onClick={() => onNavigate('/tools/backlink-audit-disavow-generator')}
+                className="text-[10px] text-rose-400 hover:text-rose-300 font-bold underline cursor-pointer"
+                title="Launch Backlink Crawler & Google Disavow Generator"
+              >
+                Disavow Tool →
+              </button>
             </div>
           </div>
 
@@ -839,6 +848,15 @@ Generated via AccessFix AI Domain Rating Checker`;
             </div>
             <div className="flex items-center gap-2">
               <button
+                type="button"
+                onClick={() => onNavigate('/tools/backlink-audit-disavow-generator')}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                title="Crawl toxic backlinks & generate Google Disavow .txt file"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                <span>Google Disavow Tool</span>
+              </button>
+              <button
                 onClick={handleExportBacklinksCsv}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
               >
@@ -907,8 +925,17 @@ Generated via AccessFix AI Domain Rating Checker`;
                         <ExternalLink className="w-3 h-3 flex-shrink-0" />
                       </a>
                     </td>
-                    <td className="p-3.5 max-w-[180px] truncate text-slate-600">
-                      {bl.targetUrl}
+                    <td className="p-3.5 max-w-[220px] text-slate-600">
+                      <a
+                        href={bl.targetUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-[11px] text-emerald-700 hover:text-emerald-800 hover:underline font-mono truncate flex items-center gap-1"
+                        title={`Open target URL: ${bl.targetUrl}`}
+                      >
+                        <span className="truncate">{bl.targetUrl}</span>
+                        <ExternalLink className="w-3 h-3 flex-shrink-0 text-emerald-600" />
+                      </a>
                     </td>
                     <td className="p-3.5">
                       <span className="inline-block px-2 py-1 rounded bg-slate-100 text-slate-900 font-mono text-[11px] border border-slate-200">

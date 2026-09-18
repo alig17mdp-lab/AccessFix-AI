@@ -263,7 +263,7 @@ export const CountryThemedNavDeck: React.FC<CountryThemedNavDeckProps> = ({
                 {/* THE 48PX+ BOLD BUTTON TEXT (Exact user mandate: 48px or larger font size) */}
                 <div className="my-1.5">
                   <div
-                    className={`text-[36px] sm:text-[42px] lg:text-[48px] font-black tracking-tight leading-[1.02] uppercase select-none transition-colors drop-shadow-xs ${
+                    className={`text-[40px] sm:text-[48px] xl:text-[52px] font-black tracking-tight leading-[1.02] uppercase select-none transition-colors drop-shadow-xs ${
                       isActive ? item.colorClasses.activeTitleColor : item.colorClasses.titleColor
                     }`}
                     style={{

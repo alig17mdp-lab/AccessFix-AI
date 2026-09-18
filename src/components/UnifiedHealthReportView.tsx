@@ -512,6 +512,74 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
             </span>
           </div>
 
+          {/* Specialized Flagship AI Optimization Engine Recommendations */}
+          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 rounded-2xl p-5 border border-indigo-500/30 text-white shadow-lg space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-black tracking-wide uppercase text-indigo-300">
+                  Recommended Next Generation AI Tools
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold border border-emerald-500/40">
+                  High-Impact Snipe
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400">Zero Configuration • Client-Side Instant Run</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-slate-900/80 border border-emerald-500/30 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
+                      <Target className="w-3.5 h-3.5" />
+                      Single-Answer Precision Optimizer
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
+                      KD &lt; 10 • Vol &gt; 2,000
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Snipe Google Position 0 and AI Overviews with &lt;25-word direct answer synthesis, bold comparison tables, and first-50-words snippet placement.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools/single-answer-precision-optimizer')}
+                  className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <span>Launch Single-Answer Precision Tool</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="bg-slate-900/80 border border-indigo-500/30 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-cyan-400 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      WCAG 2.2 Touch Target Calculator
+                    </span>
+                    <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-800">
+                      SC 2.5.8 • Level AA
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Evaluate 24×24px minimum touch target dimensions, spacing offset circles, and mobile tappable area compliance to eliminate tap frustration.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+                  className="w-full py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <span>Launch Touch Target Calculator</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4">
             {healthScan.topPriorityActions.map((action, idx) => (
               <div

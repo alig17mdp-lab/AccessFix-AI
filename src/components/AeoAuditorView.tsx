@@ -169,13 +169,23 @@ export const AeoAuditorView: React.FC<AeoAuditorViewProps> = ({ onNavigate }) =>
             <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono">FAQPage JSON-LD</span>
             <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono">Information Gain Tables</span>
             <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono">Voice Search Synthesizer</span>
-            <button
-              onClick={() => onNavigate('/tools/geo-auditor')}
-              className="ml-auto inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-semibold transition-colors cursor-pointer"
-            >
-              <span>Need GEO Entity Audit? Switch to GEO Auditor</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="ml-auto flex items-center gap-3">
+              <button
+                onClick={() => onNavigate('/tools/single-answer-precision-optimizer')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/20 font-bold transition-all cursor-pointer"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span>Single-Answer Precision (Snipe Position 0)</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onNavigate('/tools/geo-auditor')}
+                className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-semibold transition-colors cursor-pointer"
+              >
+                <span>GEO Auditor</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

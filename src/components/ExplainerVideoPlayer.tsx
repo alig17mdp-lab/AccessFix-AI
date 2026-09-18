@@ -23,6 +23,10 @@ import {
   Box,
   Network,
   FileCode,
+  Bot,
+  Building2,
+  Mic,
+  ShieldAlert,
 } from 'lucide-react';
 
 export interface VideoChapter {
@@ -50,7 +54,7 @@ export interface VideoKeywordData {
 }
 
 interface ExplainerVideoPlayerProps {
-  toolType: 'mcp' | 'c2pa' | 'x402' | 'spatial' | 'geo' | 'aitxt';
+  toolType: 'mcp' | 'c2pa' | 'x402' | 'spatial' | 'geo' | 'aitxt' | 'aisearch' | 'voiceschema' | 'brandkg' | 'disavow';
   title: string;
   subtitle: string;
   chapters: VideoChapter[];
@@ -316,6 +320,30 @@ export const ExplainerVideoPlayer: React.FC<ExplainerVideoPlayerProps> = ({
                 <span>Protocol: ai.txt / W3C Machine Permissions</span>
               </span>
             )}
+            {toolType === 'aisearch' && (
+              <span className="flex items-center gap-1.5 text-indigo-300">
+                <Bot className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Standard: RAG Cross-Encoder / Top-3 Citations</span>
+              </span>
+            )}
+            {toolType === 'voiceschema' && (
+              <span className="flex items-center gap-1.5 text-emerald-300">
+                <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Standard: Schema.org SpeakableSpecification</span>
+              </span>
+            )}
+            {toolType === 'brandkg' && (
+              <span className="flex items-center gap-1.5 text-cyan-300">
+                <Building2 className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Standard: ISO 24617 / Wikidata Knowledge Graph</span>
+              </span>
+            )}
+            {toolType === 'disavow' && (
+              <span className="flex items-center gap-1.5 text-rose-300">
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+                <span>Standard: Google Search Console Disavow Protocol</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -371,6 +399,10 @@ export const ExplainerVideoPlayer: React.FC<ExplainerVideoPlayerProps> = ({
                   {toolType === 'spatial' && <Move3d className="w-3.5 h-3.5 text-purple-400 shrink-0" />}
                   {toolType === 'geo' && <Network className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
                   {toolType === 'aitxt' && <FileCode className="w-3.5 h-3.5 text-rose-400 shrink-0" />}
+                  {toolType === 'aisearch' && <Bot className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
+                  {toolType === 'voiceschema' && <Volume2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                  {toolType === 'brandkg' && <Building2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+                  {toolType === 'disavow' && <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />}
                   <span
                     className={`truncate font-medium ${
                       isIndigo
@@ -390,7 +422,23 @@ export const ExplainerVideoPlayer: React.FC<ExplainerVideoPlayerProps> = ({
                   </span>
                 </div>
                 <span className="text-[10px] text-slate-400 shrink-0 pl-2">
-                  {toolType === 'x402' ? '28ms Settled' : toolType === 'spatial' ? 'WebXR 60fps' : toolType === 'geo' ? 'Triples Verified' : toolType === 'aitxt' ? 'Directives Live' : 'sub-120ms'}
+                  {toolType === 'x402'
+                    ? '28ms Settled'
+                    : toolType === 'spatial'
+                    ? 'WebXR 60fps'
+                    : toolType === 'geo'
+                    ? 'Triples Verified'
+                    : toolType === 'aitxt'
+                    ? 'Directives Live'
+                    : toolType === 'aisearch'
+                    ? 'Top-3 Sourced'
+                    : toolType === 'voiceschema'
+                    ? 'TTS Speakable'
+                    : toolType === 'brandkg'
+                    ? 'Wikidata QID Grounded'
+                    : toolType === 'disavow'
+                    ? 'Google Disavow Formatted'
+                    : 'sub-120ms'}
                 </span>
               </div>
             </div>

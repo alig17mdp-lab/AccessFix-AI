@@ -107,6 +107,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <ul className="space-y-2 text-xs">
               <li>
                 <button
+                  onClick={() => navigateTo('/tools/single-answer-precision-optimizer')}
+                  className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors text-left flex items-center gap-1.5"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Single-Answer Precision (HOT)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigateTo('/tools/touch-target-size-calculator')}
+                  className="text-cyan-400 font-bold hover:text-cyan-300 transition-colors text-left flex items-center gap-1.5"
+                >
+                  <span>WCAG 2.2 Touch Target Calc (NEW)</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => navigateTo('/tools/site-comparison')}
                   className="text-cyan-400 font-semibold hover:text-cyan-300 transition-colors text-left flex items-center gap-1"
                 >

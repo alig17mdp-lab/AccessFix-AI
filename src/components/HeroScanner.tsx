@@ -102,13 +102,55 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
         <span>WCAG 2.2 AAA Ready</span>
       </motion.div>
 
+      {/* Floating Top-Right Bold Blinking Advertisement Card for Single-Answer Precision Optimizer */}
       <motion.div
-        animate={{ y: [0, 8, 0], rotate: [0, -1.5, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="hidden xl:flex absolute right-8 top-32 items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0a0f1d] text-cyan-300 shadow-xl backdrop-blur-md border border-slate-800 text-[11px] font-semibold"
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        className="hidden lg:flex absolute right-4 xl:right-10 top-16 z-30 max-w-xs xl:max-w-sm"
       >
-        <Zap className="w-3.5 h-3.5 text-amber-400" />
-        <span>Core Web Vitals &lt; 0.8s</span>
+        <div className="relative group p-[2px] rounded-3xl bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-500 shadow-2xl shadow-emerald-500/20 hover:shadow-emerald-500/35 transition-all">
+          <div className="bg-[#0b1329] border border-emerald-500/40 rounded-[22px] p-4 text-white space-y-2.5 backdrop-blur-xl">
+            {/* Blinking Ad Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-[10px] font-black uppercase tracking-wider text-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span>HOT AD • NEW AEO TOOL</span>
+              </div>
+              <span className="text-[10px] font-mono text-cyan-400 font-bold">KD &lt; 10 • VOL 2K+</span>
+            </div>
+
+            {/* Bold Headline & Catchphrase */}
+            <div className="space-y-1">
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 transition-colors leading-snug">
+                Single-Answer Precision Optimizer:
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 block">
+                  Snipe Google Position #0 in First 50 Words
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-tight">
+                Audit opening 50 words, measure &lt;25 words answer density, and extract instant Google Featured Snippets.
+              </p>
+            </div>
+
+            {/* CTA Button with Direct Internal Link */}
+            <div className="pt-1 flex items-center gap-2">
+              <button
+                onClick={() => onNavigate?.('/tools/single-answer-precision-optimizer')}
+                className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer"
+              >
+                <span>Launch Snippet Sniper</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onNavigate?.('/blog/single-answer-precision-featured-snippet-aeo-guide')}
+                title="Read Deep Technical Guide"
+                className="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-bold border border-slate-700 transition-all cursor-pointer"
+              >
+                Guide
+              </button>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -117,6 +159,31 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
           <div className="inline-flex items-center gap-2 bg-blue-50/90 text-blue-800 border border-blue-200/80 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-tight shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-blue-700" />
             <span>Free Website Analyzer &amp; SEO Audit Report Generator</span>
+          </div>
+
+          {/* Prominent Responsive Blinking Ad Banner for Mobile & Tablet */}
+          <div className="lg:hidden mx-auto max-w-md p-[2px] rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-500 shadow-lg">
+            <div className="bg-[#0b1329] rounded-[14px] p-3 text-white flex items-center justify-between gap-3 text-left">
+              <div className="space-y-0.5 flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>NEW AEO TOOL • KD &lt; 10</span>
+                </div>
+                <div className="text-xs font-black truncate text-white">
+                  Single-Answer Precision Optimizer
+                </div>
+                <div className="text-[10px] text-slate-300 truncate">
+                  Snipe Position 0 in First 50 Words
+                </div>
+              </div>
+              <button
+                onClick={() => onNavigate?.('/tools/single-answer-precision-optimizer')}
+                className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shrink-0 cursor-pointer flex items-center gap-1"
+              >
+                <span>Launch</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
           </div>
 
           {/* Primary H1 */}

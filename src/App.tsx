@@ -32,6 +32,12 @@ import { X402MicropaymentsView } from './components/X402MicropaymentsView';
 import { SpatialSeoSynthesizerView } from './components/SpatialSeoSynthesizerView';
 import { GeoCitationStudioView } from './components/GeoCitationStudioView';
 import { AgenticGovernanceView } from './components/AgenticGovernanceView';
+import { AiSearchCitationSimulatorView } from './components/AiSearchCitationSimulatorView';
+import { ConversationalSchemaGeneratorView } from './components/ConversationalSchemaGeneratorView';
+import { BrandKnowledgeGraphGeneratorView } from './components/BrandKnowledgeGraphGeneratorView';
+import { BacklinkAuditDisavowView } from './components/BacklinkAuditDisavowView';
+import { SingleAnswerPrecisionOptimizer } from './components/SingleAnswerPrecisionOptimizer';
+import { TouchTargetSizeCalculator } from './components/TouchTargetSizeCalculator';
 import { KineticMotionExperience } from './components/KineticMotionExperience';
 import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
 import { BLOG_POSTS } from './data/blogData';
@@ -650,8 +656,68 @@ export default function App() {
           <AgenticGovernanceView onNavigate={handleNavigate} />
         )}
 
+        {/* ROUTE 10.19: AI Search Citation & Voice Query Simulator */}
+        {(activeRoute === '/tools/ai-search-citation-simulator' ||
+          activeRoute === '/tools/ai-search-simulator' ||
+          activeRoute === '/tools/voice-query-simulator' ||
+          activeRoute === '/tools/ai-overview-predictor') && (
+          <AiSearchCitationSimulatorView onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.20: Problem-to-Solution Conversational Schema Generator */}
+        {(activeRoute === '/tools/conversational-schema-generator' ||
+          activeRoute === '/tools/voice-schema-generator' ||
+          activeRoute === '/tools/speakable-schema-builder' ||
+          activeRoute === '/tools/conversational-faq-builder') && (
+          <ConversationalSchemaGeneratorView onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.21: Brand Knowledge Graph & Wikidata Entity Bridge */}
+        {(activeRoute === '/tools/brand-knowledge-graph-generator' ||
+          activeRoute === '/tools/brand-knowledge-graph' ||
+          activeRoute === '/tools/wikidata-entity-bridge' ||
+          activeRoute === '/tools/brand-schema-generator') && (
+          <BrandKnowledgeGraphGeneratorView onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.22: Backlink Crawler & Google Disavow Generator */}
+        {(activeRoute === '/tools/backlink-audit-disavow-generator' ||
+          activeRoute === '/tools/backlink-audit-disavow' ||
+          activeRoute === '/tools/toxic-backlink-analyzer' ||
+          activeRoute === '/tools/google-disavow-generator' ||
+          activeRoute === '/tools/backlink-finder') && (
+          <BacklinkAuditDisavowView onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.23: Single-Answer Precision Optimizer (Featured Snippet Sniper) */}
+        {(activeRoute === '/tools/single-answer-precision-optimizer' ||
+          activeRoute === '/tools/single-answer-precision' ||
+          activeRoute === '/tools/featured-snippet-sniper' ||
+          activeRoute === '/tools/position-0-optimizer' ||
+          activeRoute === '/single-answer-precision-optimizer') && (
+          <SingleAnswerPrecisionOptimizer onNavigate={handleNavigate} />
+        )}
+
+        {/* ROUTE 10.24: WCAG 2.2 Touch Target Size & Spacing Calculator */}
+        {(activeRoute === '/tools/touch-target-size-calculator' ||
+          activeRoute === '/tools/target-size-calculator' ||
+          activeRoute === '/tools/touch-target-calculator' ||
+          activeRoute === '/tools/wcag-touch-target' ||
+          activeRoute === '/tools/touch-target') && (
+          <TouchTargetSizeCalculator onNavigate={handleNavigate} />
+        )}
+
         {/* ROUTE 11: Free Tools Suite (Accessibility + SEO + Growth) */}
         {activeRoute.startsWith('/tools') &&
+          activeRoute !== '/tools/single-answer-precision-optimizer' &&
+          activeRoute !== '/tools/single-answer-precision' &&
+          activeRoute !== '/tools/featured-snippet-sniper' &&
+          activeRoute !== '/tools/position-0-optimizer' &&
+          activeRoute !== '/tools/touch-target-size-calculator' &&
+          activeRoute !== '/tools/target-size-calculator' &&
+          activeRoute !== '/tools/touch-target-calculator' &&
+          activeRoute !== '/tools/wcag-touch-target' &&
+          activeRoute !== '/tools/touch-target' &&
           activeRoute !== '/tools/site-comparison' &&
           activeRoute !== '/tools/keyword-planner' &&
           activeRoute !== '/tools/keyword-planning' &&
@@ -715,7 +781,24 @@ export default function App() {
           activeRoute !== '/tools/ai-txt-agentic-governance-builder' &&
           activeRoute !== '/tools/ai-txt-generator' &&
           activeRoute !== '/tools/agentic-governance' &&
-          activeRoute !== '/tools/ai-bot-firewall' && (
+          activeRoute !== '/tools/ai-bot-firewall' &&
+          activeRoute !== '/tools/ai-search-citation-simulator' &&
+          activeRoute !== '/tools/ai-search-simulator' &&
+          activeRoute !== '/tools/voice-query-simulator' &&
+          activeRoute !== '/tools/ai-overview-predictor' &&
+          activeRoute !== '/tools/conversational-schema-generator' &&
+          activeRoute !== '/tools/voice-schema-generator' &&
+          activeRoute !== '/tools/speakable-schema-builder' &&
+          activeRoute !== '/tools/conversational-faq-builder' &&
+          activeRoute !== '/tools/brand-knowledge-graph-generator' &&
+          activeRoute !== '/tools/brand-knowledge-graph' &&
+          activeRoute !== '/tools/wikidata-entity-bridge' &&
+          activeRoute !== '/tools/brand-schema-generator' &&
+          activeRoute !== '/tools/backlink-audit-disavow-generator' &&
+          activeRoute !== '/tools/backlink-audit-disavow' &&
+          activeRoute !== '/tools/toxic-backlink-analyzer' &&
+          activeRoute !== '/tools/google-disavow-generator' &&
+          activeRoute !== '/tools/backlink-finder' && (
           <FreeToolsView
             initialTool={
               activeRoute === '/tools/alt-text-checker'
