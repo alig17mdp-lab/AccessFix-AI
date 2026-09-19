@@ -29,17 +29,17 @@ export const BrandKnowledgeGraphGeneratorView: React.FC<BrandKnowledgeGraphGener
   onNavigate,
 }) => {
   // Input State
-  const [orgName, setOrgName] = useState('AccessFix AI');
-  const [orgUrl, setOrgUrl] = useState('https://accessfix.ai');
+  const [orgName, setOrgName] = useState('AuditSnipe AI');
+  const [orgUrl, setOrgUrl] = useState('https://auditsnipe.com');
   const [founderName, setFounderName] = useState('Elena Rostova');
   const [primaryIndustryQid, setPrimaryIndustryQid] = useState('Q116183301'); // Web Accessibility
   const [industryName, setIndustryName] = useState('Web Accessibility (WCAG / ADA)');
   const [serviceName, setServiceName] = useState('Automated Accessibility & Technical SEO Audit Engine');
   const [wikipediaUrl, setWikipediaUrl] = useState('');
-  const [crunchbaseUrl, setCrunchbaseUrl] = useState('https://www.crunchbase.com/organization/accessfix');
-  const [githubUrl, setGithubUrl] = useState('https://github.com/accessfix');
-  const [linkedinUrl, setLinkedinUrl] = useState('https://www.linkedin.com/company/accessfix');
-  const [twitterUrl, setTwitterUrl] = useState('https://x.com/accessfix_ai');
+  const [crunchbaseUrl, setCrunchbaseUrl] = useState('https://www.crunchbase.com/organization/auditsnipe');
+  const [githubUrl, setGithubUrl] = useState('https://github.com/auditsnipe');
+  const [linkedinUrl, setLinkedinUrl] = useState('https://www.linkedin.com/company/auditsnipe');
+  const [twitterUrl, setTwitterUrl] = useState('https://x.com/auditsnipe_ai');
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeTab, setActiveTab] = useState<'jsonld_graph' | 'entity_triples' | 'insulation_breakdown'>('jsonld_graph');
 
@@ -551,21 +551,55 @@ export const BrandKnowledgeGraphGeneratorView: React.FC<BrandKnowledgeGraphGener
           </div>
         </div>
 
-        {/* Cross-Link */}
-        <div className="mt-12 p-6 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h4 className="font-bold text-base text-white">Simulate Your Live AI Citations</h4>
-            <p className="text-xs text-slate-300 mt-1">
-              Test whether your domain will be chosen in the top 2–3 citation links across Google AI Overviews and Perplexity.
-            </p>
+        {/* Interlinked Suite & Cross-Links (Law 6 & Law 12) */}
+        <div className="mt-12 space-y-4">
+          <div className="p-6 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h4 className="font-bold text-base text-white">Simulate Your Live AI Citations</h4>
+              <p className="text-xs text-slate-300 mt-1">
+                Test whether your domain will be chosen in the top 2–3 citation links across Google AI Overviews and Perplexity.
+              </p>
+            </div>
+            {onNavigate && (
+              <button
+                onClick={() => onNavigate('/tools/ai-search-citation-simulator')}
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+              >
+                Open AI Citation Simulator <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
+
           {onNavigate && (
-            <button
-              onClick={() => onNavigate('/tools/ai-search-citation-simulator')}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0"
-            >
-              Open AI Citation Simulator <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => onNavigate('/tools/conversational-schema-generator')}
+                className="p-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition-all cursor-pointer group"
+              >
+                <div className="text-[10px] font-black uppercase text-indigo-400">Voice &amp; Speakable SEO</div>
+                <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                  Conversational FAQ &amp; Speakable Schema Generator →
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  Synthesize SpeakableSpecification schema for smart speakers and voice assistants.
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate('/')}
+                className="p-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition-all cursor-pointer group"
+              >
+                <div className="text-[10px] font-black uppercase text-indigo-400">First-50-Words Precision</div>
+                <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                  AEO Position #0 Sniper Optimizer →
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  Audit opening paragraph token density to secure Position #0 snippets and AI summaries.
+                </div>
+              </button>
+            </div>
           )}
         </div>
       </section>

@@ -182,7 +182,7 @@ To satisfy international compliance standards, your implementation must address:
           },
           {
             question: `How do I test my website for ${genKeyword}?`,
-            answer: `Run an automated scan with AccessFix AI to detect structural errors, then perform manual keyboard tab navigation to verify focus rings.`,
+            answer: `Run an automated scan with AuditSnipe AI to detect structural errors, then perform manual keyboard tab navigation to verify focus rings.`,
           },
         ],
         targetTool: {

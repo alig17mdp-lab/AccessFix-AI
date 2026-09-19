@@ -34,7 +34,7 @@ interface AeoAuditorViewProps {
 
 export const AeoAuditorView: React.FC<AeoAuditorViewProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<'url' | 'content'>('content');
-  const [urlInput, setUrlInput] = useState<string>('https://accessfix.ai/blog/aeo-auditor-guide');
+  const [urlInput, setUrlInput] = useState<string>('https://auditsnipe.com/blog/aeo-auditor-guide');
   const [inputText, setInputText] = useState<string>(AEO_PRESET_SCENARIOS[0].sampleText);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);

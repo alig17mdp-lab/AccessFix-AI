@@ -347,7 +347,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div>
-            © {new Date().getFullYear()} AuditSnipe AI Technologies Inc. (formerly AccessFix AI). All rights reserved. English (US).
+            © {new Date().getFullYear()} AuditSnipe AI Technologies Inc. (formerly AuditSnipe AI). All rights reserved. English (US).
           </div>
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5">

@@ -169,7 +169,7 @@ export const AgenticGovernanceView: React.FC<AgenticGovernanceViewProps> = ({ on
   // Generated ai.txt content
   const generatedAiTxt = `# /ai.txt - Machine Permissions Manifest for ${domainName}
 # Standard: W3C Community ai.txt v1.0 Specification
-# Generated via Agentic Governance Studio (https://accessfix.ai/tools/ai-txt-agentic-governance-builder)
+# Generated via Agentic Governance Studio (https://auditsnipe.com/tools/ai-txt-agentic-governance-builder)
 
 User-agent: *
 Policy-Version: 2026.1
@@ -437,7 +437,7 @@ X-Content-Licensing: ${licenseType}
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
       {/* CANONICAL TAG & JSON-LD INLINE SCHEMA ENFORCEMENT */}
-      <link rel="canonical" href="https://accessfix.ai/tools/ai-txt-agentic-governance-builder" />
+      <link rel="canonical" href="https://auditsnipe.com/tools/ai-txt-agentic-governance-builder" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -449,7 +449,7 @@ X-Content-Licensing: ${licenseType}
                 name: 'Agentic Governance & ai.txt Manifest Builder',
                 applicationCategory: 'SecurityApplication',
                 operatingSystem: 'All',
-                url: 'https://accessfix.ai/tools/ai-txt-agentic-governance-builder',
+                url: 'https://auditsnipe.com/tools/ai-txt-agentic-governance-builder',
                 description:
                   'Build production-ready ai.txt manifests, robots.txt AI directives, and Cloudflare Worker firewalls to manage AI scrapers and protect copyrighted content.',
                 offers: {
@@ -459,8 +459,8 @@ X-Content-Licensing: ${licenseType}
                 },
                 creator: {
                   '@type': 'Organization',
-                  name: 'AccessFix AI',
-                  url: 'https://accessfix.ai',
+                  name: 'AuditSnipe AI',
+                  url: 'https://auditsnipe.com',
                 },
               },
               {
@@ -468,7 +468,7 @@ X-Content-Licensing: ${licenseType}
                 headline: 'ai.txt & Agentic Governance: How to Control AI Crawlers (2026 Guide)',
                 description:
                   'Authoritative guide on separating AI search indexing from LLM model training, deploying edge firewalls, and generating W3C-compliant ai.txt manifests.',
-                url: 'https://accessfix.ai/tools/ai-txt-agentic-governance-builder',
+                url: 'https://auditsnipe.com/tools/ai-txt-agentic-governance-builder',
                 author: {
                   '@type': 'Person',
                   name: 'Marcus Vance',

@@ -149,7 +149,7 @@ export const GscIndexationFixer: React.FC<GscIndexationFixerProps> = ({ onNaviga
   const [inputMode, setInputMode] = useState<'single' | 'bulk'>('single');
   const [singleUrl, setSingleUrl] = useState<string>('https://mystore.com/products/wireless-earbuds-pro-v2');
   const [bulkUrls, setBulkUrls] = useState<string>(
-    `https://mystore.com/catalog/discontinued-spring-collection\nhttps://mystore.com/products/wireless-earbuds-pro-v2\nhttps://saasplatform.io/features/cloud-sync-overview\nhttps://brandagency.com/services/seo-consulting?ref=google_cpc\nhttps://accessfix.ai/blog/site-comparison-engine-guide`
+    `https://mystore.com/catalog/discontinued-spring-collection\nhttps://mystore.com/products/wireless-earbuds-pro-v2\nhttps://saasplatform.io/features/cloud-sync-overview\nhttps://brandagency.com/services/seo-consulting?ref=google_cpc\nhttps://auditsnipe.com/blog/site-comparison-engine-guide`
   );
 
   const [isAuditing, setIsAuditing] = useState<boolean>(false);

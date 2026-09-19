@@ -41,7 +41,7 @@ export const AuthorProfileView: React.FC<AuthorProfileViewProps> = ({
         <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
           <img
             src={author.avatar}
-            alt={`${author.name} - ${author.role} at AccessFix AI`}
+            alt={`${author.name} - ${author.role} at AuditSnipe AI`}
             width={144}
             height={144}
             loading="eager"
@@ -172,6 +172,75 @@ export const AuthorProfileView: React.FC<AuthorProfileViewProps> = ({
           ))}
         </div>
       </div>
+
+      {/* Featured Diagnostic Tools Recommended by Author (Law 6 & Law 12) */}
+      <section className="mt-12 bg-slate-900 text-white border border-slate-800 rounded-3xl p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
+              Diagnostic Arsenal
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-white mt-1">
+              Recommended Free Tools by {author.name}
+            </h3>
+            <p className="text-xs text-slate-400 mt-1">
+              Apply the engineering techniques detailed in these publications with instant automated diagnostic tools.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate('/tools')}
+            className="text-xs font-bold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 cursor-pointer shrink-0"
+          >
+            <span>All 24+ Tools</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            type="button"
+            onClick={() => onNavigate('/scanner')}
+            className="p-5 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+          >
+            <div className="text-[10px] font-black uppercase text-emerald-400">172-Point Engine</div>
+            <div className="text-sm font-black text-white group-hover:text-emerald-300 mt-1">
+              Full-Domain DOM Scanner →
+            </div>
+            <div className="text-xs text-slate-400 mt-1 line-clamp-2">
+              Deep crawl for WCAG 2.1/2.2 AA, ARIA roles, and Core Web Vitals diagnostics.
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('/')}
+            className="p-5 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+          >
+            <div className="text-[10px] font-black uppercase text-emerald-400">Featured Snippets</div>
+            <div className="text-sm font-black text-white group-hover:text-emerald-300 mt-1">
+              AEO Position #0 Sniper →
+            </div>
+            <div className="text-xs text-slate-400 mt-1 line-clamp-2">
+              Optimize first-50-words tokens for Google AI Overviews and answer engines.
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+            className="p-5 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+          >
+            <div className="text-[10px] font-black uppercase text-emerald-400">WCAG 2.2 SC 2.5.8</div>
+            <div className="text-sm font-black text-white group-hover:text-emerald-300 mt-1">
+              Touch Target Size Calculator →
+            </div>
+            <div className="text-xs text-slate-400 mt-1 line-clamp-2">
+              Evaluate 24×24px button bounds and generate instant CSS offset code.
+            </div>
+          </button>
+        </div>
+      </section>
     </div>
   );
 };

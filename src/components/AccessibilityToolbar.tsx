@@ -124,7 +124,7 @@ export const AccessibilityToolbar: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-            <span>AccessFix Accessibility Engine</span>
+            <span>AuditSnipe Accessibility Engine</span>
             <button
               onClick={() => {
                 setHighContrast(false);

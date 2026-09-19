@@ -14,6 +14,7 @@ import {
   Search,
   Filter,
   ArrowLeft,
+  ArrowRight,
   ChevronDown,
   ChevronUp,
   ExternalLink,
@@ -32,6 +33,7 @@ interface ReportViewProps {
   onRescan?: (url: string) => void;
   onAddToMonitoring?: (url: string) => void;
   onOpenAuth?: () => void;
+  onNavigate?: (route: string) => void;
 }
 
 export const ReportView: React.FC<ReportViewProps> = ({
@@ -41,6 +43,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
   onRescan,
   onAddToMonitoring,
   onOpenAuth,
+  onNavigate,
 }) => {
   const scan = propScan || scanResult;
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
@@ -693,6 +696,74 @@ export const ReportView: React.FC<ReportViewProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Related Specialized Diagnostic Tools (Law 6 & Law 12) */}
+      {onNavigate && (
+        <section className="mt-8 bg-slate-900 text-white border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 print:hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
+                Remediation Suite
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                Complementary Diagnostic &amp; Optimization Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>View All 24+ Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">WCAG 2.2 SC 2.5.8</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                Touch Target Size Calculator →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Evaluate 24×24px button bounds and generate 1-click CSS pseudo-element fixes.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/site-comparison')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">Competitor Speed</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                Site Comparison Engine →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Benchmark your accessibility score and DOM load time head-to-head.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">Featured Snippets</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                AEO Position #0 Sniper →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Format first-50-words tokens for Google AI Overviews and answer engines.
+              </div>
+            </button>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

@@ -96,7 +96,7 @@ export const DomainRatingChecker: React.FC<DomainRatingCheckerProps> = ({
     { label: 'github.com', domain: 'github.com', dr: 96 },
     { label: 'ahrefs.com', domain: 'ahrefs.com', dr: 90 },
     { label: 'shopify.com', domain: 'shopify.com', dr: 94 },
-    { label: 'accessfix.ai', domain: 'accessfix.ai', dr: 48 },
+    { label: 'auditsnipe.com', domain: 'auditsnipe.com', dr: 48 },
   ];
 
   // Execute Analysis
@@ -238,7 +238,7 @@ Referring Domains: ${report.referringDomains.toLocaleString()}
 Organic Ranking Keywords: ${report.organicKeywordsCount.toLocaleString()}
 Monthly Organic Traffic: ${report.monthlyOrganicTraffic.toLocaleString()} visits/mo
 Estimated Traffic Value: $${report.organicTrafficValueUsd.toLocaleString()}/mo
-Generated via AccessFix AI Domain Rating Checker`;
+Generated via AuditSnipe AI Domain Rating Checker`;
 
     navigator.clipboard.writeText(summary);
     setCopiedAllReport(true);
@@ -248,7 +248,7 @@ Generated via AccessFix AI Domain Rating Checker`;
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-in fade-in duration-200" id="domain-rating-checker">
       {/* Self-referencing Canonical Tag (Compliance Law 13) */}
-      <link rel="canonical" href="https://accessfix.ai/tools/domain-rating-checker" />
+      <link rel="canonical" href="https://auditsnipe.com/tools/domain-rating-checker" />
 
       {/* Structured Schema Markup: WebApplication & FAQPage (Compliance Law 14 & 17) */}
       <script
@@ -260,7 +260,7 @@ Generated via AccessFix AI Domain Rating Checker`;
               {
                 '@type': 'WebApplication',
                 name: 'Free Domain Rating Checker & DA PA Authority Analyzer',
-                url: 'https://accessfix.ai/tools/domain-rating-checker',
+                url: 'https://auditsnipe.com/tools/domain-rating-checker',
                 description:
                   'Free DA PA checker, Ahrefs-standard DR checker, Moz Domain Authority analyzer, Semrush Authority Score benchmark, and free backlink Spam Score calculator.',
                 applicationCategory: 'SearchOptimizationApplication',
@@ -273,8 +273,8 @@ Generated via AccessFix AI Domain Rating Checker`;
                 },
                 creator: {
                   '@type': 'Organization',
-                  name: 'AccessFix AI',
-                  url: 'https://accessfix.ai',
+                  name: 'AuditSnipe AI',
+                  url: 'https://auditsnipe.com',
                 },
               },
               {
@@ -293,7 +293,7 @@ Generated via AccessFix AI Domain Rating Checker`;
                     name: 'Is there a free website ranking checker?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'Yes, AccessFix AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.',
+                      text: 'Yes, AuditSnipe AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.',
                     },
                   },
                   {
@@ -1315,7 +1315,7 @@ Generated via AccessFix AI Domain Rating Checker`;
             </p>
             <p className="text-sm text-slate-700 leading-relaxed">
               If you are researching <strong className="text-slate-900 font-bold">how to check domain rating and backlinks free</strong>,
-              the AccessFix AI authority diagnostic engine provides real-time computational verification without requiring credit card
+              the AuditSnipe AI authority diagnostic engine provides real-time computational verification without requiring credit card
               commitments, subscription gates, or inaccurate approximations.
             </p>
           </div>
@@ -1427,7 +1427,7 @@ Generated via AccessFix AI Domain Rating Checker`;
                 </h3>
                 <p className="text-xs text-slate-800 leading-relaxed">
                   <strong className="text-slate-950 font-black">
-                    Yes, AccessFix AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.
+                    Yes, AuditSnipe AI provides a 100% free website ranking and domain authority checker that tracks live DR, ranking keywords, and backlinks with zero registration fees.
                   </strong>{' '}
                   Our free utility provides instant access to verified backlinks, anchor profiles, keyword visibility,
                   and suggested outreach opportunities with zero usage limits.

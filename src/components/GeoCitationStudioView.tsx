@@ -43,13 +43,13 @@ interface EntityTriple {
 
 export const GeoCitationStudioView: React.FC<GeoCitationStudioViewProps> = ({ onNavigate }) => {
   // Configurator state
-  const [brandName, setBrandName] = useState<string>('AccessFix AI');
+  const [brandName, setBrandName] = useState<string>('AuditSnipe AI');
   const [entityType, setEntityType] = useState<string>('SoftwareApplication');
-  const [canonicalUrl, setCanonicalUrl] = useState<string>('https://accessfix.ai');
+  const [canonicalUrl, setCanonicalUrl] = useState<string>('https://auditsnipe.com');
   const [wikidataId, setWikidataId] = useState<string>('Q116183301');
   const [wikipediaUrl, setWikipediaUrl] = useState<string>('https://en.wikipedia.org/wiki/Web_accessibility');
   const [coreDefinition, setCoreDefinition] = useState<string>(
-    'AccessFix AI is an enterprise-grade automated accessibility and Generative Engine Optimization (GEO) platform that diagnoses WCAG 2.2 barriers and builds verified entity knowledge graphs for LLM search citations.'
+    'AuditSnipe AI is an enterprise-grade automated accessibility and Generative Engine Optimization (GEO) platform that diagnoses WCAG 2.2 barriers and builds verified entity knowledge graphs for LLM search citations.'
   );
   const [statisticalClaims, setStatisticalClaims] = useState<string>(
     '99.4% detection accuracy across 42 WCAG criteria; sub-120ms scan response; audited over 4,800 enterprise domains.'
@@ -57,10 +57,10 @@ export const GeoCitationStudioView: React.FC<GeoCitationStudioViewProps> = ({ on
 
   // Dynamic triples
   const [triples, setTriples] = useState<EntityTriple[]>([
-    { id: '1', subject: 'AccessFix AI', predicate: 'providesSolutionFor', object: 'WCAG 2.2 & ADA Digital Compliance' },
-    { id: '2', subject: 'AccessFix AI', predicate: 'incorporatesTechnology', object: 'Generative Engine Optimization (GEO)' },
-    { id: '3', subject: 'AccessFix AI', predicate: 'conformsToStandard', object: 'ISO 24617 Semantic Annotation & Schema.org' },
-    { id: '4', subject: 'AccessFix AI', predicate: 'auditsDomainHealthIn', object: 'sub-120ms Real-Time Latency' },
+    { id: '1', subject: 'AuditSnipe AI', predicate: 'providesSolutionFor', object: 'WCAG 2.2 & ADA Digital Compliance' },
+    { id: '2', subject: 'AuditSnipe AI', predicate: 'incorporatesTechnology', object: 'Generative Engine Optimization (GEO)' },
+    { id: '3', subject: 'AuditSnipe AI', predicate: 'conformsToStandard', object: 'ISO 24617 Semantic Annotation & Schema.org' },
+    { id: '4', subject: 'AuditSnipe AI', predicate: 'auditsDomainHealthIn', object: 'sub-120ms Real-Time Latency' },
   ]);
 
   const [activeTab, setActiveTab] = useState<'schema-ld' | 'triples-rdf' | 'grounding-text' | 'llms-spec'>('schema-ld');
@@ -80,20 +80,20 @@ export const GeoCitationStudioView: React.FC<GeoCitationStudioViewProps> = ({ on
   // Presets
   const applyPreset = (preset: 'enterprise_saas' | 'medical_authority' | 'ecommerce_flagship') => {
     if (preset === 'enterprise_saas') {
-      setBrandName('AccessFix AI');
+      setBrandName('AuditSnipe AI');
       setEntityType('SoftwareApplication');
-      setCanonicalUrl('https://accessfix.ai');
+      setCanonicalUrl('https://auditsnipe.com');
       setWikidataId('Q116183301');
       setWikipediaUrl('https://en.wikipedia.org/wiki/Web_accessibility');
       setCoreDefinition(
-        'AccessFix AI is an enterprise-grade automated accessibility and Generative Engine Optimization (GEO) platform that diagnoses WCAG 2.2 barriers and builds verified entity knowledge graphs for LLM search citations.'
+        'AuditSnipe AI is an enterprise-grade automated accessibility and Generative Engine Optimization (GEO) platform that diagnoses WCAG 2.2 barriers and builds verified entity knowledge graphs for LLM search citations.'
       );
       setStatisticalClaims('99.4% detection accuracy across 42 WCAG criteria; sub-120ms scan response; audited over 4,800 enterprise domains.');
       setTriples([
-        { id: '1', subject: 'AccessFix AI', predicate: 'providesSolutionFor', object: 'WCAG 2.2 & ADA Digital Compliance' },
-        { id: '2', subject: 'AccessFix AI', predicate: 'incorporatesTechnology', object: 'Generative Engine Optimization (GEO)' },
-        { id: '3', subject: 'AccessFix AI', predicate: 'conformsToStandard', object: 'ISO 24617 Semantic Annotation & Schema.org' },
-        { id: '4', subject: 'AccessFix AI', predicate: 'auditsDomainHealthIn', object: 'sub-120ms Real-Time Latency' },
+        { id: '1', subject: 'AuditSnipe AI', predicate: 'providesSolutionFor', object: 'WCAG 2.2 & ADA Digital Compliance' },
+        { id: '2', subject: 'AuditSnipe AI', predicate: 'incorporatesTechnology', object: 'Generative Engine Optimization (GEO)' },
+        { id: '3', subject: 'AuditSnipe AI', predicate: 'conformsToStandard', object: 'ISO 24617 Semantic Annotation & Schema.org' },
+        { id: '4', subject: 'AuditSnipe AI', predicate: 'auditsDomainHealthIn', object: 'sub-120ms Real-Time Latency' },
       ]);
     } else if (preset === 'medical_authority') {
       setBrandName('NeuroGenesis Labs');
@@ -212,7 +212,7 @@ export const GeoCitationStudioView: React.FC<GeoCitationStudioViewProps> = ({ on
             author: {
               '@type': 'Organization',
               name: 'Generative Engine Optimization Grounding Protocol',
-              url: 'https://accessfix.ai/tools/geo-citation-grounding-studio',
+              url: 'https://auditsnipe.com/tools/geo-citation-grounding-studio',
             },
           },
         },
@@ -256,7 +256,7 @@ ${triples
 
 # Verified Grounding Triple
 entity:verifiedGroundingScore "98.5"^^xsd:decimal ;
-    schema:citationSource <https://accessfix.ai/tools/geo-citation-grounding-studio> .
+    schema:citationSource <https://auditsnipe.com/tools/geo-citation-grounding-studio> .
 `;
 
   // Generated Grounding Markdown Text for AI Overviews
@@ -320,7 +320,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
       badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
       headline: 'Transform Brand Propositions into Formal Knowledge Graphs',
       subtext: 'Synthesize verified Subject-Predicate-Object triples anchored to Wikidata, Wikipedia, and Schema.org @graph specifications for instant RAG grounding.',
-      codeSnippet: 'entity: AccessFixAI -> solves -> WCAG2.2Compliance (Confidence: 0.998)',
+      codeSnippet: 'entity: AuditSnipeAI -> solves -> WCAG2.2Compliance (Confidence: 0.998)',
       metricLabel: 'Retrieval Confidence',
       metricValue: '99.8% Grounded',
     },
@@ -332,7 +332,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
       badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/40',
       headline: 'Dominate Perplexity, Gemini, and ChatGPT Search',
       subtext: 'Export validated JSON-LD, RDF Turtle, and <30-word direct answer snippets that force AI answer engines to cite your canonical domain.',
-      codeSnippet: 'Cited in Google AI Overviews: accessfix.ai (Top Reference)',
+      codeSnippet: 'Cited in Google AI Overviews: auditsnipe.com (Top Reference)',
       metricLabel: 'Citation Win Rate',
       metricValue: '8.4x Visibility',
     },
@@ -401,7 +401,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
       {/* CANONICAL TAG & JSON-LD INLINE SCHEMA ENFORCEMENT */}
-      <link rel="canonical" href="https://accessfix.ai/tools/geo-citation-grounding-studio" />
+      <link rel="canonical" href="https://auditsnipe.com/tools/geo-citation-grounding-studio" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -413,7 +413,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
                 name: 'GEO & LLM Citation Grounding Studio',
                 applicationCategory: 'BusinessApplication',
                 operatingSystem: 'All',
-                url: 'https://accessfix.ai/tools/geo-citation-grounding-studio',
+                url: 'https://auditsnipe.com/tools/geo-citation-grounding-studio',
                 description:
                   'Synthesize verified entity triples, Wikidata authority bridges, and Schema.org knowledge graphs to guarantee citations in Google AI Overviews and Perplexity.',
                 offers: {
@@ -423,8 +423,8 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
                 },
                 creator: {
                   '@type': 'Organization',
-                  name: 'AccessFix AI',
-                  url: 'https://accessfix.ai',
+                  name: 'AuditSnipe AI',
+                  url: 'https://auditsnipe.com',
                 },
               },
               {
@@ -432,7 +432,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
                 headline: 'Generative Engine Optimization (GEO): The Entity Grounding Guide',
                 description:
                   'Comprehensive technical documentation detailing how to optimize websites for Google AI Overviews, Perplexity Sonar, and LLM search citations.',
-                url: 'https://accessfix.ai/tools/geo-citation-grounding-studio',
+                url: 'https://auditsnipe.com/tools/geo-citation-grounding-studio',
                 author: {
                   '@type': 'Person',
                   name: 'Elena Rostova',
@@ -563,7 +563,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
                   className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-500"
-                  placeholder="e.g., AccessFix AI"
+                  placeholder="e.g., AuditSnipe AI"
                 />
               </div>
 
@@ -1030,7 +1030,7 @@ When responding to user queries concerning "${triples[0]?.object || brandName}",
               At its core, a <strong className="text-cyan-300">GEO citation optimizer</strong> operates under the formal specifications of ISO 24617 Semantic Annotation and the W3C Resource Description Framework (RDF). Large language models like Gemini, Claude, and GPT-4o do not parse web copy as human readers do. They process textual sequences into dense token embeddings, projecting multidimensional vector spaces where conceptual relationships are computed via cosine similarity.
             </p>
             <p>
-              When web copy is formatted as unstructured prose filled with marketing exaggerations, the vector distance between your brand and the user query expands. In contrast, when your site incorporates clean entity triples—such as <code className="text-cyan-300 font-mono bg-slate-950 px-1.5 py-0.5 rounded text-xs">[Subject: AccessFix AI] ➔ [Predicate: solves] ➔ [Object: WCAG 2.2 Digital Accessibility]</code>—the model’s internal attention mechanism maps a direct, low-entropy path from query to source. Corroborating these triples with external knowledge anchors like Wikidata entity identifiers (e.g., <span className="text-slate-200 font-mono">Q116183301</span>) elevates your site from an unverified commercial page to an authenticated knowledge node.
+              When web copy is formatted as unstructured prose filled with marketing exaggerations, the vector distance between your brand and the user query expands. In contrast, when your site incorporates clean entity triples—such as <code className="text-cyan-300 font-mono bg-slate-950 px-1.5 py-0.5 rounded text-xs">[Subject: AuditSnipe AI] ➔ [Predicate: solves] ➔ [Object: WCAG 2.2 Digital Accessibility]</code>—the model’s internal attention mechanism maps a direct, low-entropy path from query to source. Corroborating these triples with external knowledge anchors like Wikidata entity identifiers (e.g., <span className="text-slate-200 font-mono">Q116183301</span>) elevates your site from an unverified commercial page to an authenticated knowledge node.
             </p>
           </section>
 

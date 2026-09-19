@@ -124,7 +124,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     setError(null);
 
     // Progressive loading indicator updates
-    setLoadingStep('Connecting to AccessFix Crawler Engine & validating domains...');
+    setLoadingStep('Connecting to AuditSnipe Crawler Engine & validating domains...');
     const stepTimer1 = setTimeout(() => setLoadingStep('Auditing DOM signals, technical SEO, and WCAG accessibility...'), 800);
     const stepTimer2 = setTimeout(() => setLoadingStep('Extracting competitor keyword rankings & search volume...'), 1600);
     const stepTimer3 = setTimeout(() => setLoadingStep('Generating Content Gap matrix & ranking Top 15 Growth Actions...'), 2400);
@@ -257,7 +257,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `accessfix-comparison-${result.yourSite.domain}-vs-${result.competitorSite.domain}.csv`);
+    link.setAttribute('download', `auditsnipe-comparison-${result.yourSite.domain}-vs-${result.competitorSite.domain}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -352,7 +352,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                 onClick={() => onNavigate?.('/tools')}
                 className="hover:text-blue-600 transition-colors"
               >
-                AccessFix Tools
+                AuditSnipe Tools
               </button>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <span className="text-blue-600 font-semibold">Competitive Site Comparison</span>
@@ -1153,7 +1153,7 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                           onClick={() => onNavigate?.(act.actionRoute!)}
                           className="inline-flex items-center text-xs font-bold text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer"
                         >
-                          Execute with AccessFix Tool <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          Execute with AuditSnipe Tool <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </button>
                       )}
                     </div>
@@ -1922,6 +1922,74 @@ export const SiteComparisonView: React.FC<SiteComparisonViewProps> = ({ onNaviga
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Related Tools & Pillar Guides Hub (Law 6 & Law 12) */}
+          {onNavigate && (
+            <div className="mt-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-800/60">
+                    Competitive Intelligence Cluster
+                  </span>
+                  <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                    Related Specialized Audit Tools &amp; Authority Guides
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools')}
+                  className="text-xs font-bold text-blue-400 hover:text-blue-300 inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>All 24+ Tools</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/scanner')}
+                  className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+                >
+                  <div className="text-[10px] font-black uppercase text-blue-400">Technical Health</div>
+                  <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                    172-Point Accessibility &amp; DOM Scanner →
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                    Benchmark DOM depth, ARIA contrast, and speed diagnostics.
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools/domain-rating-checker')}
+                  className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+                >
+                  <div className="text-[10px] font-black uppercase text-blue-400">Authority Gap</div>
+                  <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                    Domain Rating &amp; Authority Checker →
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                    Compare backlink velocity, dofollow ratios, and root domain authority.
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools/keyword-planner')}
+                  className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+                >
+                  <div className="text-[10px] font-black uppercase text-blue-400">Search Strategy</div>
+                  <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                    AI Keyword Planner (KD &lt; 10) →
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                    Extract low-competition commercial keywords with high search volume.
+                  </div>
+                </button>
               </div>
             </div>
           )}

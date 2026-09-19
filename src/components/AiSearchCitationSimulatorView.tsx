@@ -112,7 +112,7 @@ export const AiSearchCitationSimulatorView: React.FC<AiSearchCitationSimulatorVi
           verdictColor: 'text-emerald-700',
           verdictBg: 'bg-emerald-50 border-emerald-200',
           synthesizedQuote:
-            'According to AccessFix Telemetry, 81% of eCommerce CLS regressions stem from unsized promotional banners and dynamic web font FOIT/FOUT swaps.',
+            'According to AuditSnipe Telemetry, 81% of eCommerce CLS regressions stem from unsized promotional banners and dynamic web font FOIT/FOUT swaps.',
           citationRank: 1,
           retrievalLatency: '112ms',
         },
@@ -243,7 +243,7 @@ export const AiSearchCitationSimulatorView: React.FC<AiSearchCitationSimulatorVi
     }, 650);
   };
 
-  const generatedRemedyCode = `<!-- AccessFix AI Search Citation & Speakable Remedy -->
+  const generatedRemedyCode = `<!-- AuditSnipe AI Search Citation & Speakable Remedy -->
 <!-- Inject inside <head> or directly below the target H2 heading -->
 
 <section class="ai-citation-direct-answer" itemscope itemtype="https://schema.org/TechArticle">
@@ -917,20 +917,55 @@ export const AiSearchCitationSimulatorView: React.FC<AiSearchCitationSimulatorVi
         </div>
 
         {/* Cross-Linking Navigation */}
-        <div className="mt-12 p-6 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h4 className="font-bold text-base text-white">Need to Generate Conversational Schema?</h4>
-            <p className="text-xs text-slate-300 mt-1">
-              Create Speakable and HowTo voice schemas for 15 conversational problem scenarios in seconds.
-            </p>
+        {/* Interlinked Suite & Cross-Links (Law 6 & Law 12) */}
+        <div className="mt-12 space-y-4">
+          <div className="p-6 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h4 className="font-bold text-base text-white">Need to Generate Conversational Schema?</h4>
+              <p className="text-xs text-slate-300 mt-1">
+                Create Speakable and HowTo voice schemas for 15 conversational problem scenarios in seconds.
+              </p>
+            </div>
+            {onNavigate && (
+              <button
+                onClick={() => onNavigate('/tools/conversational-schema-generator')}
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+              >
+                Open Conversational Schema Generator <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
+
           {onNavigate && (
-            <button
-              onClick={() => onNavigate('/tools/conversational-schema-generator')}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0"
-            >
-              Open Conversational Schema Generator <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => onNavigate('/')}
+                className="p-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition-all cursor-pointer group"
+              >
+                <div className="text-[10px] font-black uppercase text-indigo-400">Position #0 AEO</div>
+                <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                  AEO Position #0 Sniper Optimizer →
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  Format direct-answer tokens and 50-word answer blocks for Google AI Overviews.
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate('/tools/brand-knowledge-graph-generator')}
+                className="p-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition-all cursor-pointer group"
+              >
+                <div className="text-[10px] font-black uppercase text-indigo-400">Brand Authority</div>
+                <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                  Brand Knowledge Graph Generator →
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  Anchor founders, products, and Wikidata entities to build unshakeable AI citations.
+                </div>
+              </button>
+            </div>
           )}
         </div>
       </section>

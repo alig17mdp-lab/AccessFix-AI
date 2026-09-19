@@ -22,6 +22,7 @@ import {
   Layers,
   FileCode,
   Network,
+  ArrowRight,
 } from 'lucide-react';
 import { ExplainerVideoPlayer, VideoChapter, VideoKeywordData } from './ExplainerVideoPlayer';
 
@@ -686,6 +687,72 @@ export function x402Paywall(req: express.Request, res: express.Response, next: e
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Related Web Monetization & Governance Tools (Law 6 & Law 12) */}
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-800/60">
+                Agentic Monetization Cluster
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                Related AI Governance &amp; Crawler Authorization Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/ai-txt-agentic-governance-builder')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-amber-400">Agent Directives</div>
+              <div className="text-xs font-black text-white group-hover:text-amber-300 mt-0.5">
+                AI Crawler &amp; ai.txt Builder →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Configure rate-limiting, licensing, and crawler permissions for AI agents.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/robots-txt-validator')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-amber-400">Crawl Permissions</div>
+              <div className="text-xs font-black text-white group-hover:text-amber-300 mt-0.5">
+                Robots.txt &amp; AI Bot Validator →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Simulate 16 major AI crawlers against your current robots.txt file.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-amber-400">Position #0 Sniper</div>
+              <div className="text-xs font-black text-white group-hover:text-amber-300 mt-0.5">
+                AEO Position #0 Sniper Optimizer →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Extract high-value answers and verify first-50-words snippet compliance.
+              </div>
+            </button>
           </div>
         </section>
       </main>

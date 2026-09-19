@@ -1307,6 +1307,72 @@ export const SitemapAuditorView: React.FC<SitemapAuditorViewProps> = ({ onNaviga
             </div>
           </div>
         )}
+
+        {/* Related Technical SEO Tools & Pillar Guides Hub (Law 6 & Law 12) */}
+        <section className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                Technical SEO Cluster
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 mt-1">
+                Complementary Crawl Budget &amp; Indexation Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/robots-txt-validator')}
+              className="p-4 rounded-xl bg-slate-50 hover:bg-blue-50/60 border border-slate-200 hover:border-blue-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-700">Crawl Directives</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-blue-700 mt-0.5">
+                Robots.txt &amp; AI Crawler Checker →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Simulate 16 AI scrapers and search engine bots against your crawl permissions.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/indexation-fixer')}
+              className="p-4 rounded-xl bg-slate-50 hover:bg-blue-50/60 border border-slate-200 hover:border-blue-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-700">GSC Indexation</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-blue-700 mt-0.5">
+                Search Console Indexation Fixer →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Diagnose "Discovered - currently not indexed" and canonical conflict warnings.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/scanner')}
+              className="p-4 rounded-xl bg-slate-50 hover:bg-blue-50/60 border border-slate-200 hover:border-blue-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-700">Full Health Audit</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-blue-700 mt-0.5">
+                172-Point DOM &amp; Technical Scanner →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Run deep DOM inspection for metadata, accessibility, and Core Web Vitals.
+              </div>
+            </button>
+          </div>
+        </section>
       </div>
 
       {/* Embedded Schema Markup (Law 14) */}
@@ -1316,8 +1382,8 @@ export const SitemapAuditorView: React.FC<SitemapAuditorViewProps> = ({ onNaviga
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
-            name: 'AccessFix XML Sitemap Auditor & GSC Validator',
-            url: 'https://accessfix.ai/tools/sitemap-auditor',
+            name: 'AuditSnipe XML Sitemap Auditor & GSC Validator',
+            url: 'https://auditsnipe.com/tools/sitemap-auditor',
             applicationCategory: 'BusinessApplication',
             operatingSystem: 'All',
             offers: {

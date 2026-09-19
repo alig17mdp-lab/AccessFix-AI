@@ -94,7 +94,7 @@ export const BacklinkAuditDisavowView: React.FC<BacklinkAuditDisavowViewProps> =
     { label: 'stripe.com', domain: 'stripe.com' },
     { label: 'shopify.com', domain: 'shopify.com' },
     { label: 'ahrefs.com', domain: 'ahrefs.com' },
-    { label: 'accessfix.ai', domain: 'accessfix.ai' },
+    { label: 'auditsnipe.com', domain: 'auditsnipe.com' },
   ];
 
   // Execute Live Scan
@@ -322,14 +322,14 @@ export const BacklinkAuditDisavowView: React.FC<BacklinkAuditDisavowViewProps> =
       directAnswer:
         'Yes, mistakenly disavowing high-authority, legitimate editorial links will sever positive link equity and directly decrease your organic search rankings.',
       fullAnswer:
-        'You must never disavow links blindly. Disavowing authoritative websites like Wikipedia, Forbes, GitHub, or industry blogs cuts off their PageRank contribution to your site. AccessFix separates verified clean links from toxic spam to ensure you only disavow genuine hazards.',
+        'You must never disavow links blindly. Disavowing authoritative websites like Wikipedia, Forbes, GitHub, or industry blogs cuts off their PageRank contribution to your site. AuditSnipe separates verified clean links from toxic spam to ensure you only disavow genuine hazards.',
     },
     {
       q: 'What is the exact formatting syntax required for a Google Disavow text file?',
       directAnswer:
         'The file must be a 7-bit ASCII or UTF-8 plain text file (.txt) using "domain:example.com" for domains, specific URLs on separate lines, and "#" for comments.',
       fullAnswer:
-        'Google rejects Word documents, PDFs, or CSV files. Every directive must sit on its own line. Comments must start with a hash symbol (#). File size cannot exceed 2MB or 100,000 lines. The AccessFix generator formats this automatically to ensure 100% submission compliance.',
+        'Google rejects Word documents, PDFs, or CSV files. Every directive must sit on its own line. Comments must start with a hash symbol (#). File size cannot exceed 2MB or 100,000 lines. The AuditSnipe generator formats this automatically to ensure 100% submission compliance.',
     },
   ];
 
@@ -1255,7 +1255,7 @@ export const BacklinkAuditDisavowView: React.FC<BacklinkAuditDisavowViewProps> =
                 AF
               </div>
               <div>
-                <div className="font-bold text-slate-900">AccessFix Senior Link Building Audit Council</div>
+                <div className="font-bold text-slate-900">AuditSnipe Senior Link Building Audit Council</div>
                 <div>20+ Years Enterprise SEO, Algorithmic Penalty Recovery & Disavow Specialization</div>
               </div>
             </div>

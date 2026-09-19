@@ -22,6 +22,7 @@ import {
   Eye,
   Layers,
   Sliders,
+  ArrowRight,
 } from 'lucide-react';
 import { ExplainerVideoPlayer, VideoChapter, VideoKeywordData } from './ExplainerVideoPlayer';
 
@@ -41,9 +42,9 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
     '2026 Enterprise Accessibility & AEO Benchmark Infographic'
   );
   const [authorName, setAuthorName] = useState<string>('Dr. Elena Rostova, Lead Digital Accessibility Auditor');
-  const [authorOrg, setAuthorOrg] = useState<string>('AccessFix Global Standards Consortium');
+  const [authorOrg, setAuthorOrg] = useState<string>('AuditSnipe Global Standards Consortium');
   const [digitalSourceType, setDigitalSourceType] = useState<string>('compositeWithTrainedAlgorithmicMedia');
-  const [editingSoftware, setEditingSoftware] = useState<string>('AccessFix Studio v4.2 + Figma + Adobe C2PA Signer');
+  const [editingSoftware, setEditingSoftware] = useState<string>('AuditSnipe Studio v4.2 + Figma + Adobe C2PA Signer');
   const [licenseUrl, setLicenseUrl] = useState<string>('https://creativecommons.org/licenses/by-sa/4.0/');
   const [sampleScenario, setSampleScenario] = useState<'hybrid' | 'human' | 'synthetic'>('hybrid');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -71,9 +72,9 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
     if (type === 'hybrid') {
       setContentTitle('2026 Enterprise Accessibility & AEO Benchmark Infographic');
       setAuthorName('Dr. Elena Rostova, Lead Digital Accessibility Auditor');
-      setAuthorOrg('AccessFix Global Standards Consortium');
+      setAuthorOrg('AuditSnipe Global Standards Consortium');
       setDigitalSourceType('compositeWithTrainedAlgorithmicMedia');
-      setEditingSoftware('AccessFix Studio v4.2 + Figma + Adobe C2PA Signer');
+      setEditingSoftware('AuditSnipe Studio v4.2 + Figma + Adobe C2PA Signer');
     } else if (type === 'human') {
       setContentTitle('Live Keynote Photography: Web Standards Summit 2026');
       setAuthorName('Marcus Vance, Registered Photojournalist');
@@ -106,7 +107,7 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
       datePublished: '2026-09-13T10:30:00Z',
       dateModified: '2026-09-13T10:45:00Z',
       license: licenseUrl,
-      acquireLicensePage: 'https://accessfix.ai/licensing',
+      acquireLicensePage: 'https://auditsnipe.com/licensing',
       creditText: `${authorName} via ${authorOrg}`,
       copyrightNotice: `© 2026 ${authorOrg}. All Rights Reserved. Cryptographically Signed via C2PA.`,
       digitalSourceType: `https://cv.iptc.org/newscodes/digitalsourcetype/${digitalSourceType}`,
@@ -133,7 +134,7 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
   // Generate native C2PA v2.1 JUMBF Manifest Assertion Block
   const generatedC2paManifest = JSON.stringify(
     {
-      claim_generator: 'AccessFix C2PA Provenance Engine 2.1',
+      claim_generator: 'AuditSnipe C2PA Provenance Engine 2.1',
       title: contentTitle,
       format: 'image/webp',
       instance_id: `urn:uuid:c2pa-${Date.now()}-x89f`,
@@ -150,7 +151,7 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
               },
               {
                 action: 'c2pa.edited',
-                softwareAgent: 'AccessFix Contrast Engine v4.2',
+                softwareAgent: 'AuditSnipe Contrast Engine v4.2',
                 parameters: { description: 'WCAG 2.2 AA Contrast Palette Adjustments' },
               },
             ],
@@ -789,6 +790,72 @@ export const C2paProvenanceView: React.FC<C2paProvenanceViewProps> = ({ onNaviga
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Related AI Governance & Authority Tools (Law 6 & Law 12) */}
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
+                Provenance &amp; AI Integrity Cluster
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                Related AI Search &amp; Governance Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/ai-search-citation-simulator')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">Search Citation</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                AI Search Citation Simulator →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Simulate citation probabilities and authoritative source tagging in AI Overviews.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">Position #0 AEO</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                AEO Position #0 Sniper Optimizer →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Engineered for featured snippets, definition tokens, and AI answer synthesis.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/scanner')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-400">DOM Health</div>
+              <div className="text-xs font-black text-white group-hover:text-emerald-300 mt-0.5">
+                172-Point Accessibility &amp; DOM Scanner →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Instant audit for WCAG 2.1/2.2 AA standards, meta tags, and Core Web Vitals.
+              </div>
+            </button>
           </div>
         </section>
       </main>

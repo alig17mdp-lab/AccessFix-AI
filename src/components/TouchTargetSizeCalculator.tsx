@@ -655,6 +655,72 @@ export const TouchTargetSizeCalculator: React.FC<TouchTargetSizeCalculatorProps>
             </button>
           </div>
         </section>
+
+        {/* Related Accessibility & Technical Testing Tools (Law 6 & Law 12) */}
+        <section className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-800/60">
+                Auditing Arsenal
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                Complementary Accessibility &amp; UX Diagnostic Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-blue-400 hover:text-blue-300 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/scanner')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-400">172-Point DOM Audit</div>
+              <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                Full-Domain Accessibility Scanner →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Automated detection for contrast ratios, missing labels, and touch targets across live pages.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/site-comparison')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-400">Competitor Analysis</div>
+              <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                Site Comparison Engine →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Benchmark accessibility scores and load times against your competitors.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-blue-400">Position #0 Sniper</div>
+              <div className="text-xs font-black text-white group-hover:text-blue-300 mt-0.5">
+                AEO Position #0 Sniper Optimizer →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Audit answer blocks and token clarity for AI search engines and voice assistants.
+              </div>
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   );

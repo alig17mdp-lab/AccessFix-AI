@@ -32,13 +32,13 @@ interface GeoAuditorViewProps {
 }
 
 export const GeoAuditorView: React.FC<GeoAuditorViewProps> = ({ onNavigate }) => {
-  const [inputUrl, setInputUrl] = useState<string>('https://accessfix.ai');
+  const [inputUrl, setInputUrl] = useState<string>('https://auditsnipe.com');
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'audit' | 'llmstxt' | 'schema'>('audit');
 
   const [report, setReport] = useState<GeoAuditReport>(() =>
-    auditContentForGeo('https://accessfix.ai')
+    auditContentForGeo('https://auditsnipe.com')
   );
   const [auditStepMessage, setAuditStepMessage] = useState<string>('');
 

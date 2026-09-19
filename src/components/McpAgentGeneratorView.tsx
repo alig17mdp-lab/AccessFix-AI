@@ -22,6 +22,7 @@ import {
   Sliders,
   Play,
   Share2,
+  ArrowRight,
 } from 'lucide-react';
 import { ExplainerVideoPlayer, VideoChapter, VideoKeywordData } from './ExplainerVideoPlayer';
 
@@ -40,7 +41,7 @@ interface AgentAction {
 
 export const McpAgentGeneratorView: React.FC<McpAgentGeneratorViewProps> = ({ onNavigate }) => {
   const [targetDomain, setTargetDomain] = useState<string>('https://example.com');
-  const [brandName, setBrandName] = useState<string>('AccessFix Digital Solutions');
+  const [brandName, setBrandName] = useState<string>('AuditSnipe Digital Solutions');
   const [agentDescription, setAgentDescription] = useState<string>(
     'Autonomous accessibility auditing, WCAG compliance calculations, and technical SEO analysis for web applications.'
   );
@@ -762,6 +763,72 @@ export const McpAgentGeneratorView: React.FC<McpAgentGeneratorViewProps> = ({ on
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Related AI Agent & Protocol Tools (Law 6 & Law 12) */}
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-0.5 rounded-full border border-indigo-800/60">
+                Agentic Infrastructure Cluster
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                Related AI Agent &amp; Protocol Infrastructure Tools
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-indigo-400 hover:text-indigo-300 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/ai-txt-agentic-governance-builder')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-indigo-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-indigo-400">Agent Crawler Policy</div>
+              <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                AI Crawler &amp; ai.txt Builder →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Configure ai.txt and robots.txt directives for autonomous LLM agents and web scrapers.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/brand-knowledge-graph-generator')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-indigo-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-indigo-400">Entity Grounding</div>
+              <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                Brand Knowledge Graph Generator →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Ground your MCP agent tools to Wikidata QIDs and authoritative entity nodes.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-indigo-500/50 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-indigo-400">AEO Sniper</div>
+              <div className="text-xs font-black text-white group-hover:text-indigo-300 mt-0.5">
+                AEO Position #0 Sniper Optimizer →
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                Optimize token definitions and direct answer outputs for search and agents.
+              </div>
+            </button>
           </div>
         </section>
       </main>

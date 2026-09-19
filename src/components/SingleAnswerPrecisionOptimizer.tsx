@@ -124,7 +124,7 @@ export const SingleAnswerPrecisionOptimizer: React.FC<SingleAnswerPrecisionOptim
   const [draftContent, setDraftContent] = useState<string>(PRESETS[0].draftText);
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const [serpViewMode, setSerpViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [urlInput, setUrlInput] = useState<string>('timeanddate.com');
+  const [urlInput, setUrlInput] = useState<string>('example.com');
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [urlAuditResult, setUrlAuditResult] = useState<SingleAnswerUrlAuditResult | null>(null);
   const [urlAuditError, setUrlAuditError] = useState<string | null>(null);
@@ -435,15 +435,12 @@ export const SingleAnswerPrecisionOptimizer: React.FC<SingleAnswerPrecisionOptim
                   if (onSwitchToScanner) {
                     onSwitchToScanner();
                   } else {
-                    const el = document.getElementById('full-platform-scanner-section');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    onNavigate('/scanner');
                   }
                 }}
                 className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                <span>⚡ Jump Down to 172-Point Scanner</span>
+                <span>⚡ Open 172-Point Scanner Page</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -645,11 +642,11 @@ export const SingleAnswerPrecisionOptimizer: React.FC<SingleAnswerPrecisionOptim
                   <button
                     type="button"
                     onClick={() => {
-                      setUrlInput('timeanddate.com');
+                      setUrlInput('example.com');
                     }}
                     className="hover:text-blue-600 underline cursor-pointer"
                   >
-                    timeanddate.com
+                    example.com
                   </button>
                   <span>•</span>
                   <button

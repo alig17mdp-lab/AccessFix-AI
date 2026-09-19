@@ -40,7 +40,7 @@ interface NavbarProps {
   user: UserProfile | null;
   activeRoute: string;
   onNavigate: (route: string) => void;
-  onOpenAuth: (mode?: 'signin' | 'signup') => void;
+  onOpenAuth?: (mode?: 'signin' | 'signup') => void;
   onLogout: () => void;
 }
 
@@ -171,24 +171,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="uppercase tracking-wide font-black">🎯 AEO Sniper</span>
               </button>
 
-              {/* 1.1 Full Scanner Quick Jump / Active Button */}
+              {/* 1.1 Dedicated Full Scanner Page Button */}
               <button
-                onClick={() => {
-                  if (activeRoute === '/') {
-                    const el = document.getElementById('full-platform-scanner-section');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      return;
-                    }
-                  }
-                  navigateTo('/');
-                  setTimeout(() => {
-                    const el = document.getElementById('full-platform-scanner-section');
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 150);
-                }}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs tracking-tight text-slate-700 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all cursor-pointer"
-                title="Jump to 172-Point Accessibility & SEO Scanner"
+                onClick={() => navigateTo('/scanner')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs tracking-tight transition-all cursor-pointer ${
+                  activeRoute === '/scanner' || activeRoute === '/accessibility-scanner' || activeRoute === '/172-point-scanner'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-500/20 ring-2 ring-red-400'
+                    : 'text-slate-700 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200'
+                }`}
+                title="172-Point Accessibility & SEO Scanner Page"
               >
                 <span className="text-sm leading-none" role="img" aria-label="Switzerland">🇨🇭</span>
                 <span className="uppercase tracking-wide font-bold">172-Pt Scanner</span>
@@ -659,22 +650,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span>Sign Out</span>
                   </button>
                 </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => onOpenAuth('signin')}
-                    className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
-                  >
-                    Log in
-                  </button>
-                  <button
-                    onClick={() => onOpenAuth('signup')}
-                    className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 hover:from-blue-800 hover:to-blue-700 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  >
-                    Get Started
-                  </button>
-                </>
-              )}
+              ) : null}
             </div>
 
             {/* Mobile Menu Button */}
@@ -718,19 +694,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    navigateTo('/');
-                    setTimeout(() => {
-                      const el = document.getElementById('full-platform-scanner-section');
-                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 150);
-                  }}
-                  className="p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all bg-white text-slate-800 border-slate-200 hover:border-red-300"
+                  onClick={() => navigateTo('/scanner')}
+                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
+                    activeRoute === '/scanner' || activeRoute === '/accessibility-scanner' || activeRoute === '/172-point-scanner'
+                      ? 'bg-red-600 text-white border-red-600 shadow-xs ring-2 ring-red-300'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-red-300'
+                  }`}
                 >
                   <span className="text-base">🇨🇭</span>
                   <div className="truncate">
                     <div className="text-xs font-black leading-tight uppercase">172-Pt Scanner</div>
-                    <div className="text-[9px] truncate text-slate-600">Swiss Precision</div>
+                    <div className={`text-[9px] truncate ${activeRoute === '/scanner' ? 'text-red-100' : 'text-slate-600'}`}>Swiss Precision Page</div>
                   </div>
                 </button>
 
@@ -980,39 +954,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-xs font-bold text-purple-700">18+ Guides →</span>
             </button>
 
-            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              {user ? (
-                <>
-                  <button
-                    onClick={() => navigateTo('/dashboard')}
-                    className="w-full py-2.5 text-center font-bold text-white bg-blue-600 rounded-xl cursor-pointer"
-                  >
-                    Go to Dashboard
-                  </button>
-                  <button
-                    onClick={onLogout}
-                    className="w-full py-2 text-center text-xs font-semibold text-red-600 cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => onOpenAuth('signin')}
-                    className="w-full py-2 text-center font-bold text-slate-700 bg-slate-100 rounded-xl cursor-pointer"
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    onClick={() => onOpenAuth('signup')}
-                    className="w-full py-2.5 text-center font-bold text-white bg-blue-600 rounded-xl cursor-pointer"
-                  >
-                    Get Started
-                  </button>
-                </>
-              )}
-            </div>
+            {user && (
+              <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                <button
+                  onClick={() => navigateTo('/dashboard')}
+                  className="w-full py-2.5 text-center font-bold text-white bg-blue-600 rounded-xl cursor-pointer"
+                >
+                  Go to Dashboard
+                </button>
+                <button
+                  onClick={onLogout}
+                  className="w-full py-2 text-center text-xs font-semibold text-red-600 cursor-pointer"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         )}
       </header>

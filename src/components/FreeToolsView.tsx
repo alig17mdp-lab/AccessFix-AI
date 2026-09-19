@@ -223,7 +223,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
 
   // Accessibility State: Headings
   const [headingText, setHeadingText] = useState<string>(
-`<h1>AccessFix AI Website Health Platform</h1>
+`<h1>AuditSnipe AI Website Health Platform</h1>
 <h2>Core Platform Architecture</h2>
 <h3>Accessibility Engine</h3>
 <h4>WCAG 2.1 AA Audit Rules</h4>
@@ -251,18 +251,18 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
 
   // SEO State: Schema Generator
   const [schemaType, setSchemaType] = useState<'WebSite' | 'Organization' | 'FAQPage' | 'Article'>('WebSite');
-  const [schemaName, setSchemaName] = useState<string>('AccessFix AI');
-  const [schemaUrl, setSchemaUrl] = useState<string>('https://accessfix.ai');
+  const [schemaName, setSchemaName] = useState<string>('AuditSnipe AI');
+  const [schemaUrl, setSchemaUrl] = useState<string>('https://auditsnipe.com');
   const [generatedJsonLd, setGeneratedJsonLd] = useState<string>(
 `<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "AccessFix AI",
-  "url": "https://accessfix.ai",
+  "name": "AuditSnipe AI",
+  "url": "https://auditsnipe.com",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://accessfix.ai/search?q={search_term_string}",
+    "target": "https://auditsnipe.com/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -288,7 +288,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
       '1. Understanding WCAG 2.1 AA Contrast Thresholds (4.5:1 ratio)',
       '2. High-Risk Elements: Placeholder text, disabled buttons, subtle borders',
       '3. Step-by-Step Color Tuning with CSS and Design Systems',
-      '4. Automated Verification with AccessFix Contrast Tools',
+      '4. Automated Verification with AuditSnipe Contrast Tools',
       '5. Frequently Asked Questions & Quick Cheat Sheet',
     ],
     targetQuestions: [
@@ -324,7 +324,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
     const startTime = performance.now();
     setIsGeneratingMeta(true);
     const kw = targetKeyword.trim() || 'Website Accessibility';
-    const dom = domainName.trim() || 'accessfix.ai';
+    const dom = domainName.trim() || 'auditsnipe.com';
     const cleanDom = dom.replace(/^https?:\/\//, '').split('/')[0];
     const brandRaw = cleanDom.split('.')[0] || 'Brand';
     const capitalizedBrand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
@@ -1009,7 +1009,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 value={domainName}
                 onChange={(e) => setDomainName(e.target.value)}
                 className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
-                placeholder="e.g., accessfix.ai"
+                placeholder="e.g., auditsnipe.com"
               />
             </div>
           </div>
@@ -1166,7 +1166,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={schemaName}
                 onChange={(e) => setSchemaName(e.target.value)}
-                placeholder="e.g., AccessFix AI"
+                placeholder="e.g., AuditSnipe AI"
                 className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
               />
             </div>
@@ -1176,7 +1176,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
                 type="text"
                 value={schemaUrl}
                 onChange={(e) => setSchemaUrl(e.target.value)}
-                placeholder="e.g., https://accessfix.ai"
+                placeholder="e.g., https://auditsnipe.com"
                 className="w-full text-xs font-medium p-3 rounded-xl border border-slate-200 placeholder:text-slate-400/70 placeholder:font-normal focus:placeholder:text-transparent focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-hidden transition-all"
               />
             </div>

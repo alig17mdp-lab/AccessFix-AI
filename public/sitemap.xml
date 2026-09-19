@@ -3,7 +3,13 @@
   <!-- Core Platform Routes -->
   <url>
     <loc>https://auditsnipe.com/</loc>
-    <lastmod>2026-08-24</lastmod>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://auditsnipe.com/scanner</loc>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -284,7 +290,7 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://auditsnipe.com/blog/accessfix-vs-accessibe</loc>
+    <loc>https://auditsnipe.com/blog/auditsnipe-vs-accessibe</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>

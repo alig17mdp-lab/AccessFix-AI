@@ -329,7 +329,7 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
                   <span>10-Second Platform Tour</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Experience AccessFix AI in 10 Seconds
+                  Experience AuditSnipe AI in 10 Seconds
                 </h3>
               </div>
               <p className="text-xs text-slate-500 max-w-sm font-medium">
@@ -359,6 +359,74 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
               <span>Free Audit Report (PDF)</span>
             </div>
           </div>
+
+          {/* Related Tools & Pillar Guides Internal Linking Hub (Law 6 & Law 12) */}
+          {onNavigate && (
+            <div className="mt-12 pt-8 border-t border-slate-200 text-left max-w-4xl mx-auto space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                    Interlinked Diagnostic Suite
+                  </span>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 mt-1">
+                    Related Specialized Audit Tools &amp; Authority Guides
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools')}
+                  className="text-xs font-bold text-rose-700 hover:text-rose-900 inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>View All 24+ Free SEO Tools</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  className="p-4 rounded-2xl bg-white hover:bg-rose-50/50 border border-slate-200 hover:border-rose-300 text-left transition-all cursor-pointer group shadow-2xs"
+                >
+                  <div className="text-[10px] font-black uppercase text-rose-700">AEO Optimization</div>
+                  <div className="text-xs font-black text-slate-900 group-hover:text-rose-700 mt-0.5">
+                    AEO Position #0 Sniper →
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                    Optimize first-50-words tokens for Google AI Overviews and Featured Snippets.
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+                  className="p-4 rounded-2xl bg-white hover:bg-rose-50/50 border border-slate-200 hover:border-rose-300 text-left transition-all cursor-pointer group shadow-2xs"
+                >
+                  <div className="text-[10px] font-black uppercase text-rose-700">WCAG 2.2 SC 2.5.8</div>
+                  <div className="text-xs font-black text-slate-900 group-hover:text-rose-700 mt-0.5">
+                    Touch Target Size Calculator →
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                    Validate 24×24px button dimensions and generate instant CSS offset fixes.
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/blog/wcag-2-2-touch-target-size-requirements')}
+                  className="p-4 rounded-2xl bg-white hover:bg-rose-50/50 border border-slate-200 hover:border-rose-300 text-left transition-all cursor-pointer group shadow-2xs"
+                >
+                  <div className="text-[10px] font-black uppercase text-rose-700">Pillar Guide</div>
+                  <div className="text-xs font-black text-slate-900 group-hover:text-rose-700 mt-0.5">
+                    Touch Target Size Standards →
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                    In-depth compliance playbook for WCAG 2.2 Level AA and mobile guidelines.
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

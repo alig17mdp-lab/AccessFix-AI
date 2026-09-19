@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://accessfix.ai/sitemap.xml
+Sitemap: https://auditsnipe.com/sitemap.xml

@@ -50,6 +50,89 @@ interface BlogPostViewProps {
   onNavigate: (route: string) => void;
 }
 
+function renderInlineFormatting(text: string, onNavigate: (route: string) => void): React.ReactNode {
+  // Regex to match [link text](url) or **bold text**
+  const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*)/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, idx) => {
+    if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+      const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (match) {
+        const linkText = match[1];
+        const linkUrl = match[2];
+        if (linkUrl.startsWith('/')) {
+          return (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => onNavigate(linkUrl)}
+              className="text-emerald-700 hover:text-emerald-900 font-bold underline underline-offset-2 hover:bg-emerald-50 px-1 py-0.5 rounded cursor-pointer inline transition-colors"
+            >
+              {linkText}
+            </button>
+          );
+        }
+        return (
+          <a
+            key={idx}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-700 hover:text-emerald-900 font-bold underline underline-offset-2 inline"
+          >
+            {linkText}
+          </a>
+        );
+      }
+    }
+    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+      return <strong key={idx} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
+function renderMarkdownContent(content: string, onNavigate: (route: string) => void) {
+  const paragraphs = content.split(/\n\n+/);
+  return paragraphs.map((para, pIdx) => {
+    const trimmed = para.trim();
+    if (!trimmed) return null;
+
+    if (trimmed.startsWith('### ')) {
+      const headingText = trimmed.replace(/^###\s+/, '');
+      return (
+        <h3 key={pIdx} className="text-lg sm:text-xl font-black text-slate-900 mt-6 mb-3 tracking-tight">
+          {renderInlineFormatting(headingText, onNavigate)}
+        </h3>
+      );
+    }
+    if (trimmed.startsWith('## ')) {
+      const headingText = trimmed.replace(/^##\s+/, '');
+      return (
+        <h2 key={pIdx} className="text-xl sm:text-2xl font-black text-slate-900 mt-8 mb-4 tracking-tight">
+          {renderInlineFormatting(headingText, onNavigate)}
+        </h2>
+      );
+    }
+
+    if (trimmed.startsWith('> ')) {
+      const quoteText = trimmed.replace(/^>\s*/gm, '');
+      return (
+        <blockquote key={pIdx} className="border-l-4 border-emerald-500 pl-4 py-2 italic text-slate-700 bg-slate-50 rounded-r-xl my-4 text-sm">
+          {renderInlineFormatting(quoteText, onNavigate)}
+        </blockquote>
+      );
+    }
+
+    return (
+      <p key={pIdx} className="leading-relaxed text-slate-800 text-sm sm:text-base my-3">
+        {renderInlineFormatting(trimmed, onNavigate)}
+      </p>
+    );
+  });
+}
+
 export const BlogPostView: React.FC<BlogPostViewProps> = ({
   post,
   onBack,
@@ -77,6 +160,59 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
     () => getSisterClusterArticles(post, BLOG_POSTS, 4),
     [post]
   );
+
+  // Derive contextual tool CTA fallback if not explicitly defined
+  const effectiveTargetTool = useMemo(() => {
+    if (post.targetTool) return post.targetTool;
+    const lowerSlug = post.slug.toLowerCase();
+    const lowerCategory = post.category.toLowerCase();
+    if (lowerSlug.includes('touch') || lowerSlug.includes('target') || lowerSlug.includes('wcag-2-2')) {
+      return {
+        name: 'WCAG 2.2 Touch Target Size Calculator',
+        slug: '/tools/touch-target-size-calculator',
+        description: 'Verify 24×24px minimum interactive boundaries and spacing buffers with instant CSS offset generation.',
+        ctaText: 'Test Touch Target Bounds Free',
+      };
+    }
+    if (lowerCategory.includes('accessib') || lowerSlug.includes('wcag') || lowerSlug.includes('accessibility') || lowerSlug.includes('audit')) {
+      return {
+        name: '172-Point Accessibility & Technical DOM Scanner',
+        slug: '/scanner',
+        description: 'Run a complete WCAG 2.1/2.2 AA and ADA Title III audit across DOM nodes, color contrast, and keyboard focus traps.',
+        ctaText: 'Launch 172-Point DOM Audit Free',
+      };
+    }
+    if (lowerSlug.includes('sitemap') || lowerSlug.includes('gsc') || lowerSlug.includes('index')) {
+      return {
+        name: 'XML Sitemap Auditor & GSC Validator',
+        slug: '/tools/sitemap-auditor',
+        description: 'Validate sitemap XML schema, crawl limits, hreflang annotations, and lastmod freshness.',
+        ctaText: 'Audit XML Sitemap Free',
+      };
+    }
+    if (lowerSlug.includes('robot') || lowerSlug.includes('crawl')) {
+      return {
+        name: 'Robots.txt & AI Crawler Policy Validator',
+        slug: '/tools/robots-txt-validator',
+        description: 'Simulate 16 major AI crawlers and bots against your current robots.txt directives.',
+        ctaText: 'Validate Robots.txt Free',
+      };
+    }
+    if (lowerSlug.includes('schema') || lowerSlug.includes('knowledge') || lowerSlug.includes('entity')) {
+      return {
+        name: 'Brand Knowledge Graph Generator',
+        slug: '/tools/brand-knowledge-graph-generator',
+        description: 'Anchor organizations and founders to Wikidata QIDs and build verified schema graphs.',
+        ctaText: 'Generate Knowledge Graph Free',
+      };
+    }
+    return {
+      name: 'AEO Position #0 Sniper Optimizer',
+      slug: '/',
+      description: 'Audit and format 50-word answer blocks, definition formulas, and entity triplets for Google AI Overviews.',
+      ctaText: 'Optimize for Position #0 Free',
+    };
+  }, [post]);
 
   // Derive triple-engine JSON-LD schema (TechArticle + Speakable + Entity Mentions)
   const jsonLdSchema = useMemo(() => generateTripleEngineJsonLd(post), [post]);
@@ -158,7 +294,7 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
 
   // Dynamic SEO, Canonical & JSON-LD Injection
   useEffect(() => {
-    document.title = `${post.seoTitle || post.title} | AccessFix AI`;
+    document.title = `${post.seoTitle || post.title} | AuditSnipe AI`;
 
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
@@ -174,7 +310,7 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', `https://accessfix.ai/blog/${post.slug}`);
+    canonical.setAttribute('href', `https://auditsnipe.com/blog/${post.slug}`);
 
     let scriptTag = document.getElementById('article-jsonld') as HTMLScriptElement | null;
     if (!scriptTag) {
@@ -598,37 +734,36 @@ export const BlogPostView: React.FC<BlogPostViewProps> = ({
             </div>
             {post.featuredImage.caption && (
               <figcaption className="text-center text-xs text-slate-500 italic">
-                {post.featuredImage.caption} (Source: {post.featuredImage.source || 'AccessFix AI'})
+                {post.featuredImage.caption} (Source: {post.featuredImage.source || 'AuditSnipe AI'})
               </figcaption>
             )}
           </figure>
 
           {/* Article Main Markdown Content */}
-          <div className="prose prose-slate max-w-none text-slate-800 text-sm sm:text-base leading-relaxed space-y-6">
-            <div className="whitespace-pre-wrap font-sans leading-relaxed">
-              {post.content}
-            </div>
+          <div className="prose prose-slate max-w-none text-slate-800 text-sm sm:text-base leading-relaxed space-y-4">
+            {renderMarkdownContent(post.content, onNavigate)}
           </div>
 
-          {/* Contextual Full-Width Tool CTA Card */}
-          {post.targetTool && (
+          {/* Contextual Full-Width Tool CTA Card (Guaranteed Tool Interlink - Law 6 & Law 12) */}
+          {effectiveTargetTool && (
             <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-10 text-white space-y-4 shadow-xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 <span>Recommended Workflow Action</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-black tracking-tight">
-                Put These Standards Into Action with {post.targetTool.name}
+                Put These Standards Into Action with {effectiveTargetTool.name}
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                {post.targetTool.description} AccessFix AI automatically detects violations, explains them in plain English, and provides production-ready code fixes.
+                {effectiveTargetTool.description} AuditSnipe AI automatically detects violations, explains them in plain English, and provides production-ready code fixes.
               </p>
               <div className="pt-2">
                 <button
-                  onClick={() => onNavigate(post.targetTool.slug)}
+                  type="button"
+                  onClick={() => onNavigate(effectiveTargetTool.slug)}
                   className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-3.5 rounded-xl text-xs sm:text-sm tracking-wide shadow-lg hover:shadow-emerald-500/25 transition-all cursor-pointer inline-flex items-center gap-2"
                 >
-                  <span>{post.targetTool.ctaText}</span>
+                  <span>{effectiveTargetTool.ctaText || 'Open Tool Free'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

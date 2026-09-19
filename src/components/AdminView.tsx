@@ -74,7 +74,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         <div className="space-y-8">
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              AccessFix AI System Telemetry & Administration
+              AuditSnipe AI System Telemetry & Administration
             </h1>
             <p className="text-xs text-slate-500">
               Internal operational metrics, LLM gateway performance, and subscriber management.

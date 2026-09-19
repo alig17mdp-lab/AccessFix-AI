@@ -57,7 +57,7 @@ export const SeoLandingPage: React.FC<SeoLandingPageProps> = ({
       '@graph': [
         {
           '@type': 'SoftwareApplication',
-          name: 'AccessFix AI ' + pageData.h1,
+          name: 'AuditSnipe AI ' + pageData.h1,
           operatingSystem: 'All',
           applicationCategory: 'DeveloperApplication',
           description: pageData.metaDescription,
@@ -167,7 +167,7 @@ export const SeoLandingPage: React.FC<SeoLandingPageProps> = ({
         {/* Overview Module */}
         <section className="space-y-4">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-            How AccessFix AI Validates Your Digital Accessibility
+            How AuditSnipe AI Validates Your Digital Accessibility
           </h2>
           <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
             {pageData.overviewContent}
@@ -252,6 +252,72 @@ export const SeoLandingPage: React.FC<SeoLandingPageProps> = ({
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* Related Compliance Tools & Strategic Guides (Law 6 & Law 12) */}
+        <section className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Compliance &amp; Search Ecosystem
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 mt-1">
+                Related Technical Tools &amp; Authority Guides
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools')}
+              className="text-xs font-bold text-emerald-700 hover:text-emerald-900 inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>View All 24+ Tools</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+            <button
+              type="button"
+              onClick={() => onNavigate('/scanner')}
+              className="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-800">172-Point Engine</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-emerald-700 mt-0.5">
+                Full-Domain DOM Scanner →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Deep crawl for WCAG 2.1/2.2 AA, ARIA roles, and Core Web Vitals diagnostics.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/tools/touch-target-size-calculator')}
+              className="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-800">WCAG 2.2 SC 2.5.8</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-emerald-700 mt-0.5">
+                Touch Target Size Calculator →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Evaluate 24×24px button bounds and generate 1-click CSS pseudo-element fixes.
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 text-left transition-all cursor-pointer group"
+            >
+              <div className="text-[10px] font-black uppercase text-emerald-800">AEO Position #0</div>
+              <div className="text-xs font-black text-slate-900 group-hover:text-emerald-700 mt-0.5">
+                AEO Position #0 Sniper →
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                Format definition tokens and tables for Google AI Overviews and answer engines.
+              </div>
+            </button>
           </div>
         </section>
 

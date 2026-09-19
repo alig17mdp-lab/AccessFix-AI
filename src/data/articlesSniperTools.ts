@@ -806,7 +806,7 @@ For elite digital agencies in the United States, Canada, the United Kingdom, and
 └──────────────────────────────────────────────┘
 \`\`\`
 
-By winning the Featured Snippet, agencies secure the lion's share of commercial click-through volume without recurring paid ad spend. Furthermore, clients with Position #0 snippets earn trusted knowledge graph associations, insulating their domains against algorithmic volatility. Agencies managing multi-client rosters can audit technical baseline scores with our [172-Point Accessibility & Technical Scanner](/scanner) or review our transparent [Agency Pricing Plans](/pricing).
+By winning the Featured Snippet, agencies secure the lion's share of commercial click-through volume without recurring paid ad spend. Furthermore, clients with Position #0 snippets earn trusted knowledge graph associations, insulating their domains against algorithmic volatility. Agencies managing multi-client rosters can audit technical baseline scores with our [172-Point Accessibility & Technical Scanner](/scanner) or explore our [Agency Workflow Solutions](/for-agencies).
 
 ---
 

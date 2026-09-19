@@ -297,7 +297,7 @@ export default function App() {
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-1">
-        {/* ROUTE 1: Home View - Flagship Single-Answer Precision Optimizer + 172-Point Scanner */}
+        {/* ROUTE 1: AEO Sniper Flagship View (Single-Answer Precision Optimizer ONLY) */}
         {activeRoute === '/' && (
           <div>
             {/* Primary Viewport Flagship: Single-Answer Precision & AEO Snippet Sniper */}
@@ -306,20 +306,26 @@ export default function App() {
                 onNavigate={handleNavigate}
                 isHomeFlagship={true}
                 onSwitchToScanner={() => {
-                  const el = document.getElementById('full-platform-scanner-section');
-                  if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
+                  handleNavigate('/scanner');
                 }}
               />
             </section>
+          </div>
+        )}
+
+        {/* ROUTE 1B: Dedicated 172-Point Accessibility & SEO Scanner Page (Appears only on Scanner page) */}
+        {(activeRoute === '/scanner' ||
+          activeRoute === '/accessibility-scanner' ||
+          activeRoute === '/172-point-scanner') && (
+          <div>
+            {/* Top Swiss Alpine scarlet title strip */}
+            <div className="bg-gradient-to-r from-red-900 via-rose-900 to-slate-950 py-3 px-4 text-center text-white text-xs font-black tracking-wide flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
+              <span>🇨🇭 SWISS PRECISION &bull; 172-POINT DEEP DOM ACCESSIBILITY &amp; SEO SCANNER ENGINE</span>
+            </div>
 
             {/* Platform Full Health, Accessibility & SEO Scanner */}
-            <section id="full-platform-scanner-section" className="border-t-2 border-slate-200/90 relative">
-              <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 py-3 px-4 text-center text-white text-xs font-black tracking-wide flex items-center justify-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-orange-400 animate-ping" />
-                <span>ACCESSIBILITY &amp; SEO SCANNER ENGINE &bull; 172-POINT DEEP DOM AUDIT</span>
-              </div>
+            <section id="full-platform-scanner-section" className="relative">
               <HeroScanner
                 onScanComplete={handleScanComplete}
                 onViewSample={handleViewSampleReport}
@@ -449,7 +455,7 @@ export default function App() {
           <UnifiedHealthReportView
             healthScan={currentUnifiedScan}
             scan={currentUnifiedScan}
-            onBackToScan={() => setActiveRoute('/')}
+            onBackToScan={() => setActiveRoute('/scanner')}
             onAddToMonitoring={(url) => {
               handleAddWebsite(url, 'weekly');
               alert(`Added ${url} to your monitored websites dashboard!`);
@@ -479,7 +485,7 @@ export default function App() {
                 {isHeroScanning ? 'Analyzing Website...' : 'Load Live Sample Audit (calculator.net)'}
               </button>
               <button
-                onClick={() => setActiveRoute('/')}
+                onClick={() => setActiveRoute('/scanner')}
                 className="px-6 py-3 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-bold rounded-xl shadow-2xs transition-colors cursor-pointer"
               >
                 Scan My Own Domain
@@ -492,7 +498,8 @@ export default function App() {
         {activeRoute === '/report' && currentScan && (
           <ReportView
             scan={currentScan}
-            onBackToScan={() => setActiveRoute('/')}
+            onBackToScan={() => setActiveRoute('/scanner')}
+            onNavigate={handleNavigate}
             onAddToMonitoring={(url) => {
               handleAddWebsite(url, 'weekly');
               alert(`Added ${url} to your monitored websites dashboard!`);
