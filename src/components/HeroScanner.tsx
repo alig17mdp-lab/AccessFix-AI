@@ -116,7 +116,6 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 <span>HOT AD • NEW AEO TOOL</span>
               </div>
-              <span className="text-[10px] font-mono text-cyan-400 font-bold">KD &lt; 10 • VOL 2K+</span>
             </div>
 
             {/* Bold Headline & Catchphrase */}
@@ -167,7 +166,7 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
               <div className="space-y-0.5 flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>NEW AEO TOOL • KD &lt; 10</span>
+                  <span>HOT AD • NEW AEO TOOL</span>
                 </div>
                 <div className="text-xs font-black truncate text-white">
                   Single-Answer Precision Optimizer

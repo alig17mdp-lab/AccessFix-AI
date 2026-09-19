@@ -26,10 +26,10 @@ export const LegalPage: React.FC<LegalPageProps> = ({ section }) => {
               Customer Support & Inquiries
             </span>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              Get in Touch with AccessFix AI
+              Get in Touch with AuditSnipe AI
             </h1>
             <p className="text-sm text-slate-600 max-w-xl mx-auto">
-              Our engineering and accessibility compliance support teams typically respond within 2 to 4 business hours.
+              Our engineering, AEO research, and site audit technical support teams typically respond within 2 to 4 business hours.
             </p>
           </div>
 
@@ -146,7 +146,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ section }) => {
 
           <h2 className="text-lg font-bold text-slate-900 pt-4">Feedback & Contact</h2>
           <p>
-            We welcome your feedback on the accessibility of AccessFix AI. If you encounter any accessibility barriers on our platform, please email us at <strong className="text-slate-900">accessibility@accessfix.ai</strong>.
+            We welcome your feedback on the accessibility and AEO precision of AuditSnipe AI. If you encounter any barriers on our platform, please email us at <strong className="text-slate-900">support@auditsnipe.com</strong>.
           </p>
         </div>
       ) : section === 'privacy' ? (
@@ -154,21 +154,21 @@ export const LegalPage: React.FC<LegalPageProps> = ({ section }) => {
           <div className="space-y-2 border-b border-slate-200 pb-6">
             <span className="text-xs font-bold uppercase text-emerald-700">Data Protection</span>
             <h1 className="text-3xl font-black text-slate-900">Privacy Policy</h1>
-            <p className="text-slate-500 text-xs">Last Updated: August 2026</p>
+            <p className="text-slate-500 text-xs">Last Updated: September 2026</p>
           </div>
 
           <p>
-            At AccessFix AI Technologies Inc. ("AccessFix AI"), we take data security and user privacy seriously. This Privacy Policy details how we collect, process, and safeguard information when you use our website scanner and SaaS platform.
+            At AuditSnipe AI Technologies Inc. (formerly AccessFix AI, "AuditSnipe AI"), we take data security and user privacy seriously. This Privacy Policy details how we collect, process, and safeguard information when you use our AEO snippet sniper, site audit suite, and SaaS platform.
           </p>
 
           <h2 className="text-lg font-bold text-slate-900 pt-4">1. Data We Collect</h2>
           <p>
-            When you perform an automated audit, our server fetches public HTML markup from the requested target URL. We do not store or inspect private backend databases or non-public administrative credentials. For registered users, we store your account email, name, subscription tier, and list of monitored domains.
+            When you perform an automated audit or AEO snippet benchmark, our server fetches public HTML markup from the requested target URL. We do not store or inspect private backend databases or non-public administrative credentials. For registered users, we store your account email, name, subscription tier, and list of monitored domains.
           </p>
 
           <h2 className="text-lg font-bold text-slate-900 pt-4">2. Use of Gemini AI & Language Models</h2>
           <p>
-            HTML DOM snippets sent to Google Gemini 3.7 are used exclusively to synthesize technical code fixes and plain-English summaries. Customer data is not used to train public foundation models without consent.
+            HTML DOM snippets sent to Google Gemini 3.7 are used exclusively to synthesize technical code fixes, single-answer precision recommendations, and plain-English summaries. Customer data is not used to train public foundation models without consent.
           </p>
         </div>
       ) : (
@@ -176,16 +176,16 @@ export const LegalPage: React.FC<LegalPageProps> = ({ section }) => {
           <div className="space-y-2 border-b border-slate-200 pb-6">
             <span className="text-xs font-bold uppercase text-emerald-700">Legal Agreement</span>
             <h1 className="text-3xl font-black text-slate-900">Terms of Service</h1>
-            <p className="text-slate-500 text-xs">Last Updated: August 2026</p>
+            <p className="text-slate-500 text-xs">Last Updated: September 2026</p>
           </div>
 
           <p>
-            By accessing or using AccessFix AI, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not access or use our services.
+            By accessing or using AuditSnipe AI, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not access or use our services.
           </p>
 
           <h2 className="text-lg font-bold text-slate-900 pt-4">1. Authorized Target Scanning</h2>
           <p>
-            You agree to only scan websites that you own, operate, or have explicit authorization to inspect. AccessFix AI prohibits any scanning intended to disrupt, overload, or harm third-party web infrastructure.
+            You agree to only scan websites that you own, operate, or have explicit authorization to inspect. AuditSnipe AI prohibits any scanning intended to disrupt, overload, or harm third-party web infrastructure.
           </p>
 
           <h2 className="text-lg font-bold text-slate-900 pt-4">2. Subscriptions and Refunds</h2>

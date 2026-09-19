@@ -536,7 +536,7 @@ export const UnifiedHealthReportView: React.FC<UnifiedHealthReportViewProps> = (
                       Single-Answer Precision Optimizer
                     </span>
                     <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
-                      KD &lt; 10 • Vol &gt; 2,000
+                      Position #0 Snipe
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-relaxed">

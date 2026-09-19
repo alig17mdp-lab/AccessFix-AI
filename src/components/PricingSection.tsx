@@ -86,10 +86,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             Transparent Pricing Plans
           </span>
           <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight">
-            Protect Your Business with Continuous Accessibility
+            Snipe Position #0 &amp; Automate Site Audits
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
-            Start free with on-demand audits, or unlock automated weekly monitoring, white-label agency reports, and 5-member team sharing.
+            Start free with on-demand audits &amp; single-answer precision checks, or unlock automated weekly monitoring, white-label agency reports, and 5-member team sharing.
           </p>
 
           {/* Billing Cycle Toggle */}

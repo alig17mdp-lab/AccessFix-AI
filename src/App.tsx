@@ -237,18 +237,39 @@ export default function App() {
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-1">
-        {/* ROUTE 1: Home View */}
+        {/* ROUTE 1: Home View - Flagship Single-Answer Precision Optimizer + 172-Point Scanner */}
         {activeRoute === '/' && (
           <div>
-            <HeroScanner
-              onScanComplete={handleScanComplete}
-              onViewSample={handleViewSampleReport}
-              onNavigate={handleNavigate}
-              isLoading={isHeroScanning}
-              setIsLoading={setIsHeroScanning}
-            />
+            {/* Primary Viewport Flagship: Single-Answer Precision & AEO Snippet Sniper */}
+            <section id="aeo-snippet-sniper-flagship">
+              <SingleAnswerPrecisionOptimizer
+                onNavigate={handleNavigate}
+                isHomeFlagship={true}
+                onSwitchToScanner={() => {
+                  const el = document.getElementById('full-platform-scanner-section');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              />
+            </section>
 
-            {/* Why AccessFix AI Section - Multi-Color Ahrefs & Semrush Aesthetic */}
+            {/* Platform Full Health, Accessibility & SEO Scanner */}
+            <section id="full-platform-scanner-section" className="border-t-2 border-slate-200/90 relative">
+              <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 py-3 px-4 text-center text-white text-xs font-black tracking-wide flex items-center justify-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-orange-400 animate-ping" />
+                <span>ACCESSIBILITY &amp; SEO SCANNER ENGINE &bull; 172-POINT DEEP DOM AUDIT</span>
+              </div>
+              <HeroScanner
+                onScanComplete={handleScanComplete}
+                onViewSample={handleViewSampleReport}
+                onNavigate={handleNavigate}
+                isLoading={isHeroScanning}
+                setIsLoading={setIsHeroScanning}
+              />
+            </section>
+
+            {/* Why AuditSnipe AI Section - Multi-Color Ahrefs & Semrush Aesthetic */}
             <section className="py-20 bg-[#f8fafc] border-y border-slate-200/80 relative overflow-hidden">
               {/* Subtle ambient colored lighting */}
               <div className="absolute top-10 left-10 w-96 h-96 bg-red-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -261,10 +282,10 @@ export default function App() {
                     <span>Complete Remediation Workflow • Ahrefs &amp; Semrush Inspired Engine</span>
                   </span>
                   <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-                    Beyond Simple Warnings: Actionable Code Fixes
+                    Beyond Simple Warnings: Actionable Code Fixes &amp; AEO Precision
                   </h2>
                   <p className="text-sm sm:text-base text-slate-600 font-medium">
-                    Most checkers leave you with vague errors. AccessFix AI diagnoses the root cause, explains the impact on disabled users, and writes the code to fix it.
+                    Most checkers leave you with vague errors. AuditSnipe AI diagnoses the root cause, snipes competitor featured snippets with Single-Answer Precision, and writes production-ready code to fix it.
                   </p>
                 </div>
 

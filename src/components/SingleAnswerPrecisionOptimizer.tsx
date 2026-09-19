@@ -110,10 +110,14 @@ const PRESETS: PresetItem[] = [
 
 interface SingleAnswerPrecisionOptimizerProps {
   onNavigate: (route: string) => void;
+  isHomeFlagship?: boolean;
+  onSwitchToScanner?: () => void;
 }
 
 export const SingleAnswerPrecisionOptimizer: React.FC<SingleAnswerPrecisionOptimizerProps> = ({
   onNavigate,
+  isHomeFlagship = false,
+  onSwitchToScanner,
 }) => {
   const [selectedPresetId, setSelectedPresetId] = useState<string>('wcag-target-size');
   const [targetQuery, setTargetQuery] = useState<string>(PRESETS[0].targetQuery);
@@ -401,25 +405,67 @@ export const SingleAnswerPrecisionOptimizer: React.FC<SingleAnswerPrecisionOptim
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className={`min-h-screen bg-slate-50 ${isHomeFlagship ? 'pt-6 pb-14' : 'py-10'} px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-7xl mx-auto space-y-10">
-        {/* Navigation Breadcrumb */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <button
-            onClick={() => onNavigate('/')}
-            className="text-xs font-bold text-slate-500 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            ← Back to Platform Scanner
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
-              AEO &amp; GEO Growth Tool
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
-              KD &lt; 10 • Vol &gt; 2,000
-            </span>
+        {/* Navigation Breadcrumb or Flagship Mode Switcher */}
+        {isHomeFlagship ? (
+          <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-[#0b1329] via-[#0d1b3e] to-[#0b1329] border border-emerald-500/40 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md">
+                <Target className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-300">
+                    Flagship Engine Active
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/40">
+                    Position 0 Verified
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 font-medium">
+                  AEO Single-Answer Precision &bull; Sniping Google &amp; Perplexity AI Citations
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              <button
+                onClick={() => {
+                  if (onSwitchToScanner) {
+                    onSwitchToScanner();
+                  } else {
+                    const el = document.getElementById('full-platform-scanner-section');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }
+                }}
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span>⚡ Jump Down to 172-Point Scanner</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <button
+              onClick={() => onNavigate('/')}
+              className="text-xs font-bold text-slate-500 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              ← Back to Homepage
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
+                AEO &amp; GEO Growth Tool
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
+                Featured Snippet Position #0
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Hero Header Area */}
         <div className="text-center max-w-4xl mx-auto space-y-4">

@@ -1,6 +1,6 @@
 {
-  "name": "AccessFix AI",
-  "description": "Enterprise-grade website accessibility scanner and AI-powered WCAG/ADA compliance remediation platform.",
+  "name": "AuditSnipe AI",
+  "description": "Unified AEO Single-Answer Precision, Featured Snippet Sniper, 172-point deep website auditing, and automated WCAG/ADA code remediations.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

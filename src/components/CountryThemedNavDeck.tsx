@@ -40,14 +40,14 @@ interface CountryNavButton {
 export const COUNTRY_NAV_BUTTONS: CountryNavButton[] = [
   {
     id: 'scanner',
-    name: 'Scanner',
+    name: 'AEO Sniper',
     route: '/',
     country: 'Switzerland',
     flag: '🇨🇭',
     themeName: 'Swiss Alpine Scarlet',
-    headline: '172-Point Live Health & Accessibility Diagnostic',
-    badgeText: 'Live Scanner',
-    statsText: 'Instant 40+ Tests',
+    headline: 'AEO Position #0 Sniper & 172-Pt Site Audit',
+    badgeText: 'Flagship AEO',
+    statsText: 'Sniper + 40+ Tests',
     icon: Search,
     colorClasses: {
       baseCard: 'bg-white hover:bg-gradient-to-br hover:from-white hover:to-red-50/70 border-slate-200/90 hover:border-red-500/80',

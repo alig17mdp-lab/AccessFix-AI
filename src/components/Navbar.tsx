@@ -135,17 +135,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Logo */}
               <button
                 onClick={() => navigateTo('/')}
-                aria-label="AccessFix AI Home"
-                className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 group cursor-pointer"
+                aria-label="AuditSnipe AI Home"
+                className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded-lg p-1 group cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-800 to-blue-600 flex items-center justify-center text-white shadow-xs group-hover:from-blue-900 group-hover:to-blue-700 transition-all">
-                  <div className="w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 bg-cyan-300 rounded-full"></div>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-600 flex items-center justify-center text-white shadow-xs group-hover:from-emerald-700 group-hover:to-cyan-700 transition-all">
+                  <div className="w-4 h-4 border-2 border-white rounded-full flex items-center justify-center relative">
+                    <div className="w-1.5 h-1.5 bg-amber-300 rounded-full"></div>
+                    <div className="absolute -top-1 w-0.5 h-1 bg-white"></div>
+                    <div className="absolute -bottom-1 w-0.5 h-1 bg-white"></div>
+                    <div className="absolute -left-1 w-1 h-0.5 bg-white"></div>
+                    <div className="absolute -right-1 w-1 h-0.5 bg-white"></div>
                   </div>
                 </div>
                 <div className="text-left">
                   <span className="text-xl font-extrabold tracking-tight text-slate-950">
-                    AccessFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-600">AI</span>
+                    Audit<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Snipe</span> <span className="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300/60 ml-0.5">AI</span>
                   </span>
                 </div>
               </button>
@@ -153,18 +157,41 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-2 xl:gap-3 text-sm font-semibold">
-              {/* 1. Scanner - Switzerland (Swiss Precision Red) */}
+              {/* 1. Flagship AEO Position-0 Sniper / Home */}
               <button
                 onClick={() => navigateTo('/')}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
                   activeRoute === '/'
-                    ? 'bg-red-600 text-white shadow-md shadow-red-500/20 ring-2 ring-red-400'
-                    : 'text-slate-800 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 ring-2 ring-emerald-400'
+                    : 'text-slate-800 hover:text-emerald-700 hover:bg-emerald-50 border border-transparent hover:border-emerald-200'
                 }`}
-                title="Switzerland • Swiss Precision Red"
+                title="AEO Position-0 & Single-Answer Precision Engine"
               >
-                <span className="text-base leading-none" role="img" aria-label="Switzerland">🇨🇭</span>
-                <span className="uppercase tracking-wide font-black">Scanner</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
+                <span className="uppercase tracking-wide font-black">🎯 AEO Sniper</span>
+              </button>
+
+              {/* 1.1 Full Scanner Quick Jump / Active Button */}
+              <button
+                onClick={() => {
+                  if (activeRoute === '/') {
+                    const el = document.getElementById('full-platform-scanner-section');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      return;
+                    }
+                  }
+                  navigateTo('/');
+                  setTimeout(() => {
+                    const el = document.getElementById('full-platform-scanner-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 150);
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs tracking-tight text-slate-700 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all cursor-pointer"
+                title="Jump to 172-Point Accessibility & SEO Scanner"
+              >
+                <span className="text-sm leading-none" role="img" aria-label="Switzerland">🇨🇭</span>
+                <span className="uppercase tracking-wide font-bold">172-Pt Scanner</span>
               </button>
 
               {/* 2. Free Tools - Japan (Tokyo Cyber Emerald) */}
@@ -672,14 +699,32 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => navigateTo('/')}
                   className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
                     activeRoute === '/'
-                      ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-red-300'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-emerald-300'
                   }`}
+                >
+                  <span className="text-base">🎯</span>
+                  <div className="truncate">
+                    <div className="text-xs font-black leading-tight uppercase">AEO Sniper</div>
+                    <div className={`text-[9px] truncate ${activeRoute === '/' ? 'text-emerald-100' : 'text-slate-600'}`}>Position #0 Flagship</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigateTo('/');
+                    setTimeout(() => {
+                      const el = document.getElementById('full-platform-scanner-section');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 150);
+                  }}
+                  className="p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all bg-white text-slate-800 border-slate-200 hover:border-red-300"
                 >
                   <span className="text-base">🇨🇭</span>
                   <div className="truncate">
-                    <div className="text-xs font-black leading-tight uppercase">Scanner</div>
-                    <div className={`text-[9px] truncate ${activeRoute === '/' ? 'text-red-100' : 'text-slate-600'}`}>Swiss Precision</div>
+                    <div className="text-xs font-black leading-tight uppercase">172-Pt Scanner</div>
+                    <div className="text-[9px] truncate text-slate-600">Swiss Precision</div>
                   </div>
                 </button>
 

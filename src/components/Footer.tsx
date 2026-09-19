@@ -16,15 +16,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Disclaimer Banner */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-14 flex flex-col md:flex-row items-start md:items-center gap-4 text-xs">
-          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
+          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
             <Lock className="w-5 h-5" aria-hidden="true" />
           </div>
           <div className="space-y-1">
             <div className="font-bold text-slate-200">
-              Important Legal & Automated Auditing Notice
+              Important Legal &amp; Automated Auditing Notice
             </div>
             <p className="text-slate-400 leading-relaxed">
-              AccessFix AI provides automated website accessibility diagnostic testing, WCAG 2.1 rule evaluation, and AI-assisted code remediation suggestions. Automated testing identifies common programmatic barriers but does not constitute legal advice, formal certification, or an absolute guarantee of ADA Title III or Section 508 legal immunity.
+              AuditSnipe AI provides automated AEO single-answer precision benchmarking, featured snippet analysis, website accessibility diagnostic testing, WCAG 2.1 evaluation, and AI code remediations. Automated testing identifies common technical barriers but does not constitute legal advice or an absolute guarantee of search rankings or legal immunity.
             </p>
           </div>
         </div>
@@ -34,19 +34,19 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Col 1: Brand */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-4">
             <div className="flex items-center gap-2 text-white">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black shadow-xs">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <span className="font-extrabold text-lg tracking-tight">
-                Access<span className="text-emerald-400">Fix</span> AI
+                Audit<span className="text-emerald-400">Snipe</span> AI
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Automated website accessibility auditing, plain-English AI explanations, and production-ready code fixes for high-growth businesses.
+              Unified AEO Single-Answer Precision, Google Position #0 Featured Snippet Sniper, and 172-point site health audits with automated AI fixes.
             </p>
             <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
               <CheckCircle2 className="w-4 h-4" />
-              <span>WCAG 2.1 & 2.2 AA Aligned</span>
+              <span>AEO Position-0 &amp; WCAG 2.2 AA Aligned</span>
             </div>
           </div>
 
@@ -347,16 +347,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div>
-            © {new Date().getFullYear()} AccessFix AI Technologies Inc. All rights reserved. English (US).
+            © {new Date().getFullYear()} AuditSnipe AI Technologies Inc. (formerly AccessFix AI). All rights reserved. English (US).
           </div>
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-emerald-400" />
-              <span>support@accessfix.ai</span>
+              <span>support@auditsnipe.com</span>
             </span>
             <span className="flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-blue-400" />
-              <span>US, UK, CA, AU & Worldwide</span>
+              <span>US, UK, CA, AU &amp; Worldwide</span>
             </span>
           </div>
         </div>
