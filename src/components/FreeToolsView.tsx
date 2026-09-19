@@ -204,7 +204,7 @@ export const FreeToolsView: React.FC<FreeToolsViewProps> = ({ initialTool = 'con
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const simElements = [
     { name: 'Logo link (Skip link target)', role: 'link', tabIndex: '0', accessible: true },
-    { name: 'Main Navigation: Pricing', role: 'link', tabIndex: '0', accessible: true },
+    { name: 'Main Navigation: Free Tools', role: 'link', tabIndex: '0', accessible: true },
     { name: 'Search Input Field', role: 'textbox', tabIndex: '0', accessible: true },
     { name: 'Custom Filter Div (Missing role="button" & tabIndex)', role: 'div', tabIndex: 'none', accessible: false },
     { name: 'Primary CTA Button', role: 'button', tabIndex: '0', accessible: true },

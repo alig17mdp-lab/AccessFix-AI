@@ -526,6 +526,75 @@ async function startServer() {
     }
   });
 
+  // =================== AUTHENTICATION ROUTES =================== //
+  app.post('/api/auth/signup', (req: Request, res: Response) => {
+    try {
+      const { fullName, username, email, password } = req.body;
+
+      if (!fullName || !fullName.trim()) {
+        return res.status(400).json({ error: 'Full Name is compulsory.' });
+      }
+      if (!username || !username.trim()) {
+        return res.status(400).json({ error: 'Username is compulsory.' });
+      }
+      if (!email || !email.trim()) {
+        return res.status(400).json({ error: 'Email Address is compulsory.' });
+      }
+      if (!password || password.length < 6) {
+        return res.status(400).json({ error: 'Password is compulsory and must be at least 6 characters.' });
+      }
+
+      // Check username characters (alphanumeric and underscores/dashes)
+      const cleanUsername = username.trim().replace(/^@/, '');
+      if (!/^[a-zA-Z0-9_-]{3,24}$/.test(cleanUsername)) {
+        return res.status(400).json({
+          error: 'Username must be 3-24 characters long and contain only letters, numbers, underscores, or hyphens.',
+        });
+      }
+
+      // Check email format
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        return res.status(400).json({ error: 'Please enter a valid email address.' });
+      }
+
+      const user = storage.signupUser({
+        fullName: fullName.trim(),
+        username: cleanUsername,
+        email: email.trim(),
+        password,
+      });
+
+      return res.status(201).json(user);
+    } catch (err: any) {
+      console.error('Auth signup error:', err);
+      return res.status(400).json({ error: err.message || 'Failed to create account.' });
+    }
+  });
+
+  app.post('/api/auth/signin', (req: Request, res: Response) => {
+    try {
+      const { username, email, identifier, password } = req.body;
+      const lookup = (username || identifier || email || '').trim();
+
+      if (!lookup) {
+        return res.status(400).json({ error: 'Please enter your username or email address.' });
+      }
+      if (!password) {
+        return res.status(400).json({ error: 'Please enter your password.' });
+      }
+
+      const user = storage.signinUser(lookup, password);
+      return res.json(user);
+    } catch (err: any) {
+      console.error('Auth signin error:', err);
+      return res.status(401).json({ error: err.message || 'Authentication failed.' });
+    }
+  });
+
+  app.post('/api/auth/logout', (req: Request, res: Response) => {
+    return res.json({ success: true, message: 'Logged out successfully.' });
+  });
+
   // Current authenticated user profile
   app.get('/api/user', (req: Request, res: Response) => {
     const user = storage.getUser();

@@ -11,7 +11,6 @@ import { SeoLandingPage } from './components/SeoLandingPage';
 import { BlogView } from './components/BlogView';
 import { BlogPostView } from './components/BlogPostView';
 import { AuthorProfileView } from './components/AuthorProfileView';
-import { PricingSection } from './components/PricingSection';
 import { LegalPage } from './components/LegalPage';
 import { AdminView } from './components/AdminView';
 import { AuthModal } from './components/AuthModal';
@@ -39,7 +38,7 @@ import { BacklinkAuditDisavowView } from './components/BacklinkAuditDisavowView'
 import { SingleAnswerPrecisionOptimizer } from './components/SingleAnswerPrecisionOptimizer';
 import { TouchTargetSizeCalculator } from './components/TouchTargetSizeCalculator';
 import { KineticMotionExperience } from './components/KineticMotionExperience';
-import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory } from './types';
+import { UserProfile, MonitoredWebsite, ScanResult, UnifiedHealthScan, BlogPost, ArticleCategory, AuditHistoryItem } from './types';
 import { BLOG_POSTS } from './data/blogData';
 import { AUTHORS } from './data/authorsData';
 import { executeUniversalHealthScan, executeUniversalAccessibilityScan } from './utils/clientHealthScanner';
@@ -54,34 +53,50 @@ import {
   Code,
   Layers,
   HelpCircle,
+  Clock,
+  Activity,
+  Download,
 } from 'lucide-react';
 
 export default function App() {
   const [activeRoute, setActiveRoute] = useState<string>('/');
-  const [user, setUser] = useState<UserProfile | null>({
-    id: 'usr_demo_123',
-    email: 'alex.developer@accessfix.ai',
-    fullName: 'Alex Morgan',
-    role: 'admin',
-    plan: 'pro',
-    createdAt: new Date().toISOString(),
-    scansThisMonth: 14,
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+  // Default to logged out state as requested: "hr user ko log outed web mily"
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('auditsnipe_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
 
   const [currentScan, setCurrentScan] = useState<ScanResult | null>(null);
   const [currentUnifiedScan, setCurrentUnifiedScan] = useState<UnifiedHealthScan | null>(null);
   const [monitoredWebsites, setMonitoredWebsites] = useState<MonitoredWebsite[]>([]);
+  const [auditHistory, setAuditHistory] = useState<AuditHistoryItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('auditsnipe_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [selectedAuthorSlug, setSelectedAuthorSlug] = useState<string>('elena-rostova');
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [isHeroScanning, setIsHeroScanning] = useState<boolean>(false);
 
-  // Auto-resolve post if activeRoute is /blog/:slug
+  // Auto-resolve post if activeRoute is /blog/:slug or /guides/:slug
   useEffect(() => {
+    let slug = '';
     if (activeRoute.startsWith('/blog/') && activeRoute.length > 6) {
-      const slug = activeRoute.replace('/blog/', '');
+      slug = activeRoute.replace('/blog/', '');
+    } else if (activeRoute.startsWith('/guides/') && activeRoute.length > 8) {
+      slug = activeRoute.replace('/guides/', '');
+    }
+
+    if (slug) {
       const match = BLOG_POSTS.find((p) => p.slug === slug);
       if (match) {
         setSelectedPost(match);
@@ -104,8 +119,63 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleAuthSuccess = (authedUser: UserProfile) => {
+    setUser(authedUser);
+    try {
+      localStorage.setItem('auditsnipe_user', JSON.stringify(authedUser));
+    } catch (e) {
+      console.error(e);
+    }
+    setAuthModalOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    } catch {}
+    setUser(null);
+    try {
+      localStorage.removeItem('auditsnipe_user');
+    } catch {}
+    if (activeRoute === '/admin' || activeRoute === '/dashboard') {
+      setActiveRoute('/');
+    }
+  };
+
   const handleScanComplete = (result: ScanResult, unifiedResult?: UnifiedHealthScan) => {
     setCurrentScan(result);
+
+    // Save scan to Pro audit history
+    const targetUrl = result.targetUrl || 'https://audited-site.com';
+    let domain = targetUrl;
+    try {
+      domain = new URL(targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`).hostname;
+    } catch {
+      domain = targetUrl;
+    }
+
+    const historyItem: AuditHistoryItem = {
+      id: 'scan_' + Date.now(),
+      url: targetUrl,
+      domain: domain,
+      timestamp: new Date().toISOString(),
+      score: unifiedResult ? unifiedResult.overallScore : result.score,
+      criticalIssues: result.summary.criticalCount,
+      highIssues: result.summary.highCount,
+      wcagPassed: result.score >= 90 && result.summary.criticalCount === 0,
+      type: unifiedResult ? 'unified_health' : 'accessibility',
+      result: result,
+      unifiedResult: unifiedResult,
+    };
+
+    setAuditHistory((prev) => {
+      const updated = [historyItem, ...prev];
+      try {
+        localStorage.setItem('auditsnipe_history', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
     if (unifiedResult) {
       setCurrentUnifiedScan(unifiedResult);
       setActiveRoute('/health-report');
@@ -201,16 +271,6 @@ export default function App() {
     }
   };
 
-  const handleSelectPlan = (planId: string, billingCycle: 'monthly' | 'yearly') => {
-    if (!user) {
-      setAuthModalOpen(true);
-      return;
-    }
-    setUser((prev) => (prev ? { ...prev, plan: planId as any } : null));
-    alert(`Success! Your account has been upgraded to the ${planId.toUpperCase()} (${billingCycle}) tier.`);
-    setActiveRoute('/dashboard');
-  };
-
   // Derive current category if on /category/:category
   const activeCategoryParam = activeRoute.startsWith('/category/')
     ? (activeRoute.replace('/category/', '') as ArticleCategory)
@@ -232,7 +292,7 @@ export default function App() {
           setAuthMode(mode);
           setAuthModalOpen(true);
         }}
-        onLogout={() => setUser(null)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
@@ -381,12 +441,6 @@ export default function App() {
                 </div>
               </div>
             </section>
-
-            {/* Pricing Preview on Homepage */}
-            <PricingSection
-              onSelectPlan={handleSelectPlan}
-              currentPlan={user?.plan || 'free'}
-            />
           </div>
         )}
 
@@ -448,21 +502,88 @@ export default function App() {
           />
         )}
 
-        {/* ROUTE 3: SaaS Dashboard */}
-        {activeRoute === '/dashboard' && user && (
-          <DashboardView
-            user={user}
-            websites={monitoredWebsites}
-            onAddWebsite={handleAddWebsite}
-            onRescanWebsite={handleRescanWebsite}
-            onDeleteWebsite={handleDeleteWebsite}
-            onViewReport={(scan) => {
-              setCurrentScan(scan);
-              setActiveRoute('/report');
-            }}
-            onUpgradePlan={() => setActiveRoute('/pricing')}
-            onNavigate={handleNavigate}
-          />
+        {/* ROUTE 3: SaaS Executive Pro Dashboard */}
+        {activeRoute === '/dashboard' && (
+          user ? (
+            <DashboardView
+              user={user}
+              websites={monitoredWebsites}
+              auditHistory={auditHistory}
+              onAddWebsite={handleAddWebsite}
+              onRescanWebsite={handleRescanWebsite}
+              onDeleteWebsite={handleDeleteWebsite}
+              onViewReport={(scan) => {
+                setCurrentScan(scan);
+                setActiveRoute('/report');
+              }}
+              onUpgradePlan={() => {}}
+              onNavigate={handleNavigate}
+              onLogout={handleLogout}
+            />
+          ) : (
+            <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24 text-center space-y-8 animate-in fade-in duration-200">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
+                <span>Executive Pro Command Center</span>
+              </div>
+
+              <div className="space-y-4 max-w-2xl mx-auto">
+                <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+                  Sign In to Access Your Pro Dashboard
+                </h1>
+                <p className="text-base text-slate-600 leading-relaxed">
+                  Log in with your username and password to unlock continuous website monitoring, audit history archives, AEO answer vaults, and 1-click executive compliance PDF exports.
+                </p>
+              </div>
+
+              {/* Feature Highlights Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left pt-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-black">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Audit Scan History</h3>
+                  <p className="text-xs text-slate-500">Every audit logged with timestamp, barrier severity, and 1-click re-test.</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Continuous Monitoring</h3>
+                  <p className="text-xs text-slate-500">Automated daily/weekly cadence scans alerting on accessibility score drops.</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-black">
+                    <Download className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Executive PDF Hub</h3>
+                  <p className="text-xs text-slate-500">Export board-ready VPAT statements and developer remediation tickets.</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+                <button
+                  onClick={() => {
+                    setAuthMode('signin');
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm transition-all shadow-lg hover:shadow-xl cursor-pointer"
+                >
+                  Sign In with Username &amp; Password
+                </button>
+                <button
+                  onClick={() => {
+                    setAuthMode('signup');
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm transition-all shadow-lg hover:shadow-xl cursor-pointer"
+                >
+                  Create Account (4 Compulsory Fields)
+                </button>
+              </div>
+            </div>
+          )
         )}
 
         {/* ROUTE 4: Admin Telemetry & Content Hub */}
@@ -478,16 +599,8 @@ export default function App() {
           />
         )}
 
-        {/* ROUTE 5: Pricing Page */}
-        {activeRoute === '/pricing' && (
-          <PricingSection
-            onSelectPlan={handleSelectPlan}
-            currentPlan={user?.plan || 'free'}
-          />
-        )}
-
         {/* ROUTE 6: Blog & Category Knowledge Hub */}
-        {(activeRoute === '/blog' || activeRoute.startsWith('/category/')) && (
+        {(activeRoute === '/blog' || activeRoute === '/guides' || activeRoute.startsWith('/category/')) && (
           <BlogView
             initialCategory={activeCategoryParam}
             onSelectPost={(post) => {
@@ -503,11 +616,14 @@ export default function App() {
         )}
 
         {/* ROUTE 7: Detailed Blog Post View */}
-        {activeRoute.startsWith('/blog/') && (
+        {(activeRoute.startsWith('/blog/') || activeRoute.startsWith('/guides/')) && (
           <BlogPostView
             post={
               selectedPost ||
-              BLOG_POSTS.find((p) => p.slug === activeRoute.replace('/blog/', '')) ||
+              BLOG_POSTS.find(
+                (p) =>
+                  p.slug === activeRoute.replace('/blog/', '').replace('/guides/', '')
+              ) ||
               BLOG_POSTS[0]
             }
             onBack={() => setActiveRoute('/blog')}
@@ -893,7 +1009,7 @@ export default function App() {
         initialMode={authMode}
         onClose={() => setAuthModalOpen(false)}
         onSuccess={(newUser) => {
-          setUser(newUser);
+          handleAuthSuccess(newUser);
           setActiveRoute('/dashboard');
         }}
       />

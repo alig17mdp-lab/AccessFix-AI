@@ -20,7 +20,6 @@ import {
 import { ScanResult, UnifiedHealthScan } from '../types';
 import { executeUniversalHealthScan } from '../utils/clientHealthScanner';
 import { SiteIntroVideoPlayer } from './SiteIntroVideoPlayer';
-import { CountryThemedNavDeck } from './CountryThemedNavDeck';
 
 interface HeroScannerProps {
   onScanComplete: (result: ScanResult, unifiedResult?: UnifiedHealthScan) => void;
@@ -319,24 +318,6 @@ export const HeroScanner: React.FC<HeroScannerProps> = ({
                 Healthcare Clinic
               </button>
             </div>
-          </div>
-
-          {/* 5 Massive Navigation Buttons (48px font size display scale & Tier-1 Country Palettes) */}
-          <div className="pt-6 pb-2 w-full">
-            <CountryThemedNavDeck
-              activeRoute="/"
-              onNavigate={(route) => {
-                if (route === '/') {
-                  const el = document.getElementById('live-url-input');
-                  if (el) {
-                    el.focus();
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                } else if (onNavigate) {
-                  onNavigate(route);
-                }
-              }}
-            />
           </div>
 
           {/* 10-Second High-Impact Site Intro Video Showcase (Rendered under Run Free Audit) */}

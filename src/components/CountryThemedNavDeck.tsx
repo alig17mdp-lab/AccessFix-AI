@@ -111,30 +111,6 @@ export const COUNTRY_NAV_BUTTONS: CountryNavButton[] = [
     },
   },
   {
-    id: 'pricing',
-    name: 'Pricing',
-    route: '/pricing',
-    country: 'United States',
-    flag: '🇺🇸',
-    themeName: 'Silicon Valley Gold',
-    headline: 'Transparent Tiers, ROI Matrix & Guarantee',
-    badgeText: 'From $0/mo',
-    statsText: '14-Day Money Back',
-    icon: CreditCard,
-    colorClasses: {
-      baseCard: 'bg-white hover:bg-gradient-to-br hover:from-white hover:to-amber-50/70 border-slate-200/90 hover:border-amber-500/80',
-      activeCard: 'bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 text-white border-amber-400 shadow-xl shadow-amber-500/25 ring-2 ring-amber-300',
-      hoverBorder: 'hover:border-amber-500',
-      glowShadow: 'hover:shadow-xl hover:shadow-amber-500/20',
-      countryBadge: 'bg-amber-50 text-amber-800 border-amber-200 group-hover:bg-amber-100',
-      titleColor: 'text-slate-900 group-hover:text-amber-600',
-      activeTitleColor: 'text-white',
-      iconBg: 'bg-amber-100 text-amber-700 group-hover:bg-amber-500 group-hover:text-white',
-      iconColor: 'text-amber-700',
-      accentBar: 'bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500',
-    },
-  },
-  {
     id: 'guides',
     name: 'Guides',
     route: '/blog',
@@ -176,7 +152,7 @@ export const CountryThemedNavDeck: React.FC<CountryThemedNavDeckProps> = ({
   return (
     <section
       id="country-navigation-command-deck"
-      aria-label="Universal Command Navigation: Scanner, Free Tools, Solutions, Pricing, Guides"
+      aria-label="Universal Command Navigation: Scanner, Free Tools, Solutions, Guides"
       className={`relative w-full ${className}`}
     >
       {/* Decorative ambient backdrop inspired by Ahrefs / Semrush multi-palette */}
@@ -220,7 +196,6 @@ export const CountryThemedNavDeck: React.FC<CountryThemedNavDeckProps> = ({
                 (activeRoute === '/solutions' ||
                   activeRoute.startsWith('/for-') ||
                   activeRoute.includes('-checker'))) ||
-              (item.route === '/pricing' && activeRoute === '/pricing') ||
               (item.route === '/blog' &&
                 (activeRoute.startsWith('/blog') || activeRoute.startsWith('/category/')));
 

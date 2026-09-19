@@ -550,20 +550,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
 
-              {/* 4. Pricing - United States (Silicon Valley Electric Gold) */}
-              <button
-                onClick={() => navigateTo('/pricing')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-black text-sm tracking-tight transition-all cursor-pointer ${
-                  activeRoute === '/pricing'
-                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 ring-2 ring-amber-300'
-                    : 'text-slate-800 hover:text-amber-800 hover:bg-amber-50 border border-transparent hover:border-amber-200'
-                }`}
-                title="United States • Silicon Valley Electric Gold"
-              >
-                <span className="text-base leading-none" role="img" aria-label="United States">🇺🇸</span>
-                <span className="uppercase tracking-wide font-black">Pricing</span>
-              </button>
-
               {/* 5. Guides - France (French Riviera Luxe Violet) */}
               <button
                 onClick={() => navigateTo('/blog')}
@@ -580,14 +566,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
 
             {/* Right Action Bar */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <>
                   <button
                     onClick={() => navigateTo('/dashboard')}
-                    className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition-colors cursor-pointer border border-blue-200 shadow-2xs"
                   >
-                    <LayoutDashboard className="w-4 h-4 text-blue-600" />
+                    <LayoutDashboard className="w-3.5 h-3.5 text-blue-600" />
                     <span>Dashboard</span>
                   </button>
 
@@ -595,25 +581,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => setUserMenuOpen(!userMenuOpen)}
                       aria-label="User profile menu"
-                      className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
                     >
                       <img
-                        src={user.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                        src={user.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.fullName || 'User')}`}
                         alt={user.fullName || 'User profile photo'}
-                        width={32}
-                        height={32}
+                        width={28}
+                        height={28}
                         loading="lazy"
                         decoding="async"
-                        className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/30"
+                        className="w-7 h-7 rounded-full object-cover ring-2 ring-blue-500/30"
                       />
+                      <div className="text-left hidden lg:block">
+                        <div className="text-xs font-bold text-slate-800 leading-tight truncate max-w-[100px]">{user.fullName}</div>
+                        {user.username && (
+                          <div className="text-[10px] text-blue-600 font-mono leading-none">@{user.username}</div>
+                        )}
+                      </div>
+                      <ChevronDown className="w-3 h-3 text-slate-400" />
                     </button>
 
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50">
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95">
                         <div className="p-2 border-b border-slate-100">
                           <div className="text-xs font-bold text-slate-900">{user.fullName}</div>
+                          {user.username && (
+                            <div className="text-[11px] font-mono text-blue-600">@{user.username}</div>
+                          )}
                           <div className="text-[11px] text-slate-500 truncate">{user.email}</div>
-                          <div className="mt-1 inline-block text-[10px] font-bold uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                          <div className="mt-1.5 inline-block text-[10px] font-bold uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
                             {user.plan.toUpperCase()} Plan
                           </div>
                         </div>
@@ -622,8 +618,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                           onClick={() => navigateTo('/dashboard')}
                           className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 text-xs font-semibold text-slate-700 text-left cursor-pointer"
                         >
-                          <LayoutDashboard className="w-3.5 h-3.5" />
-                          <span>My Websites & Scans</span>
+                          <LayoutDashboard className="w-3.5 h-3.5 text-blue-600" />
+                          <span>Pro Command Dashboard</span>
                         </button>
                         <button
                           type="button"
@@ -644,7 +640,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <button
                           type="button"
                           onClick={onLogout}
-                          className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-red-50 text-xs font-semibold text-red-600 text-left cursor-pointer"
+                          className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-red-50 text-xs font-semibold text-red-600 text-left cursor-pointer border-t border-slate-100 mt-1"
                         >
                           <LogOut className="w-3.5 h-3.5" />
                           <span>Sign Out</span>
@@ -652,6 +648,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                     )}
                   </div>
+
+                  {/* Explicit Logout button always visible on desktop */}
+                  <button
+                    onClick={onLogout}
+                    title="Sign Out of your account"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Sign Out</span>
+                  </button>
                 </>
               ) : (
                 <>
@@ -757,22 +763,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="truncate">
                     <div className="text-xs font-black leading-tight uppercase">Solutions</div>
                     <div className={`text-[9px] truncate ${activeRoute === '/solutions' ? 'text-blue-100' : 'text-slate-600'}`}>Royal Azure</div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigateTo('/pricing')}
-                  className={`p-2 rounded-xl text-left border flex items-center gap-2 cursor-pointer transition-all ${
-                    activeRoute === '/pricing'
-                      ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-xs'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-300'
-                  }`}
-                >
-                  <span className="text-base">🇺🇸</span>
-                  <div className="truncate">
-                    <div className="text-xs font-black leading-tight uppercase">Pricing</div>
-                    <div className={`text-[9px] truncate ${activeRoute === '/pricing' ? 'text-amber-950 font-bold' : 'text-slate-600'}`}>Silicon Gold</div>
                   </div>
                 </button>
 
@@ -975,20 +965,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
 
-            <button
-              onClick={() => navigateTo('/pricing')}
-              className={`w-full text-left font-black p-3 rounded-xl text-sm cursor-pointer border flex items-center justify-between transition-colors ${
-                activeRoute === '/pricing'
-                  ? 'bg-amber-500 text-slate-950 border-amber-500'
-                  : 'text-slate-800 bg-amber-50/40 border-amber-200/80 hover:bg-amber-50'
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <span>🇺🇸</span>
-                <span>Pricing &amp; Plans (US Silicon Gold)</span>
-              </span>
-              <span className="text-xs font-bold text-amber-700">From $0 →</span>
-            </button>
             <button
               onClick={() => navigateTo('/blog')}
               className={`w-full text-left font-black p-3 rounded-xl text-sm cursor-pointer border flex items-center justify-between transition-colors ${

@@ -108,6 +108,7 @@ export interface MonitoredWebsite {
 export interface UserProfile {
   id: string;
   email: string;
+  username?: string;
   fullName: string;
   companyName?: string;
   role: 'user' | 'agency_admin' | 'super_admin' | 'admin';
@@ -131,6 +132,20 @@ export interface AgencyClient {
   activeIssues: number;
   createdDate: string;
   notes?: string;
+}
+
+export interface AuditHistoryItem {
+  id: string;
+  url: string;
+  domain: string;
+  timestamp: string;
+  score: number;
+  criticalIssues: number;
+  highIssues: number;
+  wcagPassed: boolean;
+  type: 'unified_health' | 'accessibility' | 'aeo_audit';
+  result?: ScanResult;
+  unifiedResult?: UnifiedHealthScan;
 }
 
 export interface MonitoringAlert {

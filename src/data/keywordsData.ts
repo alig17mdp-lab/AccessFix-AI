@@ -85,6 +85,13 @@ export const KEYWORDS_DATABASE: KeywordRecord[] = [
     searchIntent: 'transactional',
     status: 'published',
   },
+  {
+    keyword: '2026 AEO playbook',
+    primaryUrl: '/blog/2026-aeo-playbook-win-google-position-0',
+    articleTitle: 'The 2026 AEO Playbook: How to Win Google Position #0 with Single-Answer Precision',
+    searchIntent: 'informational',
+    status: 'published',
+  },
 ];
 
 export const SEARCH_CONSOLE_QUICK_WINS: SearchConsoleMetric[] = [

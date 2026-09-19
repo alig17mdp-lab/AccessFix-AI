@@ -13,6 +13,7 @@ import {
 // In-memory data structures with robust persistence simulation
 export class StorageService {
   private users: Map<string, UserProfile> = new Map();
+  private userCredentials: Map<string, { user: UserProfile; password: string }> = new Map();
   private websites: Map<string, MonitoredWebsite> = new Map();
   private scans: Map<string, ScanResult> = new Map();
   private comparisons: Map<string, SiteComparisonResult> = new Map();
@@ -27,10 +28,11 @@ export class StorageService {
     // Default demo user profile
     const defaultUser: UserProfile = {
       id: 'usr_demo_accessfix',
-      email: 'alex.rivera@acmebrand.com',
-      fullName: 'Alex Rivera',
-      companyName: 'Acme Digital Agency',
-      role: 'agency_admin',
+      email: 'alex.developer@accessfix.ai',
+      username: 'alex_seo',
+      fullName: 'Alex Morgan',
+      companyName: 'AuditSnipe Labs',
+      role: 'admin',
       plan: 'pro',
       scansUsedThisMonth: 14,
       scansLimit: 250,
@@ -40,6 +42,10 @@ export class StorageService {
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     };
     this.users.set(defaultUser.id, defaultUser);
+    this.userCredentials.set(defaultUser.id, {
+      user: defaultUser,
+      password: 'demo123456',
+    });
 
     // Default monitored websites
     const sites: MonitoredWebsite[] = [
@@ -153,6 +159,64 @@ export class StorageService {
   // User methods
   getUser(id: string = 'usr_demo_accessfix'): UserProfile {
     return this.users.get(id) || this.users.values().next().value;
+  }
+
+  signupUser(data: { fullName: string; username: string; email: string; password: string }): UserProfile {
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const normalizedUsername = data.username.trim().toLowerCase().replace(/^@/, '');
+
+    // Check if email or username already in use
+    for (const cred of this.userCredentials.values()) {
+      if (cred.user.email.toLowerCase() === normalizedEmail) {
+        throw new Error('An account with this email address already exists.');
+      }
+      if (cred.user.username && cred.user.username.toLowerCase() === normalizedUsername) {
+        throw new Error('This username is already taken. Please choose another username.');
+      }
+    }
+
+    const newUserId = `usr_${Date.now()}`;
+    const newUser: UserProfile = {
+      id: newUserId,
+      email: normalizedEmail,
+      username: normalizedUsername,
+      fullName: data.fullName.trim(),
+      companyName: `${data.fullName.trim()}'s Team`,
+      role: 'user',
+      plan: 'pro',
+      scansUsedThisMonth: 0,
+      scansLimit: 250,
+      websitesCount: 0,
+      websitesLimit: 10,
+      createdAt: new Date().toISOString(),
+      avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.fullName.trim())}`,
+    };
+
+    this.users.set(newUserId, newUser);
+    this.userCredentials.set(newUserId, {
+      user: newUser,
+      password: data.password,
+    });
+
+    return newUser;
+  }
+
+  signinUser(identifier: string, password: string): UserProfile {
+    const query = identifier.trim().toLowerCase().replace(/^@/, '');
+
+    for (const cred of this.userCredentials.values()) {
+      const matchEmail = cred.user.email.toLowerCase() === query;
+      const matchUsername = cred.user.username && cred.user.username.toLowerCase() === query;
+
+      if (matchEmail || matchUsername) {
+        if (cred.password === password) {
+          return cred.user;
+        }
+        throw new Error('Incorrect password. Please verify your password and try again.');
+      }
+    }
+
+    throw new Error('No account found with that username or email address.');
   }
 
   updateUserPlan(userId: string, plan: 'free' | 'pro' | 'agency'): UserProfile {
